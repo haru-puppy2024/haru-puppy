@@ -1,13 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useMutation } from 'react-query';
-import { useRecoilState } from 'recoil';
-import { userState } from '@/app/_states/userState';
 import { useRouter } from 'next/navigation';
 import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
-import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import dayjs from 'dayjs';
 import ProfileImg, { ProfileType } from '@/app/components/profile/ProfileImg';
 import Input, { InputType } from '@/app/components/input/Input';
@@ -15,17 +10,13 @@ import styled from 'styled-components';
 import Button from '@/app/components/button/Button';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
-import { IUser } from '@/app/_types/user/User';
-import { IDog } from '@/app/_types/user/Dog';
 import GenderSelect from '@/app/components/profile/GenderSelect';
+import { IRequestData } from '@/app/_types/user/RegisterData';
+import { usePostRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
 
 const DogRegisterPage = () => {
-  interface IRequestData {
-    userRequest: IUser;
-    dogRequest: IDog;
-    homeName: string;
-  }
   const router = useRouter();
+  const { mutate: registerAPI } = usePostRegisterAPI();
   const [requestData, setRequestData] = useState<IRequestData>({
     userRequest: {},
     dogRequest: {
@@ -91,36 +82,10 @@ const DogRegisterPage = () => {
   //필수 입력란 체크 boolean
   const areAllFieldsFilled = requiredField.name && requiredField.gender && requiredField.weight;
 
-  const [, setUser] = useRecoilState(userState);
-  const postApi = (data: IRequestData) => {
-    return axios.post('http://localhost:8080/api/users/register', data);
-  };
-
-  const mutation = useMutation(postApi, {
-    onSuccess: (res) => {
-      const resData = res.data.data;
-      const accessToken = resData.token.accessToken;
-      localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-      console.log(accessToken);
-      if (setUser) {
-        setUser(resData.userResponse);
-      }
-
-      console.log('응답 데이터', resData);
-
-      if (accessToken) {
-        router.push('/');
-      } else {
-        console.error('accessToken이 응답에 포함되지 않았습니다.');
-      }
-    },
-    onError: (error) => console.error('가입 실패:', error),
-  });
-
   //signUp 요청 함수
   const handleSignUpClick = () => {
     if (requestData.userRequest) {
-      mutation.mutate(requestData);
+      registerAPI(requestData);
     }
   };
 
