@@ -1,52 +1,14 @@
 'use client';
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { BACKEND_REDIRECT_URL, LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useQuery } from 'react-query';
-import { useRecoilState } from 'recoil';
-import { userState } from '@/app/_states/userState';
+import { useCode, useLoginQuery } from '@/app/_utils/apis/usePostLoginApi';
 
 const Page = () => {
-  const router = useRouter();
-  const params = useSearchParams();
-  const code = params?.get('code') || null;
+  const code = useCode();
   const [error, setError] = useState<string>();
-
-  const [, setUser] = useRecoilState(userState);
-  const fetcher = async (code: string | null) => {
-    if (!code) return null;
-    const res = await axios.get(`${BACKEND_REDIRECT_URL}?code=${code}`);
-    return res.data.data;
-  };
-
-  const { isLoading } = useQuery(['login'], () => fetcher(code), {
-    enabled: !!code,
-    onSuccess: (responseData: any) => {
-      if (responseData.response.isAlreadyRegistered === false) {
-        const email = responseData.response.email;
-        router.push(`/auth/welcome/?email=${email}`);
-      } else {
-        const accessToken = responseData.accessToken;
-        const refreshToken = responseData.refreshToken;
-
-        localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-        if (setUser) {
-          setUser(responseData.response.registeredUser);
-          console.log('Recoil 상태 업데이트: userState =', responseData.response.registeredUser);
-        }
-        router.push('/');
-      }
-    },
-    onError: (error) => {
-      setError('로그인 중 에러가 발생하였습니다.');
-      // console.log('error', error)
-    },
-  });
+  const { isLoading } = useLoginQuery(code);
 
   if (error) {
     return (
