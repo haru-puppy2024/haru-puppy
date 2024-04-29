@@ -13,6 +13,8 @@ import { useRouter } from 'next/navigation'
 import Modal from '@/app/components/modal/modal'
 import BottomNavigation from '@/app/components/navigation/BottomNavigation'
 import { LOCAL_STORAGE_KEYS } from '@/app/constants/api'
+import { fetchNotification } from '@/app/_utils/apis/usePutAlarmApi'
+import { useTerminateAccount } from '@/app/_utils/apis/useTerminateAccount'
 
 
 const UserDummy = {
@@ -26,37 +28,8 @@ const page = () => {
     const [isToggled, setIsToggled] = useState(false);
     const [isLogoutModal, setLogoutIsModal] = useState(false);
     const [isTerminateModal, setTerminateModal] = useState(false);
-
     const queryClient = useQueryClient();
     const router = useRouter();
-
-
-    //알림 설정 fetcher 함수
-    const fetchNotification = async (active: boolean, accessToken: string | null) => {
-        try {
-            const response = await axios.put(
-                `/api/notifications?active=${active}`,
-                null,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                }
-            );
-
-            if (!response) {
-                console.error('알림 설정 요청 실패');
-                throw new Error('알림 설정 요청 실패');
-            }
-
-            return response.data;
-        } catch (error) {
-            console.error('알림 설정을 요청하는 중 에러가 발생했습니다:', error);
-            throw error;
-        }
-    };
-
 
     const { mutate: notification } = useMutation(
         (active: boolean) => fetchNotification(active, localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN)),
@@ -87,7 +60,6 @@ const page = () => {
         setTerminateModal(!isTerminateModal)
     }
 
-
     //로그아웃
     const handelLogout = () => {
         localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
@@ -95,30 +67,8 @@ const page = () => {
         router.push('/auth/login');
     }
 
-
     //회원탈퇴
-    const { mutate: terminateMutation } = useMutation(
-        async ({ userId, accessToken }: { userId: string; accessToken: string | null }) => {
-            const response = await axios.delete(`/api/users/${userId}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            return response.data;
-        },
-        {
-            onSuccess: (data) => {
-                localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-                localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
-                router.push('/auth/login');
-            },
-            onError: (error) => {
-                console.error('회원 탈퇴 에러:', error);
-            },
-        }
-    );
+    const { mutate: terminateMutation } = useTerminateAccount();
 
     //회원 탈퇴 
     const handleTerminate = () => {
