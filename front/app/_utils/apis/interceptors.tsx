@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: 'https://port-0-haru-puppy-backend-1cupyg2klv9dkg9z.sel5.cloudtype.app',
     headers: {
         'Content-type': 'application/json',
     },

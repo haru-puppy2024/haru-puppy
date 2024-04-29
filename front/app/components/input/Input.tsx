@@ -51,7 +51,7 @@ const inputConfig: Record<InputType, InputConfig> = {
 
 const Input = ({ inputType, onInputValue, value }: IInputProps) => {
   const [showErr, setShowErr] = useState<boolean>(false);
-
+  const [inputValue, setInputValue] = useState(value || '');
   const { type, inputId, label, placeholder, errMsg, minLength, maxLength } = inputConfig[inputType];
 
   const isValueEmpty = (value: string) => {
@@ -63,12 +63,15 @@ const Input = ({ inputType, onInputValue, value }: IInputProps) => {
   };
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    let newValue = event.target.value;
 
-    const isEmpty = isValueEmpty(value);
+    // 입력 값 state 업데이트
+    setInputValue(newValue);
+
+    const isEmpty = isValueEmpty(newValue);
     event.target.placeholder = isEmpty ? placeholder : '';
 
-    onInputValue(value);
+    onInputValue(newValue);
     setShowErr(isEmpty);
   };
 
@@ -96,7 +99,7 @@ const Input = ({ inputType, onInputValue, value }: IInputProps) => {
         {label}
         <span>*</span>
       </label>
-      <input type={type} id={inputId} name={inputId} placeholder={placeholder} minLength={minLength} maxLength={maxLength} value={value || ''} onChange={onInputChange} onBlur={onBlurHandler} />
+      <input type={type} id={inputId} name={inputId} placeholder={placeholder} minLength={minLength} maxLength={maxLength} value={inputValue} onChange={onInputChange} onBlur={onBlurHandler} />
       {showErr && <span>{errMsg}</span>}
     </InputWrap>
   );

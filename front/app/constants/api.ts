@@ -5,7 +5,7 @@ export const LOCAL_STORAGE_KEYS = {
 
 //api url
 
-export const BACKEND_REDIRECT_URL = 'http://localhost:8080/auth/login/kakao';
+export const BACKEND_REDIRECT_URL = 'https://port-0-haru-puppy-backend-1cupyg2klv9dkg9z.sel5.cloudtype.app/auth/login/kakao';
 
 //kakao 인증에 필요한 변수
 
