@@ -24,12 +24,25 @@ const UserDummy = {
     profileImg: '/svgs/user_profile.svg'
 }
 
+interface UserState {
+    userId: number;
+    email: string;
+    imgUrl: string;
+    nickName: string;
+    userRole: string;
+    allowNotification: boolean;
+    dogId: number;
+    homeId: string;
+}
+
+
 const page = () => {
     const [isToggled, setIsToggled] = useState(false);
     const [isLogoutModal, setLogoutIsModal] = useState(false);
     const [isTerminateModal, setTerminateModal] = useState(false);
     const queryClient = useQueryClient();
     const router = useRouter();
+
 
     const { mutate: notification } = useMutation(
         (active: boolean) => fetchNotification(active, localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN)),
@@ -72,10 +85,8 @@ const page = () => {
 
     //회원 탈퇴 
     const handleTerminate = () => {
-        const userId = UserDummy.userId;
         const accessToken = localStorage.getItem('access_token');
-        terminateMutation({ userId, accessToken })
-
+        terminateMutation({ accessToken })
     };
 
 
@@ -97,7 +108,7 @@ const page = () => {
                             onClose={toggleLogoutModal}
                         />
                     )}
-                    <NavMenu title='회원 탈퇴' onClick={toggleTerminateModal} />
+                    <NavMenu title='회원 탈퇴' onClick={handleTerminate} />
                     {isTerminateModal && (
                         <Modal
                             children="정말 탈퇴 하시겠습니까?"
