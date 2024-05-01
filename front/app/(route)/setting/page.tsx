@@ -108,13 +108,14 @@ const page = () => {
                             onClose={toggleLogoutModal}
                         />
                     )}
-                    <NavMenu title='회원 탈퇴' onClick={handleTerminate} />
+                    <NavMenu title='회원 탈퇴' onClick={toggleTerminateModal} />
                     {isTerminateModal && (
                         <Modal
                             children="정말 탈퇴 하시겠습니까?"
                             btn1="취소"
                             btn2="회원 탈퇴"
                             onClose={toggleTerminateModal}
+                            onBtn2Click={handleTerminate}
                         />
                     )}
                     <NavMenu title='메이트 초대하기' onClick={handleMateInvite} />

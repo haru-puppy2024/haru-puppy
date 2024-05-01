@@ -13,6 +13,7 @@ import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import { IUser } from '@/app/_types/user/User';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
+import instance from '@/app/_utils/apis/interceptors';
 
 const UserRegisterPage = () => {
   const searchParams = useSearchParams();
@@ -48,7 +49,7 @@ const UserRegisterPage = () => {
   };
 
   const postApi = (data: any) => {
-    return axios.post(`/api/users/invitation/${userData.homeId}`, data);
+    return instance.post(`/api/users/invitation/${userData.homeId}`, data);
   };
 
   const mutation = useMutation(postApi, {
