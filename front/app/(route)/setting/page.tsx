@@ -24,12 +24,25 @@ const UserDummy = {
     profileImg: '/svgs/user_profile.svg'
 }
 
+interface UserState {
+    userId: number;
+    email: string;
+    imgUrl: string;
+    nickName: string;
+    userRole: string;
+    allowNotification: boolean;
+    dogId: number;
+    homeId: string;
+}
+
+
 const page = () => {
     const [isToggled, setIsToggled] = useState(false);
     const [isLogoutModal, setLogoutIsModal] = useState(false);
     const [isTerminateModal, setTerminateModal] = useState(false);
     const queryClient = useQueryClient();
     const router = useRouter();
+
 
     const { mutate: notification } = useMutation(
         (active: boolean) => fetchNotification(active, localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN)),
@@ -72,10 +85,8 @@ const page = () => {
 
     //회원 탈퇴 
     const handleTerminate = () => {
-        const userId = UserDummy.userId;
         const accessToken = localStorage.getItem('access_token');
-        terminateMutation({ userId, accessToken })
-
+        terminateMutation({ accessToken })
     };
 
 
@@ -104,6 +115,7 @@ const page = () => {
                             btn1="취소"
                             btn2="회원 탈퇴"
                             onClose={toggleTerminateModal}
+                            onBtn2Click={handleTerminate}
                         />
                     )}
                     <NavMenu title='메이트 초대하기' onClick={handleMateInvite} />
