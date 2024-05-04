@@ -1,4 +1,3 @@
-import axios from 'axios';
 import instance from '../interceptors';
 import { useMutation } from 'react-query';
 import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
@@ -26,6 +25,7 @@ export const usePostRegisterAPI = () => {
 
       if (accessToken) {
         router.push('/');
+        console.log('가입 성공:', resData.userResponse);
       } else {
         console.error('accessToken이 응답에 포함되지 않았습니다.');
       }

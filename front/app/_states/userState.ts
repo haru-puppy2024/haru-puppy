@@ -11,7 +11,7 @@ interface UserStateType {
   email: string;
   homeId: string;
   imgUrl: string | null;
-  nickname: string;
+  nickName: string;
   userId: string;
   userRole: string | null;
 }
@@ -24,7 +24,7 @@ export const userState = atom<UserStateType>({
     email: '',
     homeId: '',
     imgUrl: null,
-    nickname: '',
+    nickName: '',
     userId: '',
     userRole: null,
   },
