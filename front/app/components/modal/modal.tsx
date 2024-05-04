@@ -11,7 +11,6 @@ interface IModalProps {
 }
 
 const Modal = ({ children, btn1, btn2, onClose, onBtn1Click, onBtn2Click }: IModalProps) => {
-
   const handleBtn1Click = () => {
     if (onBtn1Click) {
       onBtn1Click();
@@ -59,6 +58,7 @@ const ModalWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 16px;
   width: 242px;
   height: 170px;
   border-radius: 10px;
@@ -71,6 +71,7 @@ const ModalWrap = styled.div`
   & > strong {
     position: absolute;
     top: 60px;
+    text-align: center;
   }
 `;
 
