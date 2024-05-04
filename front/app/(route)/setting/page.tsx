@@ -15,6 +15,7 @@ import BottomNavigation from '@/app/components/navigation/BottomNavigation'
 import { LOCAL_STORAGE_KEYS } from '@/app/constants/api'
 import { fetchNotification } from '@/app/_utils/apis/usePutAlarmApi'
 import { useTerminateAccount } from '@/app/_utils/apis/useTerminateAccount'
+import { useLogout } from '@/app/_utils/apis/user/useLogout'
 
 
 const UserDummy = {
@@ -74,11 +75,7 @@ const page = () => {
     }
 
     //로그아웃
-    const handelLogout = () => {
-        localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-        localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
-        router.push('/auth/login');
-    }
+    const { mutate: logoutMutation } = useLogout();
 
     //회원탈퇴
     const { mutate: terminateMutation } = useTerminateAccount();
