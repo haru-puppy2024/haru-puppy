@@ -5,13 +5,14 @@ import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import instance from './interceptors';
 
 // 회원 탈퇴 요청을 보내는 함수
-const terminateAccountRequest = async ({ userId, accessToken }: { userId: string; accessToken: string | null }) => {
-    const response = await instance.delete(`/api/users/${userId}`, {
+const terminateAccountRequest = async ({ accessToken }: { accessToken: string | null }) => {
+    const response = await instance.post(`/api/users/withdraw`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
         },
     });
+    console.log('회원탈퇴 성공', response.data)
     return response.data;
 };
 

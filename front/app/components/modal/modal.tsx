@@ -6,16 +6,23 @@ interface IModalProps {
   btn1: string;
   btn2?: string;
   onClose: () => void;
+  onBtn1Click?: () => void;
+  onBtn2Click?: () => void;
 }
 
-const Modal = ({ children, btn1, btn2, onClose }: IModalProps) => {
-  const router = useRouter();
+const Modal = ({ children, btn1, btn2, onClose, onBtn1Click, onBtn2Click }: IModalProps) => {
 
   const handleBtn1Click = () => {
+    if (onBtn1Click) {
+      onBtn1Click();
+    }
     onClose();
   };
 
   const handleBtn2Click = () => {
+    if (onBtn2Click) {
+      onBtn2Click();
+    }
     onClose();
   };
 
