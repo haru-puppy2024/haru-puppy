@@ -24,7 +24,6 @@ const UserRegisterPage = () => {
   const [formData, setFormData] = useState<IUser>({
     imgUrl: 'src://',
     email: '',
-    password: 'password',
     nickName: '',
     userRole: '',
   });
@@ -45,7 +44,6 @@ const UserRegisterPage = () => {
     const formIncomplete = newFormData.nickName === '' || newFormData.userRole === '';
     setIsFormIncomplete(formIncomplete);
     console.log(newFormData);
-    console.log(formIncomplete);
   };
 
   const postApi = (data: any) => {
@@ -65,7 +63,6 @@ const UserRegisterPage = () => {
   const handleSubmit = () => {
     const userRequestData = {
       email: formData.email,
-      password: formData.password,
       nickName: formData.nickName,
       imgUrl: formData.imgUrl,
       userRole: formData.userRole,

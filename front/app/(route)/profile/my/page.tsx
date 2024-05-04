@@ -2,9 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { userState } from '@/app/_states/userState';
-import axios from 'axios';
-import { useMutation } from 'react-query';
-import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
+import { AxiosError } from 'axios';
 import ProfileImg, { ProfileType } from '@/app/components/profile/ProfileImg';
 import Input, { InputType } from '@/app/components/input/Input';
 import Button from '@/app/components/button/Button';
@@ -13,36 +11,41 @@ import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
 import Modal from '@/app/components/modal/modal';
-
-interface IUserProfileUpdateRequest {
-  userId: number;
-  imgUrl?: string;
-  nickname: string;
-  userRole: string;
-}
+import { IUser } from '@/app/_types/user/User';
+import { usePutUserProfileAPI } from '@/app/_utils/apis';
 
 const MyProfilePage = () => {
-  const [formData, setFormData] = useState<IUserProfileUpdateRequest>({
+  const [formData, setFormData] = useState<IUser>({
     userId: 0,
     imgUrl: 'src://',
-    nickname: '',
+    nickName: '',
     userRole: '',
   });
-
   const [userData, setUserData] = useRecoilState<any>(userState);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const onSuccess = (userInfo: IUser) => {
+    console.log('프로필 업데이트 성공:', userInfo);
+    setUserData({ ...userInfo });
+    setIsModalVisible(true);
+  };
+
+  const onError = (error: AxiosError) => {
+    console.error('프로필 업데이트 실패:', error);
+  };
+  const { mutate: updateUserProfileAPI } = usePutUserProfileAPI(onSuccess, onError);
 
   useEffect(() => {
     if (userData) {
       setFormData((currentFormData) => ({
         ...currentFormData,
         userId: userData.userId,
-        nickname: userData.nickname,
+        nickName: userData.nickName,
         userRole: userData.userRole,
       }));
     }
   }, [userData]);
 
-  console.log('recoil-persist로 갖고온 데이터 setFormData하면:', formData);
   const handleSignupForm = (name: string, value: any) => {
     const newFormData = {
       ...formData,
@@ -51,35 +54,13 @@ const MyProfilePage = () => {
     setFormData(newFormData);
   };
 
-  const isFormIncomplete = formData.nickname === '' || formData.userRole === '';
-
-  const updateProfile = (formData: IUserProfileUpdateRequest) => {
-    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-    return axios.put('http://localhost:8080/api/users/profile', formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  };
-
-  const mutation = useMutation(updateProfile, {
-    onSuccess: (res) => {
-      const resData = res.data.data;
-      console.log('프로필 업데이트 성공:', resData);
-      setUserData(resData);
-      setIsModalVisible(true);
-    },
-    onError: (error) => {
-      console.error('프로필 업데이트 실패:', error);
-    },
-  });
+  const isFormIncomplete = formData.nickName === '' || formData.userRole === '';
 
   const handleSubmitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    mutation.mutate(formData);
+    updateUserProfileAPI(formData);
   };
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const handleCloseModal = () => {
     setIsModalVisible(false);
   };
@@ -90,7 +71,7 @@ const MyProfilePage = () => {
       <TopNavigation />
       <UserProfileFormWrap>
         <ProfileImg profileType={ProfileType.User} onValueChange={(value) => handleSignupForm('img', value)} />
-        <Input inputType={InputType.NickName} onInputValue={(value) => handleSignupForm('nickname', value)} value={formData.nickname} />
+        <Input inputType={InputType.NickName} onInputValue={(value) => handleSignupForm('nickName', value)} value={formData.nickName} />
         <RoleDropdown onValueChange={(value) => handleSignupForm('userRole', value)} value={formData.userRole} />
         <Button onClick={handleSubmitClick} disabled={isFormIncomplete}>
           저장하기
