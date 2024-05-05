@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from 'next/navigation';
 import instance from "../interceptors";
 import { useMutation } from "react-query";
 import { LOCAL_STORAGE_KEYS } from "@/app/constants/api";
@@ -23,6 +23,7 @@ export const useLogout = () => {
         onSuccess: () => {
             localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
             localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
+            localStorage.removeItem('userState');
             router.push('/auth/login');
         },
         onError: (error) => {

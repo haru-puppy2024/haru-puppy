@@ -10,16 +10,9 @@ import Button from '@/app/components/button/Button';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import GenderSelect from '@/app/components/profile/GenderSelect';
+import { updateDogProfileAPI } from '@/app/_utils/apis/useDogProfileApi';
+import { IDogProfile } from '@/app/_types/user/Dog';
 
-
-interface IDogProfile {
-    dog_id: string;
-    name: string;
-    gender: string;
-    birthday: string;
-    weight: number;
-    img: string;
-}
 
 const DogProfilePage = () => {
     const [formData, setFormData] = useState<IDogProfile>({
@@ -66,6 +59,8 @@ const DogProfilePage = () => {
 
     //signUp 요청 함수
     const handleSignUpClick = () => {
+        const accessToken = localStorage.getItem('access_token')
+        updateDogProfileAPI({ accessToken, formData });
         console.log('signUp 성공')
     };
 

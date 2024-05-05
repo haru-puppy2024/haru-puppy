@@ -43,6 +43,7 @@ const page = () => {
     const [isTerminateModal, setTerminateModal] = useState(false);
     const queryClient = useQueryClient();
     const router = useRouter();
+    const accessToken = localStorage.getItem('access_token');
 
 
     const { mutate: notification } = useMutation(
@@ -77,12 +78,15 @@ const page = () => {
     //로그아웃
     const { mutate: logoutMutation } = useLogout();
 
+    const handleLogout = () => {
+        logoutMutation({ accessToken });
+    }
+
     //회원탈퇴
     const { mutate: terminateMutation } = useTerminateAccount();
 
     //회원 탈퇴 
     const handleTerminate = () => {
-        const accessToken = localStorage.getItem('access_token');
         terminateMutation({ accessToken })
     };
 
@@ -103,6 +107,8 @@ const page = () => {
                             btn1="취소"
                             btn2="로그아웃"
                             onClose={toggleLogoutModal}
+                            onBtn2Click={handleLogout}
+
                         />
                     )}
                     <NavMenu title='회원 탈퇴' onClick={toggleTerminateModal} />
