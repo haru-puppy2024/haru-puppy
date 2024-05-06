@@ -25,7 +25,8 @@ export const updateDogProfileAPI = ({ accessToken, formData }: { accessToken: st
 
     return useMutation(() => updateDogProfileRequest({ accessToken, formData }), {
         onSuccess: () => {
-            console.log('프로필이 성공적으로 업데이트되었습니다.');
+            console.log('프로필이 성공적으로 업데이트되었습니다.', formData);
+            localStorage.setItem('DogInfo', JSON.stringify(formData))
             router.push('/');
         },
         onError: (error) => {

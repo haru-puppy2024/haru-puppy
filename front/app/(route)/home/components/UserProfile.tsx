@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { useRouter } from 'next/navigation';
 import React from 'react'
 import styled from 'styled-components';
 
@@ -9,6 +10,7 @@ export interface IUserProfileProps {
 }
 
 const UserProfile = ({ user }: IUserProfileProps) => {
+  const router = useRouter();
   return (
     <Wrapper>
       <ImageWrapper>
@@ -47,7 +49,7 @@ const UserProfile = ({ user }: IUserProfileProps) => {
           <span>체중</span> 4.3 kg
         </div>
       </UserInfo>
-      <EditBtn>
+      <EditBtn onClick={() => router.push('profile/dog')}>
         <Image src={'/svgs/home_edit_btn.svg'} alt='mate-edit-btn' width={40} height={40} />
       </EditBtn>
     </Wrapper>
