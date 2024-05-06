@@ -16,12 +16,12 @@ import { IDogProfile } from '@/app/_types/user/Dog';
 
 const DogProfilePage = () => {
     const [formData, setFormData] = useState<IDogProfile>({
-        dog_id: '',
+        dogId: '13',
         name: '',
         gender: '',
         birthday: '',
         weight: 0,
-        img: '',
+        imgUrl: 'src://',
     });
 
     //필수입력 상태값   
@@ -58,11 +58,20 @@ const DogProfilePage = () => {
 
 
     //signUp 요청 함수
+    // const handleSignUpClick = () => {
+    //     const accessToken = localStorage.getItem('access_token')
+    //     updateDogProfileAPI({ accessToken, formData });
+    //     console.log('signUp 성공')
+    // };
+
+    const accessToken = localStorage.getItem('access_token')
+    const { mutate: updateDogProfileMutation } = updateDogProfileAPI({ accessToken, formData });
+
     const handleSignUpClick = () => {
-        const accessToken = localStorage.getItem('access_token')
-        updateDogProfileAPI({ accessToken, formData });
-        console.log('signUp 성공')
-    };
+        console.log('Sending FormData:', formData);
+        updateDogProfileMutation();
+    }
+
 
     return (
         <ContainerLayout>

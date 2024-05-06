@@ -8,10 +8,10 @@ export interface IDog {
 
 
 export interface IDogProfile {
-    dog_id: string;
+    dogId: string;
     name: string;
     gender: string;
     birthday: string;
     weight: number;
-    img: string;
+    imgUrl: string;
 }

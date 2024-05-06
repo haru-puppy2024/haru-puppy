@@ -1,11 +1,12 @@
-import { useRouter } from 'next/router'; // Correct the import for useRouter
+import { useRouter } from 'next/navigation';
 import { useMutation } from "react-query";
 import instance from './interceptors'; // Ensure this is set up to handle requests correctly
 import { IDogProfile } from '@/app/_types/user/Dog';
 
 // API 요청 함수 수정 (Update Profile)
 const updateDogProfileRequest = async ({ accessToken, formData }: { accessToken: string | null, formData: IDogProfile }) => {
-    const response = await instance.put('/api/users/profile', {
+    console.log('요청 formData', formData)
+    const response = await instance.patch('/api/dogs', {
         ...formData
     }, {
         headers: {
@@ -25,7 +26,7 @@ export const updateDogProfileAPI = ({ accessToken, formData }: { accessToken: st
     return useMutation(() => updateDogProfileRequest({ accessToken, formData }), {
         onSuccess: () => {
             console.log('프로필이 성공적으로 업데이트되었습니다.');
-            router.push('/some-success-route');
+            router.push('/');
         },
         onError: (error) => {
             console.error('프로필 업데이트 에러:', error);
