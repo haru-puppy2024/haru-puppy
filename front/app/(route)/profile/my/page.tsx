@@ -26,7 +26,11 @@ const MyProfilePage = () => {
 
   const onSuccess = (userInfo: IUser) => {
     console.log('프로필 업데이트 성공:', userInfo);
-    setUserData({ ...userInfo });
+    setUserData((currentData: IUser) => ({
+      ...currentData,
+      nickName: userInfo.nickName,
+      userRole: userInfo.userRole,
+    }));
     setIsModalVisible(true);
   };
 
