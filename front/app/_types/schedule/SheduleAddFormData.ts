@@ -1,11 +1,11 @@
 import { IMate } from '../user/Mate';
 
 export interface IScheduleAddFormData {
-  type: string;
+  scheduleType: string;
   mates: IMate[] | null;
-  date: string | null;
-  time: Date | null;
-  repeat: string;
-  noti: string;
+  scheduleDate: string | null;
+  scheduleTime: Date | null;
+  repeatType: string;
+  alertType: string;
   memo: string;
 }
