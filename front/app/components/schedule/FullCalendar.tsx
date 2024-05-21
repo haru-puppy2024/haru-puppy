@@ -20,11 +20,16 @@ export interface ScheduleResponse {
   schedule: IScheduleItem[];
 }
 
+interface ICalendarProps {
+  selectedDate: Date;
+  onDateChange: (date: Date) => void;
+}
+
 const currentYear = getYear(new Date());
 const YEARS = [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
 const MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
-const Calendar = () => {
+const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
   const [date, setDate] = useState(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleResponse | null>(null);
   const [selectedDateTasks, setSelectedDateTasks] = useState<IScheduleItem[]>([]);
@@ -80,10 +85,15 @@ const Calendar = () => {
 
       // weekcalendar와 fullcalendar모두 상태 동일하게 업데이트
       setDate(clickedDate);
+      onDateChange(clickedDate);
     } catch (error) {
       console.error('특정 날짜 스케줄 목록 조회 에러', error);
     }
   };
+
+  useEffect(() => {
+    setDate(selectedDate);
+  }, [selectedDate]);
 
   return (
     <>

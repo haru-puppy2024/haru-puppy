@@ -14,11 +14,12 @@ interface IDateSelectProps {
   onValueChange: (date: Date) => void;
   label?: DateSelectLabel;
   isRequired?: boolean;
+  initialDate?: Date;
 }
 
-const DateSelect = ({ onValueChange, label, isRequired }: IDateSelectProps) => {
+const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const width = label === DateSelectLabel.Birthday ? '340px' : '300px';
@@ -36,6 +37,10 @@ const DateSelect = ({ onValueChange, label, isRequired }: IDateSelectProps) => {
       }
     }
   };
+
+  useEffect(() => {
+    setSelectedDate(initialDate || new Date());
+  }, [initialDate]);
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);

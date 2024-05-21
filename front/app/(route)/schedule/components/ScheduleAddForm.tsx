@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import dayjs from 'dayjs';
 import Button from '@/app/components/button/Button';
@@ -15,6 +15,7 @@ import { IMate, IScheduleAddFormData } from '@/app/_types';
 export interface IScheduleAddFormProps {
   isOpen: boolean;
   onToggle: () => void;
+  selectedDate: Date;
 }
 
 export const dummyMatesData: IMate[] = [
@@ -38,17 +39,23 @@ export const dummyMatesData: IMate[] = [
   },
 ];
 
-const ScheduleAddForm = ({ isOpen, onToggle }: IScheduleAddFormProps) => {
+const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormProps) => {
   const [formData, setFormData] = useState<IScheduleAddFormData>({
     type: '산책',
     mates: null,
-    date: null,
+    date: dayjs(selectedDate).format('YYYY-MM-DD'),
     time: null,
     repeat: '',
     noti: '',
     memo: '',
   });
 
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      date: dayjs(selectedDate).format('YYYY-MM-DD'),
+    }));
+  }, [selectedDate]);
   console.log('formData:', formData);
 
   const handleSelectChange = (name: string, value: any) => {
@@ -69,7 +76,6 @@ const ScheduleAddForm = ({ isOpen, onToggle }: IScheduleAddFormProps) => {
       ...formData,
       [name]: value,
     };
-    console.log('업데이트 된 formData:', newFormData);
 
     setFormData(newFormData);
   };
@@ -89,7 +95,7 @@ const ScheduleAddForm = ({ isOpen, onToggle }: IScheduleAddFormProps) => {
         <FormWrap>
           <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('type', value)} />
           <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={dummyMatesData} />
-          <DateSelect onValueChange={(value) => handleSelectChange('date', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} />
+          <DateSelect onValueChange={(value) => handleSelectChange('date', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={selectedDate} />
           <TimeSelect onValueChange={(value) => handleSelectChange('time', value)} />
           <RepeatSelect onValueChange={(value) => handleSelectChange('repeat', value)} />
           <NotiSelect onValueChange={(value) => handleSelectChange('noti', value)} />
