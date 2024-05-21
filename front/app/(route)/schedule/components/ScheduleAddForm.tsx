@@ -80,12 +80,12 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
     setFormData(newFormData);
   };
 
-  const handleSave = () => {
-    console.log('저장');
-  };
-
   const handleDelete = () => {
     console.log('삭제');
+  };
+
+  const handleSave = () => {
+    console.log('저장');
   };
 
   return (
@@ -101,11 +101,11 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
           <NotiSelect onValueChange={(value) => handleSelectChange('noti', value)} />
           <MemoTextArea onValueChange={(value) => handleSelectChange('memo', value)} />
           <ButtonGroupWrap>
-            <Button onClick={handleSave} width='135px' height='32px'>
-              저장
-            </Button>
             <Button onClick={handleDelete} width='135px' height='32px'>
               삭제
+            </Button>
+            <Button onClick={handleSave} width='135px' height='32px'>
+              저장
             </Button>
           </ButtonGroupWrap>
         </FormWrap>
