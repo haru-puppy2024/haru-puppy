@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { getYear, getMonth } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -12,43 +12,27 @@ import { ko } from 'date-fns/locale';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import WeekCalendar from './WeekCalendar';
-import { ScheduleItem } from '@/app/_types/schedule/Schedule';
+import { IScheduleItem } from '@/app/_types';
 import axios from 'axios';
-import instance from "@/app/_utils/apis/interceptors";
+import instance from '@/app/_utils/apis/interceptors';
 
 export interface ScheduleResponse {
-  schedule: ScheduleItem[];
+  schedule: IScheduleItem[];
 }
-
 
 const currentYear = getYear(new Date());
 const YEARS = [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
-const MONTHS = [
-  '1월',
-  '2월',
-  '3월',
-  '4월',
-  '5월',
-  '6월',
-  '7월',
-  '8월',
-  '9월',
-  '10월',
-  '11월',
-  '12월',
-];
-
+const MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
 const Calendar = () => {
   const [date, setDate] = useState(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleResponse | null>(null);
-  const [selectedDateTasks, setSelectedDateTasks] = useState<ScheduleItem[]>([]);
+  const [selectedDateTasks, setSelectedDateTasks] = useState<IScheduleItem[]>([]);
   const [markedDates, setMarkedDates] = useState<Date[]>([new Date('2023-12-01'), new Date('2023-12-05'), new Date('2023-12-10')]);
   const month = getMonth(date) + 1;
   const year = getYear(date);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
-
 
   useEffect(() => {
     const fetchScheduleData = async () => {
@@ -56,7 +40,7 @@ const Calendar = () => {
         const response = await instance.get(`/api/schedule/month/${year}/${month}`);
         const data: ScheduleResponse = response.data;
         setScheduleData(data);
-        const dateObjects = data.schedule.map((item: ScheduleItem) => new Date(item.scheduleDate || item.reservedDate || ''));
+        const dateObjects = data.schedule.map((item: IScheduleItem) => new Date(item.scheduleDate || item.reservedDate || ''));
         setMarkedDates(dateObjects);
       } catch (error) {
         console.error('Month 스케줊 페칭 에러', error);
@@ -149,11 +133,10 @@ const Calendar = () => {
               )}
             />
             <ArrowDropUpIcon onClick={() => setShowDatePicker(!showDatePicker)} fontSize='large' color='action' />
-
           </>
+        ) : (
           // </motion.div>
 
-        ) : (
           <>
             {/* <motion.div
               key="weekcalendar"
@@ -169,21 +152,19 @@ const Calendar = () => {
           </>
         )}
         {/* </AnimatePresence> */}
-
-
-      </Wrapper >
+      </Wrapper>
       <TodoCard todoList={selectedDateTasks} />
     </>
   );
 };
 
-const Wrapper = styled.div` 
-display: flex;
-flex-direction:column;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top:100px;
-  background-color: #FFFFFF;
+  margin-top: 100px;
+  background-color: #ffffff;
 `;
 
 const Dot = styled.div`
@@ -201,7 +182,7 @@ const CustomHeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   height: 100%;
   margin-top: 8px;
   padding: 5px;
@@ -213,7 +194,7 @@ const CustomHeaderContainer = styled.div`
 
     & > * {
       margin-right: auto;
-      margin-left: auto; 
+      margin-left: auto;
     }
 
     & > span {
@@ -223,7 +204,7 @@ const CustomHeaderContainer = styled.div`
     }
 
     & > select {
-      background-color: #FFFFFF;
+      background-color: #ffffff;
       color: #5b5b5b;
       border: none;
       margin-right: 12px;
@@ -235,23 +216,21 @@ const CustomHeaderContainer = styled.div`
   }
 `;
 
-
 const Button = styled.button`
-    width: 34px;
-    height: 34px;
-    padding: 5px;
-    border-radius: 50%;
-    svg {
-      color: ${({ theme }) => theme.colors.main};
-    }
-    &:hover {
-      background-color: rgba(#FFFFFF, 0.08);
-    }
-    &:disabled {
-      cursor: default;
-      background-color:  ${({ theme }) => theme.colors.main};
-    }
-`
-
+  width: 34px;
+  height: 34px;
+  padding: 5px;
+  border-radius: 50%;
+  svg {
+    color: ${({ theme }) => theme.colors.main};
+  }
+  &:hover {
+    background-color: rgba(#ffffff, 0.08);
+  }
+  &:disabled {
+    cursor: default;
+    background-color: ${({ theme }) => theme.colors.main};
+  }
+`;
 
 export default Calendar;
