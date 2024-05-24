@@ -4,20 +4,25 @@ import Image from 'next/image';
 import React, { useState } from 'react'
 import styled from 'styled-components';
 import ScheduleAddForm from './components/ScheduleAddForm';
+import ContainerLayout from '@/app/components/layout/layout';
+import TopNavigation from '@/app/components/navigation/TopNavigation';
+import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 
 const page = () => {
     const [isOpen, setIsOpen] = useState(false);
-    
+
     const onAddBtnClick = () => {
         setIsOpen(true);
     }
 
     const onToggle = () => {
-        setIsOpen(!isOpen); 
+        setIsOpen(!isOpen);
     };
-    
+
     return (
         <>
+            {/* <ContainerLayout> */}
+            <TopNavigation />
             <Wrapper>
                 <Calendar />
                 <AddBtnWrapper onClick={onAddBtnClick}>
@@ -25,6 +30,8 @@ const page = () => {
                 </AddBtnWrapper>
             </Wrapper>
             <ScheduleAddForm isOpen={isOpen} onToggle={onToggle} />
+            <BottomNavigation />
+            {/* </ContainerLayout> */}
         </>
     )
 
