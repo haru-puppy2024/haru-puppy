@@ -3,14 +3,13 @@ import { useMutation } from 'react-query';
 import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import { useRecoilState } from 'recoil';
 import { userState } from '@/app/_states/userState';
-import { IRequestData } from '@/app/_types/user/RegisterData';
 import { useRouter } from 'next/navigation';
-import { IUser } from '@/app/_types/user/User';
+import { IRegisterData, IUser } from '@/app/_types';
 
 export const usePostRegisterAPI = () => {
   const [, setUser] = useRecoilState(userState);
   const router = useRouter();
-  const postRegisterData = (data: IRequestData) => {
+  const postRegisterData = (data: IRegisterData) => {
     return instance.post('/api/users/register', data);
   };
 

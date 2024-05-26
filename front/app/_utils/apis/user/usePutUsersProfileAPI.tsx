@@ -1,6 +1,6 @@
 import instance from '../interceptors';
 import { useMutation } from 'react-query';
-import { IUser } from '@/app/_types/user/User';
+import { IUser } from '@/app/_types';
 import { AxiosError } from 'axios';
 
 export const usePutUserProfileAPI = (onSuccess: (userInfo: IUser) => void, onError: (error: AxiosError) => void) => {

@@ -11,13 +11,13 @@ import Button from '@/app/components/button/Button';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import GenderSelect from '@/app/components/profile/GenderSelect';
-import { IRequestData } from '@/app/_types/user/RegisterData';
+import { IRegisterData } from '@/app/_types';
 import { usePostRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
 
 const DogRegisterPage = () => {
   const router = useRouter();
   const { mutate: registerAPI } = usePostRegisterAPI();
-  const [requestData, setRequestData] = useState<IRequestData>({
+  const [requestData, setRequestData] = useState<IRegisterData>({
     userRequest: {},
     dogRequest: {
       name: '',

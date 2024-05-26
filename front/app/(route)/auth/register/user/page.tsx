@@ -10,7 +10,7 @@ import Button from '@/app/components/button/Button';
 import styled from 'styled-components';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
-import { IUser } from '@/app/_types/user/User';
+import { IUser } from '@/app/_types';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
 import { usePostInviteRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
 
