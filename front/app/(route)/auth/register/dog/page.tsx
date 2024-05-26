@@ -30,14 +30,16 @@ const DogRegisterPage = () => {
   });
 
   useEffect(() => {
-    const storedUserRequest = sessionStorage.getItem('userRequestData');
-    if (storedUserRequest) {
-      setRequestData((prev) => ({
-        ...prev,
-        userRequest: JSON.parse(storedUserRequest),
-      }));
-    } else {
-      router.push('/auth/register/user');
+    if (typeof window !== 'undefined') {
+      const storedUserRequest = sessionStorage.getItem('userRequestData');
+      if (storedUserRequest) {
+        setRequestData((prev) => ({
+          ...prev,
+          userRequest: JSON.parse(storedUserRequest),
+        }));
+      } else {
+        router.push('/auth/register/user');
+      }
     }
   }, [router]);
 
