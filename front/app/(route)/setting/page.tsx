@@ -41,9 +41,13 @@ const page = () => {
   const [isTerminateModal, setTerminateModal] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
-  const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
-  const { mutate: notification } = useMutation((active: boolean) => fetchNotification(active, localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN)), {
+  useEffect(() => {
+    setAccessToken(localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN));
+  }, []);
+
+  const { mutate: notification } = useMutation((active: boolean) => fetchNotification(active, accessToken), {
     onSuccess: () => {
       queryClient.invalidateQueries('notifications');
     },
@@ -81,20 +85,16 @@ const page = () => {
   };
 
   useEffect(() => {
-    if (isLogoutModal) {
-      if (accessToken) {
-        logoutMutation({ accessToken });
-      }
+    if (isLogoutModal && accessToken) {
+      logoutMutation({ accessToken });
     }
-  }, [isLogoutModal, logoutMutation]);
+  }, [isLogoutModal, accessToken, logoutMutation]);
 
   useEffect(() => {
-    if (isTerminateModal) {
-      if (accessToken) {
-        terminateMutation({ accessToken });
-      }
+    if (isTerminateModal && accessToken) {
+      terminateMutation({ accessToken });
     }
-  }, [isTerminateModal]);
+  }, [isTerminateModal, accessToken, terminateMutation]);
 
   return (
     <>
