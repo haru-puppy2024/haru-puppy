@@ -2,46 +2,58 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import PeopleOutlineRoundedIcon from '@mui/icons-material/PeopleOutlineRounded';
 import MateProfile from '@/app/components/profile/MateProfile';
+import { IMate } from '@/app/_types/user/Mate';
 
 interface IMateSelectProps {
-    onValueChange: (value: Array<{ userId: string }>) => void;
-  }
+  onValueChange: (value: IMate[]) => void;
+  mates: IMate[] | null;
+}
 
-const MateSelect = ({onValueChange }: IMateSelectProps) => {
-    const [selectedValue, setSelectedValue] = useState<Array<{ userId: string }>>([]);
+const MateSelect = ({ onValueChange, mates }: IMateSelectProps) => {
+  const [selectedMates, setSelectedMates] = useState<string[]>([]);
 
-    const handleSelect = (value: { userId: string }) => {
-        setSelectedValue(prevSelectedValue => [...prevSelectedValue, value]);
-        onValueChange([...selectedValue, value]);
-    };
-        
+  const handleMateClick = (userId: string) => {
+    const isSelected = selectedMates.includes(userId);
+    const newSelectedMates = isSelected ? selectedMates.filter((mateId) => mateId !== userId) : [...selectedMates, userId];
+
+    setSelectedMates(newSelectedMates);
+    const selectedMateObjects = newSelectedMates.map((mateId) => ({ user_id: mateId }));
+
+    onValueChange(selectedMateObjects);
+  };
+
   return (
     <MateSelectWrap>
       <label htmlFor='schedule-type'>
-        <span><PeopleOutlineRoundedIcon/></span>
+        <span>
+          <PeopleOutlineRoundedIcon />
+        </span>
         담당 선택
       </label>
-    <MateProfile/>
+      <MateProfileWrapper>{mates?.map((mate) => <MateProfile key={mate.user_id} mate={mate} isClicked={selectedMates.includes(mate.user_id)} onClick={() => handleMateClick(mate.user_id)} size='40' />)}</MateProfileWrapper>
     </MateSelectWrap>
-    )
+  );
 };
 
+const MateProfileWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 const MateSelectWrap = styled.div`
-position: relative; 
-width: 300px;
-display: flex;
-flex-direction: column;
-cursor: pointer;
+  position: relative;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
 
-& > label {
+  & > label {
     font-size: 14px;
     font-weight: ${({ theme }) => theme.typo.regular};
     & > span {
-        margin-right: 10px;
-        vertical-align: middle;
+      margin-right: 10px;
+      vertical-align: middle;
     }
-}
-`
-
+  }
+`;
 
 export default MateSelect;

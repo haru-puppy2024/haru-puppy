@@ -1,32 +1,38 @@
-import React, { useState } from 'react';
+import { Imates } from '@/app/(route)/schedule/components/ScheduleAddForm';
+import React from 'react';
 import styled from 'styled-components';
+import Image from 'next/image';
 
-interface MateProfileProps {
-    clickable?: boolean;
+interface IMateProfileProps {
+  isClicked?: boolean;
+  onClick?: () => void;
+  mate: Imates
+  size?: string;
 }
 
-const MateProfile = ({ clickable = true }: MateProfileProps) => {
-    const [isProfileClicked, setProfileClicked] = useState(false);
 
-    const onProfileClick = () => {
-        if (clickable) {
-            console.log('메이트 프로필 클릭');
-            setProfileClicked(!isProfileClicked);
+const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
+
+  const onMateDelete = () => {
+    console.log('mate 삭제')
+  }
+
+  return (
+    <Wrapper>
+      <ProfileContainer>
+        <Profile isClicked={isClicked} onClick={onClick} size={size} />
+        {isClicked &&
+          <Image src='/svgs/mate_check.svg' alt='mate-check' width={20} height={20} />
         }
-    };
-
-    return (
-        <Wrapper>
-            <ProfileContainer>
-                <Profile onClick={onProfileClick} isClicked={isProfileClicked} clickable={clickable} />
-            </ProfileContainer>
-            <Info>
-                <NickName>닉네임</NickName>
-                <Name>엄마</Name>
-            </Info>
-        </Wrapper>
-    );
+      </ProfileContainer>
+      <Info size={size}>
+        <NickName>{mate.nickname}</NickName>
+        <Name>{mate.role}</Name>
+      </Info>
+    </Wrapper>
+  );
 };
+
 
 const Wrapper = styled.div`
   width: 80px;
@@ -38,25 +44,36 @@ const Wrapper = styled.div`
 `;
 
 const ProfileContainer = styled.div`
+position: relative;
   height: 40px;
+  & > img {
+    position: absolute;
+    top: 20%;
+    left: 85%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
 `;
 
-const Profile = styled.div<{ isClicked: boolean; clickable: boolean }>`
-  width: 40px;
-  height: 40px;
+const Profile = styled.div<{ isClicked: boolean | undefined; size: string | undefined }>`
+  width: ${({ size }) => `${size}px`};
+  height: ${({ size }) => `${size}px`};
   border-radius: 50%;
   background-color: ${({ theme }) => theme.colors.light};
   position: relative;
-  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
   box-sizing: border-box;
   border: ${({ isClicked }) => (isClicked ? '2px solid #06acf4' : 'none')};
+  cursor: pointer;
 `;
 
-const Info = styled.div`
+const Info = styled.div<{ size?: string }>`
   display: flex;
+  height: 40px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  /* margin-top: ${({ size }) => (size === '60' ? '20px' : '0')} */
+  ${({ size }) => size === '60' && 'margin-top: 20px;'}
   p {
     display: inline-block;
     margin: 3px;

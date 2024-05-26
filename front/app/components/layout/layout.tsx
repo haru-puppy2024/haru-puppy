@@ -1,27 +1,23 @@
 import styled from 'styled-components';
-import TopNavigation from '../navigation/TopNavigation';
-import BottomNavigation from '../navigation/BottomNavigation';
-
 
 const ContainerLayout = ({
-  children,
+  children, 
 }: {
   children: React.ReactNode;
 }) => {
+
   return (
     <Container>
-      <TopNavigation />
       {children}
-      <BottomNavigation />
     </Container>
   );
 };
 
-
-
+     
 const Container = styled.div`
     width: 100%;
-    max-width: 36rem;
+    max-width: 24.375rem;
+    height: 100vh;
     margin: 0 auto;
     display: flex;
     justify-content: center;
