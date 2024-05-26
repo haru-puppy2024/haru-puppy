@@ -39,9 +39,9 @@ const page = () => {
   const [isToggled, setIsToggled] = useState(false);
   const [isLogoutModal, setLogoutIsModal] = useState(false);
   const [isTerminateModal, setTerminateModal] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
     setAccessToken(localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN));
@@ -61,7 +61,9 @@ const page = () => {
 
   //매이트 초대 함수(/invite로 라우팅)
   const handleMateInvite = () => {
-    router.push('/invite');
+    if (typeof window !== 'undefined') {
+      router.push('/invite');
+    }
   };
 
   const toggleLogoutModal = () => {
@@ -78,23 +80,29 @@ const page = () => {
   //회원탈퇴
   const { mutate: terminateMutation } = useTerminateAccount();
 
-  //회원 탈퇴
+  const handleLogout = () => {
+    if (accessToken) {
+      logoutMutation({ accessToken });
+    }
+  };
+
   const handleTerminate = () => {
-    const accessToken = localStorage.getItem('access_token');
-    terminateMutation({ accessToken });
+    if (accessToken) {
+      terminateMutation({ accessToken });
+    }
   };
 
   useEffect(() => {
-    if (isLogoutModal && accessToken) {
-      logoutMutation({ accessToken });
+    if (isLogoutModal) {
+      handleLogout();
     }
-  }, [isLogoutModal, accessToken, logoutMutation]);
+  }, [isLogoutModal]);
 
   useEffect(() => {
-    if (isTerminateModal && accessToken) {
-      terminateMutation({ accessToken });
+    if (isTerminateModal) {
+      handleTerminate();
     }
-  }, [isTerminateModal, accessToken, terminateMutation]);
+  }, [isTerminateModal]);
 
   return (
     <>
