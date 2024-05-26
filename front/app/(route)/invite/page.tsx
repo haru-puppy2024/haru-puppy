@@ -28,8 +28,13 @@ const InvitePage = () => {
     }
   };
 
+  //   const shareLink = () => {
+  //     const inviteUrl = `http://localhost:3000/auth/login?homeId=${homeId}`;
+  //     copyToClipboard(inviteUrl);
+  //   };
+
   const shareLink = () => {
-    const inviteUrl = `http://localhost:3000/auth/login?homeId=${homeId}`;
+    const inviteUrl = `https://haru-puppy-frontend-1um376hxj-harupuppy.vercel.app/auth/login?homeId=${homeId}`;
     copyToClipboard(inviteUrl);
   };
 
