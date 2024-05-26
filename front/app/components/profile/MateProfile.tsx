@@ -1,29 +1,25 @@
-import { Imates } from '@/app/(route)/schedule/components/ScheduleAddForm';
 import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { IMate } from '@/app/_types';
 
 interface IMateProfileProps {
   isClicked?: boolean;
   onClick?: () => void;
-  mate: Imates
+  mate: IMate;
   size?: string;
 }
 
-
 const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
-
   const onMateDelete = () => {
-    console.log('mate 삭제')
-  }
+    console.log('mate 삭제');
+  };
 
   return (
     <Wrapper>
       <ProfileContainer>
         <Profile isClicked={isClicked} onClick={onClick} size={size} />
-        {isClicked &&
-          <Image src='/svgs/mate_check.svg' alt='mate-check' width={20} height={20} />
-        }
+        {isClicked && <Image src='/svgs/mate_check.svg' alt='mate-check' width={20} height={20} />}
       </ProfileContainer>
       <Info size={size}>
         <NickName>{mate.nickname}</NickName>
@@ -32,7 +28,6 @@ const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
     </Wrapper>
   );
 };
-
 
 const Wrapper = styled.div`
   width: 80px;
@@ -44,7 +39,7 @@ const Wrapper = styled.div`
 `;
 
 const ProfileContainer = styled.div`
-position: relative;
+  position: relative;
   height: 40px;
   & > img {
     position: absolute;
