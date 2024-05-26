@@ -82,7 +82,16 @@ const page = () => {
 
   const handleLogout = () => {
     if (accessToken) {
-      logoutMutation({ accessToken });
+      logoutMutation(
+        { accessToken },
+        {
+          onSuccess: () => {
+            if (typeof window !== 'undefined') {
+              router.push('/auth/login');
+            }
+          },
+        },
+      );
     }
   };
 
