@@ -44,7 +44,9 @@ const page = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setAccessToken(localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN));
+    if (typeof window !== 'undefined') {
+      setAccessToken(localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN));
+    }
   }, []);
 
   const { mutate: notification } = useMutation((active: boolean) => fetchNotification(active, accessToken), {
