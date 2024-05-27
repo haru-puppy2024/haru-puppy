@@ -10,14 +10,14 @@ interface IMateSelectProps {
 }
 
 const MateSelect = ({ onValueChange, mates }: IMateSelectProps) => {
-  const [selectedMates, setSelectedMates] = useState<string[]>([]);
+  const [selectedMates, setSelectedMates] = useState<number[]>([]);
 
-  const handleMateClick = (userId: string) => {
+  const handleMateClick = (userId: number) => {
     const isSelected = selectedMates.includes(userId);
     const newSelectedMates = isSelected ? selectedMates.filter((mateId) => mateId !== userId) : [...selectedMates, userId];
 
     setSelectedMates(newSelectedMates);
-    const selectedMateObjects = newSelectedMates.map((mateId) => ({ user_id: mateId }));
+    const selectedMateObjects = newSelectedMates.map((mateId) => ({ userId: mateId }));
 
     onValueChange(selectedMateObjects);
   };
@@ -30,7 +30,7 @@ const MateSelect = ({ onValueChange, mates }: IMateSelectProps) => {
         </span>
         담당 선택
       </label>
-      <MateProfileWrapper>{mates?.map((mate) => <MateProfile key={mate.user_id} mate={mate} isClicked={selectedMates.includes(mate.user_id)} onClick={() => handleMateClick(mate.user_id)} size='40' />)}</MateProfileWrapper>
+      <MateProfileWrapper>{mates?.map((mate) => <MateProfile key={mate.userId} mate={mate} isClicked={selectedMates.includes(mate.userId)} onClick={() => handleMateClick(mate.userId)} size='40' />)}</MateProfileWrapper>
     </MateSelectWrap>
   );
 };

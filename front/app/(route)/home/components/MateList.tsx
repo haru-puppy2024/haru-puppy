@@ -23,7 +23,7 @@ const MateList = ({ mates }: IMateHomeProps) => {
       </UpperWrapper>
 
       <ProfileWrapper>
-        {mates?.map((mate) => <MateProfile key={mate.user_id} mate={mate} size='60' />)}
+        {mates?.map((mate) => <MateProfile key={mate.userId} mate={mate} size='60' />)}
         <PlusWrapper>{mates.length < 4 && <Image src={'/svgs/mate_plus.svg'} alt='mate-edit-btn' width={24} height={24} />}</PlusWrapper>
       </ProfileWrapper>
     </Wrapper>

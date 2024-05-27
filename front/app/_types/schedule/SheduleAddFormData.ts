@@ -4,7 +4,7 @@ export interface IScheduleAddFormData {
   scheduleType: string;
   mates: IMate[] | null;
   scheduleDate: string | null;
-  scheduleTime: Date | null;
+  scheduleTime: string;
   repeatType: string;
   alertType: string;
   memo: string;

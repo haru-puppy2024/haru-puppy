@@ -21,19 +21,19 @@ export interface IScheduleAddFormProps {
 
 export const dummyMatesData: IMate[] = [
   {
-    user_id: '1',
+    userId: 1,
     user_img: '',
     nickname: '송이엄마',
     role: 'MOM',
   },
   {
-    user_id: '2',
+    userId: 2,
     user_img: '',
     nickname: '송이아빠',
     role: 'DAD',
   },
   {
-    user_id: '3',
+    userId: 3,
     user_img: '',
     nickname: '송이언니',
     role: 'UNNIE',
@@ -43,12 +43,12 @@ export const dummyMatesData: IMate[] = [
 const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormProps) => {
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
   const [formData, setFormData] = useState<IScheduleAddFormData>({
-    scheduleType: '산책',
+    scheduleType: 'WALK',
     mates: null,
     scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
-    scheduleTime: null,
-    repeatType: '',
-    alertType: '',
+    scheduleTime: '',
+    repeatType: 'NONE',
+    alertType: 'NONE',
     memo: '',
   });
 
@@ -67,7 +67,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
       value = dayjs(value).format('YYYY-MM-DD');
     }
 
-    if (name === 'schduleTime' && value instanceof Date) {
+    if (name === 'scheduleTime' && value instanceof Date) {
       formattedValue = dayjs(value).format('HH:mm');
     }
     if (name === 'mates' && value instanceof Array) {
@@ -99,7 +99,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
           <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('scheduleType', value)} />
           <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={dummyMatesData} />
           <DateSelect onValueChange={(value) => handleSelectChange('scheduleDate', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={selectedDate} />
-          <TimeSelect onValueChange={(value) => handleSelectChange('schduleTime', value)} />
+          <TimeSelect onValueChange={(value) => handleSelectChange('scheduleTime', value)} />
           <RepeatSelect onValueChange={(value) => handleSelectChange('repeatType', value)} />
           <NotiSelect onValueChange={(value) => handleSelectChange('alertType', value)} />
           <MemoTextArea onValueChange={(value) => handleSelectChange('memo', value)} />
