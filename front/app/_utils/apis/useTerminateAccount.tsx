@@ -24,6 +24,7 @@ export const useTerminateAccount = () => {
         onSuccess: () => {
             localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
             localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
+            localStorage.removeItem('userState');
             router.push('/auth/login');
         },
         onError: (error) => {

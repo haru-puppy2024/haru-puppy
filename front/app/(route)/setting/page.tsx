@@ -36,6 +36,14 @@ interface UserState {
 }
 
 const page = () => {
+<<<<<<< api/userProfileMod
+    const [isToggled, setIsToggled] = useState(false);
+    const [isLogoutModal, setLogoutIsModal] = useState(false);
+    const [isTerminateModal, setTerminateModal] = useState(false);
+    const queryClient = useQueryClient();
+    const router = useRouter();
+    const accessToken = localStorage.getItem('access_token');
+=======
   const [isToggled, setIsToggled] = useState(false);
   const [isLogoutModal, setLogoutIsModal] = useState(false);
   const [isTerminateModal, setTerminateModal] = useState(false);
@@ -67,6 +75,7 @@ const page = () => {
       router.push('/invite');
     }
   };
+>>>>>>> dev-front
 
   const toggleLogoutModal = () => {
     setLogoutIsModal(!isLogoutModal);
@@ -103,11 +112,67 @@ const page = () => {
     }
   };
 
+<<<<<<< api/userProfileMod
+    //로그아웃
+    const { mutate: logoutMutation } = useLogout();
+
+    const handleLogout = () => {
+        logoutMutation({ accessToken });
+    }
+
+    //회원탈퇴
+    const { mutate: terminateMutation } = useTerminateAccount();
+
+    //회원 탈퇴 
+    const handleTerminate = () => {
+        terminateMutation({ accessToken })
+    };
+
+
+    return (
+        <>
+            <TopNavigation />
+            <Wrapper>
+                <UpperUserProfile user={UserDummy} />
+                <MenuWrapper>
+                    <NavMenu title='알림 설정' >
+                        <ToggleSwitch onToggle={handelToggle} isToggled={isToggled} />
+                    </NavMenu>
+                    <NavMenu title='로그아웃' onClick={toggleLogoutModal} />
+                    {isLogoutModal && (
+                        <Modal
+                            children="로그아웃하시겠습니까?"
+                            btn1="취소"
+                            btn2="로그아웃"
+                            onClose={toggleLogoutModal}
+                            onBtn2Click={handleLogout}
+
+                        />
+                    )}
+                    <NavMenu title='회원 탈퇴' onClick={toggleTerminateModal} />
+                    {isTerminateModal && (
+                        <Modal
+                            children="정말 탈퇴 하시겠습니까?"
+                            btn1="취소"
+                            btn2="회원 탈퇴"
+                            onClose={toggleTerminateModal}
+                            onBtn2Click={handleTerminate}
+                        />
+                    )}
+                    <NavMenu title='메이트 초대하기' onClick={handleMateInvite} />
+                </MenuWrapper>
+            </Wrapper>
+            <BottomNavigation />
+        </>
+    )
+}
+=======
   useEffect(() => {
     if (isLogoutModal) {
       handleLogout();
     }
   }, [isLogoutModal]);
+>>>>>>> dev-front
 
   useEffect(() => {
     if (isTerminateModal) {
