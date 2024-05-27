@@ -21,7 +21,6 @@ const page = () => {
 
     return (
         <>
-            {/* <ContainerLayout> */}
             <TopNavigation />
             <Wrapper>
                 <Calendar />
@@ -31,7 +30,6 @@ const page = () => {
             </Wrapper>
             <ScheduleAddForm isOpen={isOpen} onToggle={onToggle} />
             <BottomNavigation />
-            {/* </ContainerLayout> */}
         </>
     )
 
