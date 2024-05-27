@@ -1,7 +1,7 @@
 import { IDog } from './Dog';
 import { IUser } from './User';
 
-export interface IRequestData {
+export interface IRegisterData {
   userRequest: IUser;
   dogRequest: IDog;
   homeName: string;

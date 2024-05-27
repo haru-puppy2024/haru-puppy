@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
-import { ScheduleItem } from '@/app/_types/schedule/Schedule';
+import { IScheduleItem } from '@/app/_types';
 
 interface ITodoCardProps {
-  todoList: ScheduleItem[];
+  todoList: IScheduleItem[];
 }
 
 const TodoCard = ({ todoList }: ITodoCardProps) => {
   const [todos, setTodos] = useState(todoList);
 
   const handleCheckboxChange = (scheduleId: number) => {
-    const updatedTodos = todos.map((todo) =>
-      todo.scheduleId === scheduleId ? { ...todo, active: !todo.active } : todo
-    );
+    const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, active: !todo.active } : todo));
     setTodos(updatedTodos);
   };
 
@@ -27,11 +25,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           <CardTitle>완료</CardTitle>
           {activeTodos.map((todo, index) => (
             <TodoItem key={index}>
-              <Checkbox
-                type='checkbox'
-                checked
-                onChange={() => handleCheckboxChange(todo.scheduleId)}
-              />
+              <Checkbox type='checkbox' checked onChange={() => handleCheckboxChange(todo.scheduleId)} />
               <TodoText active={!todo.active}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
@@ -48,11 +42,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           <CardTitle>오늘</CardTitle>
           {inactiveTodos.map((todo, index) => (
             <TodoItem key={index}>
-              <Checkbox
-                type='checkbox'
-                checked={!todo.active}
-                onChange={() => handleCheckboxChange(todo.scheduleId)}
-              />
+              <Checkbox type='checkbox' checked={!todo.active} onChange={() => handleCheckboxChange(todo.scheduleId)} />
               <TodoText active={!todo.active}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
@@ -65,33 +55,28 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
       )}
 
       <RegisteredMate></RegisteredMate>
-      {(activeTodos.length === 0 && inactiveTodos.length === 0) && (
-        <CenteredMessage>일정을 추가해주세요!</CenteredMessage>
-      )}
+      {activeTodos.length === 0 && inactiveTodos.length === 0 && <CenteredMessage>일정을 추가해주세요!</CenteredMessage>}
     </Wrapper>
   );
 };
 
 const CenteredMessage = styled.p`
- display: flex;
+  display: flex;
   font-size: 16px;
   color: ${({ theme }) => theme.colors.black80};
   margin-top: 50%;
-
 `;
-
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
 `;
 
 const TodoListWrapper = styled.div`
   width: 349px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   margin: 20px;
   border-radius: 15px;
   padding-top: 3px;
@@ -100,9 +85,8 @@ const TodoListWrapper = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.5);
-  min-height: 70px; 
+  min-height: 70px;
 `;
-
 
 const TodoItem = styled.div`
   display: flex;
@@ -111,9 +95,9 @@ const TodoItem = styled.div`
   border-radius: 15px;
   align-items: center;
   margin-bottom: 10px;
-  transition: background-color 0.3s ease; 
+  transition: background-color 0.3s ease;
   &:hover {
-    background-color: #f0f0f0; 
+    background-color: #f0f0f0;
   }
 `;
 
@@ -144,9 +128,9 @@ const Checkbox = styled.input.attrs<{ checked?: boolean }>(({ checked }) => ({
     background-size: 100% 100%;
     background-position: 50%;
     background-repeat: no-repeat;
-    background-color: #06ACF4;
-  }`
-
+    background-color: #06acf4;
+  }
+`;
 
 const TodoText = styled.p<{ active: boolean }>`
   font-weight: ${({ theme }) => theme.typo.regular};
@@ -163,7 +147,7 @@ const MateImgWrapper = styled.div`
   position: relative;
 `;
 
-const MateImg = styled(Image) <{ index: number }>`
+const MateImg = styled(Image)<{ index: number }>`
   width: 25px;
   height: 25px;
   border-radius: 50%;
@@ -176,6 +160,5 @@ const RegisteredMate = styled.div`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.black60};
 `;
-
 
 export default TodoCard;

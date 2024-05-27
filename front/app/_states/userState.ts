@@ -1,9 +1,11 @@
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
+const storage = typeof window !== 'undefined' ? localStorage : undefined;
+
 const { persistAtom } = recoilPersist({
   key: 'userState',
-  storage: localStorage,
+  storage: storage,
 });
 interface UserStateType {
   allowNotification: boolean | null;
