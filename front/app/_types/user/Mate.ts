@@ -1,5 +1,5 @@
 export interface IMate {
-  user_id: string;
+  userId: number;
   user_img?: string;
   nickname?: string;
   role?: string;
