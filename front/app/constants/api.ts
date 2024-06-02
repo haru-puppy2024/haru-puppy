@@ -12,5 +12,6 @@ export const BACKEND_REDIRECT_URL = 'https://port-0-haru-puppy-backend-1cupyg2kl
 const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_REST_API_KEY;
 
 export const KAKAO_REDIRECT_URL = 'http://localhost:3000/auth/callback/kakao';
+// export const KAKAO_REDIRECT_URL = 'https://haru-puppy-front.vercel.app/auth/callback/kakao';
 
 export const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${KAKAO_REDIRECT_URL}&response_type=code`;

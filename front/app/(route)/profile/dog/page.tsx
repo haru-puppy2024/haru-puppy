@@ -10,25 +10,18 @@ import Button from '@/app/components/button/Button';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import GenderSelect from '@/app/components/profile/GenderSelect';
+import { updateDogProfileAPI } from '@/app/_utils/apis/useDogProfileApi';
+import { IDogProfile } from '@/app/_types/user/Dog';
 
-
-interface IDogProfile {
-    dog_id: string;
-    name: string;
-    gender: string;
-    birthday: string;
-    weight: number;
-    img: string;
-}
 
 const DogProfilePage = () => {
     const [formData, setFormData] = useState<IDogProfile>({
-        dog_id: '',
+        dogId: '13',
         name: '',
         gender: '',
         birthday: '',
         weight: 0,
-        img: '',
+        imgUrl: 'src://',
     });
 
     //필수입력 상태값   
@@ -65,9 +58,20 @@ const DogProfilePage = () => {
 
 
     //signUp 요청 함수
+    // const handleSignUpClick = () => {
+    //     const accessToken = localStorage.getItem('access_token')
+    //     updateDogProfileAPI({ accessToken, formData });
+    //     console.log('signUp 성공')
+    // };
+
+    const accessToken = localStorage.getItem('access_token')
+    const { mutate: updateDogProfileMutation } = updateDogProfileAPI({ accessToken, formData });
+
     const handleSignUpClick = () => {
-        console.log('signUp 성공')
-    };
+        console.log('Sending FormData:', formData);
+        updateDogProfileMutation();
+    }
+
 
     return (
         <ContainerLayout>

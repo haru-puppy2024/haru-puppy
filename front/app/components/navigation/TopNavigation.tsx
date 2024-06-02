@@ -1,10 +1,12 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneRounded';
 import NotificationUnreadIcon from '../../../public/svgs/notifications_unread.svg';
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const TopNavigation = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -12,9 +14,7 @@ const TopNavigation = () => {
 
   const [hasNotification, setHasNotification] = useState(true);
 
-  const NotiComponent = hasNotification
-    ? <Image src={NotificationUnreadIcon} alt="알림" />
-    : <NotificationsNoneRoundedIcon />;
+  const NotiComponent = hasNotification ? <Image src={NotificationUnreadIcon} alt='알림' /> : <NotificationsNoneRoundedIcon />;
 
   const handleNotiClick = () => {
     setHasNotification(false);
@@ -54,7 +54,7 @@ const TopNavigation = () => {
       case '/auth/userprofile':
         return '내 프로필';
       case '/setting/userprofile':
-        return '내 프로필'
+        return '내 프로필';
     }
   };
 
@@ -73,43 +73,44 @@ const TopNavigation = () => {
 
   return (
     <TopNavigationWrap showBtns={showBtns}>
-      <button onClick={handleGoBack}><ArrowBackRoundedIcon /></button>
+      <button onClick={handleGoBack}>
+        <ArrowBackRoundedIcon />
+      </button>
       <strong>{currentTitle}</strong>
       <button onClick={handleNotiClick}>{NotiComponent}</button>
     </TopNavigationWrap>
-  )
-
+  );
 };
 
 const TopNavigationWrap = styled.nav<{ showBtns: boolean }>`
-    position: fixed;
-    top: 0;
-    z-index: 100;
-    background-color: #FFFFFF;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 390px; 
-    height: 48px;
-    border-bottom: 0.5px solid ${({ theme }) => theme.colors.black60};
-    background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  background-color: #ffffff;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 390px;
+  height: 48px;
+  border-bottom: 0.5px solid ${({ theme }) => theme.colors.black60};
+  background-color: #ffffff;
 
-    & > strong {
-        font-size: 16px;
-        font-weight: ${({ theme }) => theme.typo.semibold};
+  & > strong {
+    font-size: 16px;
+    font-weight: ${({ theme }) => theme.typo.semibold};
+  }
+
+  & > button {
+    padding: 12px 15px;
+    color: ${({ theme }) => theme.colors.black80};
+    visibility: ${({ showBtns }) => (showBtns ? 'visible' : 'hidden')};
+
+    &:hover {
+      color: ${({ theme }) => theme.colors.black90};
     }
-
-    & > button {
-        padding: 12px 15px;
-        color: ${({ theme }) => theme.colors.black80};
-        visibility: ${({ showBtns }) => (showBtns ? 'visible' : 'hidden')};
-
-        &:hover {
-            color: ${({ theme }) => theme.colors.black90};
-        }
-    }
+  }
 `;
 
 export default TopNavigation;

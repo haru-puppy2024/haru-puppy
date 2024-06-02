@@ -4,22 +4,23 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import { userState } from '@/app/_states/userState';
 import { useMutation } from 'react-query';
-import axios from 'axios';
 import ProfileImg, { ProfileType } from '@/app/components/profile/ProfileImg';
 import Input, { InputType } from '@/app/components/input/Input';
 import Button from '@/app/components/button/Button';
 import styled from 'styled-components';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
-import { IUser } from '@/app/_types/user/User';
+import { IUser } from '@/app/_types';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
-import instance from '@/app/_utils/apis/interceptors';
+import { usePostInviteRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
 
 const UserRegisterPage = () => {
   const searchParams = useSearchParams();
-
+  const router = useRouter();
   const userData = useRecoilValue(userState);
   const isInvitedUser = userData.homeId !== '';
+  console.log(userData.homeId);
+  const { mutate: inviteRegisterAPI } = usePostInviteRegisterAPI();
 
   const [formData, setFormData] = useState<IUser>({
     imgUrl: 'src://',
@@ -46,20 +47,6 @@ const UserRegisterPage = () => {
     console.log(newFormData);
   };
 
-  const postApi = (data: any) => {
-    return instance.post(`/api/users/invitation/${userData.homeId}`, data);
-  };
-
-  const mutation = useMutation(postApi, {
-    onSuccess: () => {
-      router.push('/home');
-    },
-    onError: (error) => {
-      console.error('가입 실패:', error);
-    },
-  });
-
-  const router = useRouter();
   const handleSubmit = () => {
     const userRequestData = {
       email: formData.email,
@@ -67,13 +54,10 @@ const UserRegisterPage = () => {
       imgUrl: formData.imgUrl,
       userRole: formData.userRole,
     };
-    const requestData = {
-      user: userRequestData,
-      homeId: userData.homeId,
-    };
 
     if (isInvitedUser) {
-      mutation.mutate(requestData);
+      console.log(userRequestData, userData.homeId);
+      inviteRegisterAPI({ requestData: userRequestData, homeId: userData.homeId });
     } else {
       sessionStorage.setItem('userRequestData', JSON.stringify(userRequestData));
       router.push('/auth/register/dog');
