@@ -1,3 +1,4 @@
 export { usePostRegisterAPI } from './user/usePostRegisterAPI';
 export { usePutUserProfileAPI } from './user/usePutUsersProfileAPI';
-import { usePostScheduleAPI } from './schedule/usePostScheduleAPI';
+export { usePostScheduleAPI } from './schedule/usePostScheduleAPI';
+export { useGetScheduleAPI } from './schedule/useGetScheduleAPI';
