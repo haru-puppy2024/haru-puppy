@@ -42,13 +42,20 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
   useEffect(() => {
     const fetchScheduleData = async () => {
       try {
-        const response = await instance.get(`/api/schedule/month/${year}/${month}`);
+        const response = await instance.get(`/api/schedules?year=${year}&month=${month}`);
         const data: ScheduleResponse = response.data;
-        setScheduleData(data);
-        const dateObjects = data.schedule.map((item: IScheduleItem) => new Date(item.scheduleDate || item.reservedDate || ''));
-        setMarkedDates(dateObjects);
+        console.log('Month 스케줄 패칭', data)
+
+        if (data && data.schedule) {
+          setScheduleData(data);
+          const dateObjects = data.schedule.map((item: IScheduleItem) => new Date(item.scheduleDate || item.reservedDate || ''));
+          setMarkedDates(dateObjects);
+        } else {
+          setScheduleData({ schedule: [] });
+        }
       } catch (error) {
-        console.error('Month 스케줊 페칭 에러', error);
+        console.error('Month 스케줄 페칭 에러', error);
+        setScheduleData({ schedule: [] });
       }
     };
 
@@ -75,8 +82,9 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
       const activeScheduleItem = scheduleData?.schedule.find((item) => item.scheduleDate === formattedDate && item.active);
       const inactiveScheduleItem = scheduleData?.schedule.find((item) => item.reservedDate === formattedDate && !item.active);
 
+      console.log('activeScheduleItem:', activeScheduleItem)
       if (activeScheduleItem) {
-        const response = await fetch(`/api/schedule/${activeScheduleItem.scheduleId}`);
+        const response = await fetch(`/api/schedules/${activeScheduleItem.scheduleId}`);
         const data = await response.json();
         setSelectedDateTasks(data);
       } else if (inactiveScheduleItem) {
@@ -98,15 +106,7 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
   return (
     <>
       <Wrapper>
-        {/* <AnimatePresence mode='wait'> */}
         {showDatePicker ? (
-          // <motion.div
-          //   key="datepicker"
-          //   initial={{ height: 0 }}
-          //   animate={{ height: 'auto' }}
-          //   exit={{ height: 0 }}
-          //   transition={{ duration: 0.3 }}
-          // >
           <>
             <DatePicker
               renderDayContents={renderDayContents}
@@ -145,23 +145,11 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
             <ArrowDropUpIcon onClick={() => setShowDatePicker(!showDatePicker)} fontSize='large' color='action' />
           </>
         ) : (
-          // </motion.div>
-
           <>
-            {/* <motion.div
-              key="weekcalendar"
-              initial={{ height: 0 }}
-              animate={{ height: 'auto' }}
-              exit={{ height: 0 }}
-              transition={{ duration: 0.3 }}
-            > */}
-
             <WeekCalendar date={date} handleDateClick={handleDateClick} />
             <ArrowDropDownIcon onClick={() => setShowDatePicker(!showDatePicker)} fontSize='large' color='action' />
-            {/* </motion.div> */}
           </>
         )}
-        {/* </AnimatePresence> */}
       </Wrapper>
       <TodoCard todoList={selectedDateTasks} />
     </>
