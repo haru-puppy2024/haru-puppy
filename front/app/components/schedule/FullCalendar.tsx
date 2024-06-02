@@ -173,8 +173,9 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 70px;
-  background-color: #ffffff;
+  margin-top:70px;
+  background-color: #FFFFFF;
+
 `;
 
 const Dot = styled.div`
