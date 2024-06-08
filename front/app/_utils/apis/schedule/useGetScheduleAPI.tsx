@@ -1,9 +1,11 @@
 import instance from '../interceptors';
 import { useQuery } from 'react-query';
-import { IScheduleAddFormData } from '@/app/_types';
 
 export const useGetScheduleAPI = (scheduleId: number | undefined) => {
   const getSchedule = async () => {
+    if (!scheduleId) {
+      throw new Error('scheduleId 없음');
+    }
     try {
       const response = await instance.get(`/api/schedules/${scheduleId}`);
       return response.data.data;
@@ -13,6 +15,7 @@ export const useGetScheduleAPI = (scheduleId: number | undefined) => {
   };
 
   return useQuery(['getSchedule', scheduleId], getSchedule, {
+    enabled: !!scheduleId,
     onSuccess: (data) => {
       console.log('스케줄 단일 데이터:', data);
     },

@@ -11,12 +11,13 @@ import TimeSelect from './TimeSelect';
 import RepeatSelect from './RepeatSelect';
 import NotiSelect from './NotiSelect';
 import { IMate, IScheduleAddFormData } from '@/app/_types';
-import { usePostScheduleAPI } from '@/app/_utils/apis/schedule/usePostScheduleAPI';
+import { usePostScheduleAPI, useGetScheduleAPI } from '@/app/_utils/apis';
 
 export interface IScheduleAddFormProps {
   isOpen: boolean;
   onToggle: () => void;
   selectedDate: Date;
+  scheduleId?: number;
 }
 
 export const dummyMatesData: IMate[] = [
@@ -40,11 +41,13 @@ export const dummyMatesData: IMate[] = [
   },
 ];
 
-const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormProps) => {
+const ScheduleAddForm = ({ isOpen, onToggle, selectedDate, scheduleId }: IScheduleAddFormProps) => {
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
+  const { data: loadedScheduleData, isLoading, isError } = useGetScheduleAPI(scheduleId);
+
   const [formData, setFormData] = useState<IScheduleAddFormData>({
     scheduleType: 'WALK',
-    mates: null,
+    mates: [],
     scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
     scheduleTime: '',
     repeatType: 'NONE',
@@ -53,11 +56,26 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
   });
 
   useEffect(() => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
-    }));
-  }, [selectedDate]);
+    if (scheduleId && loadedScheduleData && !isLoading && !isError) {
+      setFormData({
+        scheduleType: loadedScheduleData.scheduleType || 'WALK',
+        mates: loadedScheduleData.mates || [],
+        scheduleDate: dayjs(loadedScheduleData.scheduleDate).format('YYYY-MM-DD'),
+        scheduleTime: loadedScheduleData.scheduleTime || '',
+        repeatType: loadedScheduleData.repeatType || 'NONE',
+        alertType: loadedScheduleData.alertType || 'NONE',
+        memo: loadedScheduleData.memo || '',
+      });
+    } else if (!scheduleId) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
+      }));
+    }
+  }, [scheduleId, loadedScheduleData, isLoading, isError, selectedDate]);
+
+  const initialDate = scheduleId && loadedScheduleData ? new Date(loadedScheduleData.scheduleDate) : selectedDate;
+
   console.log('formData:', formData);
 
   const handleSelectChange = (name: string, value: any) => {
@@ -96,13 +114,13 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
       {isOpen && <Overlay onClick={onToggle} />}
       <ScheduleAddWrap isOpen={isOpen}>
         <FormWrap method='POST'>
-          <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('scheduleType', value)} />
-          <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={dummyMatesData} />
-          <DateSelect onValueChange={(value) => handleSelectChange('scheduleDate', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={selectedDate} />
-          <TimeSelect onValueChange={(value) => handleSelectChange('scheduleTime', value)} />
+          <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('scheduleType', value)} initialValue={formData.scheduleType} />
+          <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={dummyMatesData} initialSelectedMates={formData.mates} />
+          <DateSelect onValueChange={(value) => handleSelectChange('scheduleDate', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={initialDate} />
+          <TimeSelect onValueChange={(value) => handleSelectChange('scheduleTime', value)} initialValue={formData.scheduleTime} />
           <RepeatSelect onValueChange={(value) => handleSelectChange('repeatType', value)} />
           <NotiSelect onValueChange={(value) => handleSelectChange('alertType', value)} />
-          <MemoTextArea onValueChange={(value) => handleSelectChange('memo', value)} />
+          <MemoTextArea onValueChange={(value) => handleSelectChange('memo', value)} initialValue={formData.memo} />
           <ButtonGroupWrap>
             <Button onClick={handleDelete} width='135px' height='32px'>
               삭제

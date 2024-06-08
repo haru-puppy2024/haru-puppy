@@ -14,15 +14,22 @@ interface IDateSelectProps {
   onValueChange: (date: Date) => void;
   label?: DateSelectLabel;
   isRequired?: boolean;
-  initialDate?: Date;
+  initialDate?: Date | string;
 }
 
 const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const width = label === DateSelectLabel.Birthday ? '340px' : '300px';
+
+  const parseDate = (date: Date | string | undefined): Date => {
+    if (typeof date === 'string') return new Date(date);
+    return date || new Date();
+  };
+
+  const initialDateAsDate = parseDate(initialDate);
+
+  const [selectedDate, setSelectedDate] = useState<Date>(initialDateAsDate || new Date());
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -39,7 +46,10 @@ const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSele
   };
 
   useEffect(() => {
-    setSelectedDate(initialDate || new Date());
+    const newDate = parseDate(initialDate);
+    if (selectedDate.getTime() !== newDate.getTime()) {
+      setSelectedDate(newDate);
+    }
   }, [initialDate]);
 
   useEffect(() => {

@@ -6,12 +6,20 @@ import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 
 interface IScheduleTypeSelectProps {
   onValueChange: (value: string) => void;
+  initialValue: string;
 }
 
-const ScheduleTypeSelect = ({ onValueChange }: IScheduleTypeSelectProps) => {
+const ScheduleTypeSelect = ({ onValueChange, initialValue }: IScheduleTypeSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(scheduleTypeOptions[0]);
+  const [selectedValue, setSelectedValue] = useState(scheduleTypeOptions.find((option) => option.value === initialValue) || scheduleTypeOptions[0]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const initialSelectedValue = scheduleTypeOptions.find((option) => option.value === initialValue);
+    if (initialSelectedValue) {
+      setSelectedValue(initialSelectedValue);
+    }
+  }, [initialValue]);
 
   const handleSelect = (label: string) => {
     const selectedOption = scheduleTypeOptions.find((option) => option.label === label);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PeopleOutlineRoundedIcon from '@mui/icons-material/PeopleOutlineRounded';
 import MateProfile from '@/app/components/profile/MateProfile';
@@ -6,11 +6,21 @@ import { IMate } from '@/app/_types/user/Mate';
 
 interface IMateSelectProps {
   onValueChange: (value: IMate[]) => void;
-  mates: IMate[] | null;
+  mates: IMate[] | [];
+  initialSelectedMates: IMate[];
 }
 
-const MateSelect = ({ onValueChange, mates }: IMateSelectProps) => {
+const MateSelect = ({ onValueChange, mates, initialSelectedMates }: IMateSelectProps) => {
   const [selectedMates, setSelectedMates] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (initialSelectedMates && initialSelectedMates.length > 0) {
+      const initialSelectedMateIds = initialSelectedMates.map((mate) => mate.userId);
+      setSelectedMates(initialSelectedMateIds);
+    }
+  }, [initialSelectedMates]);
+
+  console.log('initialSelectedMates:', initialSelectedMates, 'selectedMates:', selectedMates); // 디버깅용
 
   const handleMateClick = (userId: number) => {
     const isSelected = selectedMates.includes(userId);
