@@ -12,28 +12,8 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import instance from '@/app/_utils/apis/interceptors';
-import { IHomeData, IMate, IRanking, IReport } from '@/app/_types/user/Mate';
+import { IDogDetail, IHomeData, IMate, IRanking, IReport } from '@/app/_types/user/Mate';
 
-const dummyMatesData = [
-  {
-    user_id: '2222',
-    user_img: 'image_url',
-    nickname: '파파',
-    role: '아빠',
-  },
-  {
-    user_id: '3333',
-    user_img: 'image_url',
-    nickname: '브라더',
-    role: '형',
-  },
-  {
-    user_id: '3333',
-    user_img: 'image_url',
-    nickname: '브라더',
-    role: '형',
-  },
-];
 
 const dummyReports = {
   today_poo_cnt: 2,
@@ -85,19 +65,40 @@ const Page = () => {
   }, []);
 
   const mates: IMate[] = data?.mateDto || [];
-  console.log('mates 데이터', mates)
-  // const reports: IReport = data?.reportDto || dummyReports;
-  // const ranking: IRanking[] = data?.rankingDto || dummyRanking;
+  const user: IDogDetail = data?.dogDetailResponse || {
+    dogId: 0,
+    name: '',
+    weight: 0,
+    gender: 'FEMALE',
+    birthday: '',
+    imgUrl: 'src://',
+  };
+
+  console.log('mates 데이터', mates);
+
+  const reports: IReport = data?.reportDto || {
+    todayPooCount: 0,
+    lastWalkCount: 0,
+    lastWash: '',
+    lastHospitalDate: '',
+  };
+  const ranking: IRanking[] = data?.rankingDto || [{
+    userId: 0,
+    imgUrl: 'src://',
+    nickName: '',
+    userRole: '',
+    count: 0,
+  }];
 
   return (
     <main>
       <ContainerLayout>
         <TopNavigation />
         <Wrapper>
-          <UserProfile />
+          <UserProfile user={user} />
           <MateList mates={mates} />
-          <ReportCard dummyReports={dummyReports} />
-          <WalkRank ranking={dummyRanking} />
+          <ReportCard reports={reports} userName={user.name} />
+          <WalkRank ranking={ranking} />
         </Wrapper>
         <BottomNavigation />
       </ContainerLayout>

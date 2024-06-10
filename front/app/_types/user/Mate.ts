@@ -12,6 +12,7 @@ export interface IDogDetail {
   weight: number;
   gender: 'FEMALE' | 'MALE';
   birthday: string;
+  imgUrl: string;
 }
 
 export interface IMate {

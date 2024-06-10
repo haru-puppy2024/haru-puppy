@@ -5,37 +5,40 @@ import { addDays, format, getMonth, getYear, subDays } from 'date-fns';
 const KOREAN_DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
 interface WeekCalendarProps {
-    date: Date;
-    handleDateClick: (day: Date) => void;
+  date: Date;
+  handleDateClick: (day: Date) => void;
 }
 
 const WeekCalendar = ({ date, handleDateClick }: WeekCalendarProps) => {
-    const startOfWeek = subDays(date, date.getDay());
+  const startOfWeek = subDays(date, date.getDay());
+  console.log('startOfWeek', startOfWeek)
 
-    return (
-        <Container>
-            <Month>
-                <span>{getMonth(date) + 1}월</span>
-            </Month>
-            <DayWrapper>
-                {Array.from({ length: 7 }).map((_, index) => {
-                    const day = addDays(startOfWeek, index);
-                    const dayOfWeek = KOREAN_DAY_NAMES[index];
+  return (
+    <Container>
+      <Month>
+        <span>{getMonth(date) + 1}월</span>
+      </Month>
+      <DayWrapper>
+        {Array.from({ length: 7 }).map((_, index) => {
+          const day = addDays(startOfWeek, index);
+          console.log('day', day)
 
-                    return (
-                        <Day
-                            key={index}
-                            onClick={() => handleDateClick(day)}
-                            className={`weekDay ${format(day, 'd') === format(date, 'd') ? 'selectedDay' : ''}`}
-                        >
-                            <div className='dayOfWeek'>{dayOfWeek}</div>
-                            {format(day, 'd')}
-                        </Day>
-                    );
-                })}
-            </DayWrapper>
-        </Container>
-    );
+          const dayOfWeek = KOREAN_DAY_NAMES[index];
+
+          return (
+            <Day
+              key={index}
+              onClick={() => handleDateClick(day)}
+              className={`weekDay ${format(day, 'd') === format(date, 'd') ? 'selectedDay' : ''}`}
+            >
+              <div className='dayOfWeek'>{dayOfWeek}</div>
+              {format(day, 'd')}
+            </Day>
+          );
+        })}
+      </DayWrapper>
+    </Container>
+  );
 };
 
 const Container = styled.div`
