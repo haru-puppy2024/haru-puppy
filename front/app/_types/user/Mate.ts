@@ -1,6 +1,37 @@
+export interface IHomeData {
+  dogDetailResponse: IDogDetail;
+  mateDto: IMate[];
+  rankingDto: IRanking[];
+  reportDto: IReport;
+}
+
+
+export interface IDogDetail {
+  dogId: number;
+  name: string;
+  weight: number;
+  gender: 'FEMALE' | 'MALE';
+  birthday: string;
+}
+
 export interface IMate {
   userId: number;
-  user_img?: string;
-  nickname?: string;
-  role?: string;
+  imgUrl?: string;
+  nickName?: string;
+  userRole?: string;
+}
+
+export interface IRanking {
+  userId: number;
+  imgUrl: string;
+  nickName: string;
+  userRole: string;
+  count: number;
+}
+
+export interface IReport {
+  todayPooCount: number;
+  lastWalkCount: number;
+  lastWash: string | null;
+  lastHospitalDate: string | null;
 }

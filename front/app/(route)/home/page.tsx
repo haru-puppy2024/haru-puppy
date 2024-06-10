@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import instance from '@/app/_utils/apis/interceptors';
+import { IHomeData, IMate, IRanking, IReport } from '@/app/_types/user/Mate';
 
 const dummyMatesData = [
   {
@@ -62,10 +63,10 @@ const dummyRanking = [
   },
 ];
 
-const fetchHomeData = async () => {
+const fetchHomeData = async (): Promise<IHomeData> => {
   try {
-    const response = await instance.put('/api/home/');
-    return response.data;
+    const response = await instance.get('/api/home');
+    return response.data.data;
   } catch (error) {
     throw new Error('Home api 페칭 에러');
   }
@@ -73,7 +74,8 @@ const fetchHomeData = async () => {
 
 const Page = () => {
   const router = useRouter();
-  const { data, isLoading, isError } = useQuery('homeData', fetchHomeData);
+  const { data, isLoading, isError } = useQuery<IHomeData>('homeData', fetchHomeData);
+  console.log('home data:', data)
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
@@ -82,13 +84,18 @@ const Page = () => {
     }
   }, []);
 
+  const mates: IMate[] = data?.mateDto || [];
+  console.log('mates 데이터', mates)
+  // const reports: IReport = data?.reportDto || dummyReports;
+  // const ranking: IRanking[] = data?.rankingDto || dummyRanking;
+
   return (
     <main>
       <ContainerLayout>
         <TopNavigation />
         <Wrapper>
           <UserProfile />
-          <MateList mates={dummyMatesData} />
+          <MateList mates={mates} />
           <ReportCard dummyReports={dummyReports} />
           <WalkRank ranking={dummyRanking} />
         </Wrapper>
