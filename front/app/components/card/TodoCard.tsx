@@ -9,7 +9,6 @@ interface ITodoCardProps {
 
 const TodoCard = ({ todoList }: ITodoCardProps) => {
   const [todos, setTodos] = useState(todoList);
-  console.log('todos다!!!!', todos)
 
   const handleCheckboxChange = (scheduleId: number) => {
     const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, active: !todo.isActive } : todo));
