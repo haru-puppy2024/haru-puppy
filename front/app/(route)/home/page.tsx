@@ -12,27 +12,8 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import instance from '@/app/_utils/apis/interceptors';
+import { IDogDetail, IHomeData, IMate, IRanking, IReport } from '@/app/_types/user/Mate';
 
-const dummyMatesData = [
-  {
-    user_id: '2222',
-    user_img: 'image_url',
-    nickname: '파파',
-    role: '아빠',
-  },
-  {
-    user_id: '3333',
-    user_img: 'image_url',
-    nickname: '브라더',
-    role: '형',
-  },
-  {
-    user_id: '3333',
-    user_img: 'image_url',
-    nickname: '브라더',
-    role: '형',
-  },
-];
 
 const dummyReports = {
   today_poo_cnt: 2,
@@ -62,10 +43,10 @@ const dummyRanking = [
   },
 ];
 
-const fetchHomeData = async () => {
+const fetchHomeData = async (): Promise<IHomeData> => {
   try {
-    const response = await instance.put('/api/home/');
-    return response.data;
+    const response = await instance.get('/api/home');
+    return response.data.data;
   } catch (error) {
     throw new Error('Home api 페칭 에러');
   }
@@ -73,7 +54,8 @@ const fetchHomeData = async () => {
 
 const Page = () => {
   const router = useRouter();
-  const { data, isLoading, isError } = useQuery('homeData', fetchHomeData);
+  const { data, isLoading, isError } = useQuery<IHomeData>('homeData', fetchHomeData);
+  console.log('home data:', data)
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
@@ -82,15 +64,41 @@ const Page = () => {
     }
   }, []);
 
+  const mates: IMate[] = data?.mateDto || [];
+  const user: IDogDetail = data?.dogDetailResponse || {
+    dogId: 0,
+    name: '',
+    weight: 0,
+    gender: 'FEMALE',
+    birthday: '',
+    imgUrl: 'src://',
+  };
+
+  console.log('mates 데이터', mates);
+
+  const reports: IReport = data?.reportDto || {
+    todayPooCount: 0,
+    lastWalkCount: 0,
+    lastWash: '',
+    lastHospitalDate: '',
+  };
+  const ranking: IRanking[] = data?.rankingDto || [{
+    userId: 0,
+    imgUrl: 'src://',
+    nickName: '',
+    userRole: '',
+    count: 0,
+  }];
+
   return (
     <main>
       <ContainerLayout>
         <TopNavigation />
         <Wrapper>
-          <UserProfile />
-          <MateList mates={dummyMatesData} />
-          <ReportCard dummyReports={dummyReports} />
-          <WalkRank ranking={dummyRanking} />
+          <UserProfile user={user} />
+          <MateList mates={mates} />
+          <ReportCard reports={reports} userName={user.name} />
+          <WalkRank ranking={ranking} />
         </Wrapper>
         <BottomNavigation />
       </ContainerLayout>

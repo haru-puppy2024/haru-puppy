@@ -3,31 +3,25 @@ import styled from 'styled-components'
 import PetsIcon from '@mui/icons-material/Pets';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { IReport } from '@/app/_types/user/Mate';
 
-
-interface IDummyData {
-    today_poo_cnt: number,
-    last_week_walk_cnt: number,
-    last_wash_date: string,
-    last_hospital_date: string,
-}
 
 interface IReportCard {
-    dummyReports: IDummyData
-
+    reports: IReport;
+    userName: string;
 }
 
-const ReportCard = ({ dummyReports }: IReportCard) => {
+const ReportCard = ({ reports, userName }: IReportCard) => {
     const reportsArray = [
-        { title: '오늘의 배변활동', count: dummyReports.today_poo_cnt, unit: '회', icon: <Image src={'/svgs/poop.svg'} alt="배변활동 아이콘" width={30} height={30} /> },
-        { title: '지난주 산책', count: dummyReports.last_week_walk_cnt, unit: '회', icon: <Image src={'/svgs/paw.svg'} alt="산책 아이콘" width={25} height={25} /> },
-        { title: '마지막 목욕', count: dayjs(dummyReports.last_wash_date).format('MM.DD'), icon: <Image src={'/svgs/dog_bath.svg'} alt="마지막 목욕 아이콘" width={30} height={30} /> },
-        { title: '마지막 검진', count: dayjs(dummyReports.last_hospital_date).format('MM.DD'), icon: <Image src={'/svgs/dog_health_check.svg'} alt="마지막 검진 아이콘" width={30} height={30} /> },
+        { title: '오늘의 배변활동', count: reports.todayPooCount, unit: '회', icon: <Image src={'/svgs/poop.svg'} alt="배변활동 아이콘" width={30} height={30} /> },
+        { title: '지난주 산책', count: reports.lastWalkCount, unit: '회', icon: <Image src={'/svgs/paw.svg'} alt="산책 아이콘" width={25} height={25} /> },
+        { title: '마지막 목욕', count: reports.lastWash ? dayjs(reports.lastWash).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_bath.svg'} alt="마지막 목욕 아이콘" width={30} height={30} /> },
+        { title: '마지막 검진', count: reports.lastHospitalDate ? dayjs(reports.lastHospitalDate).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_health_check.svg'} alt="마지막 검진 아이콘" width={30} height={30} /> },
     ];
     return (
         <>
             <ReportCardWrapper>
-                <Title>멍순이 리포트</Title>
+                <Title>{userName}의 리포트</Title>
 
                 {reportsArray.map((report, index) => (
                     <Wrapper key={index}>

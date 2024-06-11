@@ -3,13 +3,16 @@ import MateProfile from '../../../components/profile/MateProfile';
 import { IMate } from '@/app/_types';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { IHomeData } from '@/app/_types/user/Mate';
 
-interface IMateHomeProps {
+
+interface IMateListProps {
   mates: IMate[];
 }
 
-const MateList = ({ mates }: IMateHomeProps) => {
+const MateList = ({ mates }: IMateListProps) => {
   const [isEdit, setIsedit] = useState(false);
+  console.log('mates data', mates)
 
   const onEditClick = () => {
     setIsedit(!isEdit);
@@ -24,7 +27,7 @@ const MateList = ({ mates }: IMateHomeProps) => {
 
       <ProfileWrapper>
         {mates?.map((mate) => <MateProfile key={mate.userId} mate={mate} size='60' />)}
-        <PlusWrapper>{mates.length < 4 && <Image src={'/svgs/mate_plus.svg'} alt='mate-edit-btn' width={24} height={24} />}</PlusWrapper>
+        <PlusWrapper>{mates?.length < 4 && <Image src={'/svgs/mate_plus.svg'} alt='mate-edit-btn' width={24} height={24} />}</PlusWrapper>
       </ProfileWrapper>
     </Wrapper>
   );

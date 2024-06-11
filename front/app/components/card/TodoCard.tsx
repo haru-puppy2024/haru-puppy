@@ -11,12 +11,16 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
   const [todos, setTodos] = useState(todoList);
 
   const handleCheckboxChange = (scheduleId: number) => {
-    const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, active: !todo.active } : todo));
+    const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, active: !todo.isActive } : todo));
+    console.log('updatedTodos입니다', updatedTodos)
     setTodos(updatedTodos);
   };
 
-  const activeTodos = todos.filter((todo) => todo.active);
-  const inactiveTodos = todos.filter((todo) => !todo.active);
+  const activeTodos = todoList.filter((todo) => todo.isActive);
+  console.log('액티브', activeTodos)
+  const inactiveTodos = todoList.filter((todo) => !todo.isActive);
+  console.log('인액티브', inactiveTodos)
+
 
   return (
     <Wrapper>
@@ -55,7 +59,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
       )}
 
       <RegisteredMate></RegisteredMate>
-      {activeTodos.length === 0 && inactiveTodos.length === 0 && <CenteredMessage>일정을 추가해주세요!</CenteredMessage>}
+      {activeTodos.length === 0 && inactiveTodos.length === 0 && <CenteredMessage>일정이 없습니다.</CenteredMessage>}
     </Wrapper>
   );
 };
@@ -147,7 +151,7 @@ const MateImgWrapper = styled.div`
   position: relative;
 `;
 
-const MateImg = styled(Image)<{ index: number }>`
+const MateImg = styled(Image) <{ index: number }>`
   width: 25px;
   height: 25px;
   border-radius: 50%;
