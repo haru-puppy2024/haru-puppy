@@ -77,37 +77,44 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
     );
   };
 
+  // const handleDateClick = async (clickedDate: Date) => {
+  //   try {
+  //     const formattedDate = clickedDate.toISOString().split('T')[0];
+  //     console.log('clickedDate', clickedDate)
+  //     console.log('formattedDate', formattedDate)
+  //     const activeScheduleItem = scheduleData?.find((item) => item.scheduleDate === formattedDate && item.isActive);
+  //     console.log('activeScheduleItem임당', activeScheduleItem)
+  //     const inactiveScheduleItem = scheduleData?.find((item) => item.scheduleDate === formattedDate && !item.isActive);
+
+  //     console.log('activeScheduleItem:', activeScheduleItem)
+  //     if (activeScheduleItem) {
+  //       const response = await fetch(`/api/schedules/${activeScheduleItem.scheduleId}`);
+  //       const data = await response.json();
+  //       console.log('단일 데이터', data)
+  //       setSelectedDateTasks(data);
+  //     } else if (inactiveScheduleItem) {
+  //       setSelectedDateTasks([]);
+  //     }
+
+  //     // weekcalendar와 fullcalendar모두 상태 동일하게 업데이트
+  //     setDate(clickedDate);
+  //     onDateChange(clickedDate);
+  //   } catch (error) {
+  //     console.error('특정 날짜 스케줄 목록 조회 에러', error);
+  //   }
+  // };
+
+
   const handleDateClick = async (clickedDate: Date) => {
     try {
-      const formattedDate = clickedDate.toISOString().split('T')[0];
-      console.log('clickedDate', clickedDate)
-      console.log('formattedDate', formattedDate)
-      const activeScheduleItem = scheduleData?.find((item) => item.scheduleDate === formattedDate && item.isActive);
-      console.log('activeScheduleItem임당', activeScheduleItem)
-      const inactiveScheduleItem = scheduleData?.find((item) => item.scheduleDate === formattedDate && !item.isActive);
+      const year = getYear(clickedDate);
+      const month = getMonth(clickedDate) + 1;
+      const day = clickedDate.getDate();
+      const response = await instance.get(`/api/schedules?year=${year}&month=${month}&day=${day}`);
+      const DayData = response.data.data;
+      console.log('날짜별 데이터', DayData)
 
-      // const activeScheduleItem = scheduleData?.schedule
-      //   .map((item) => item.scheduleDate === formattedDate && item.isActive ? item : null)
-      //   .filter(item => item !== null);
-
-      // console.log('activeScheduleItem!!!!!!!', activeScheduleItem)
-      // const inactiveScheduleItem = scheduleData?.schedule
-      //   .map((item) => item.scheduleDate === formattedDate && !item.isActive ? item : null)
-      //   .filter(item => item !== null);
-
-
-
-      console.log('activeScheduleItem:', activeScheduleItem)
-      if (activeScheduleItem) {
-        const response = await fetch(`/api/schedules/${activeScheduleItem.scheduleId}`);
-        const data = await response.json();
-        console.log('단일 데이터', data)
-        setSelectedDateTasks(data);
-      } else if (inactiveScheduleItem) {
-        setSelectedDateTasks([]);
-      }
-
-      // weekcalendar와 fullcalendar모두 상태 동일하게 업데이트
+      setSelectedDateTasks(DayData);
       setDate(clickedDate);
       onDateChange(clickedDate);
     } catch (error) {
