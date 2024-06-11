@@ -1,3 +1,4 @@
+import { IRanking } from '@/app/_types/user/Mate';
 import Image from 'next/image';
 import React from 'react';
 import styled from 'styled-components';
@@ -10,7 +11,7 @@ interface IUser {
 }
 
 interface IWalkRank {
-  ranking: IUser[];
+  ranking: IRanking[];
 }
 
 
@@ -22,13 +23,13 @@ const WalkRank = ({ ranking }: IWalkRank) => {
         <ChartWrapper>
           {ranking?.map((user, index) => (
             <BoxWrapper key={index}>
-              <UserContainer walkCount={user.rank}>
-                {user.user_img ? <UserProfileImage><Image src={user.user_img} alt='프로필 이미지' width={65} height={65} /></UserProfileImage>
-                  : <UserProfileImage />}
-                <Nickname>{user.nickname}</Nickname>
-                <WalkCount>{user.rank}회</WalkCount>
+              <UserContainer walkCount={user.count}>
+                {/* {user.imgUrl ? <UserProfileImage><Image src={user.imgUrl} alt='프로필 이미지' width={65} height={65} /></UserProfileImage>
+                  : <UserProfileImage />} */}
+                <Nickname>{user.nickName}</Nickname>
+                <WalkCount>{user.count}회</WalkCount>
               </UserContainer>
-              <Bar walkCount={user.rank} />
+              <Bar walkCount={user.count} />
             </BoxWrapper>
           ))}
         </ChartWrapper>

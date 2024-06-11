@@ -22,8 +22,8 @@ const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
         {isClicked && <Image src='/svgs/mate_check.svg' alt='mate-check' width={20} height={20} />}
       </ProfileContainer>
       <Info size={size}>
-        <NickName>{mate.nickname}</NickName>
-        <Name>{mate.role}</Name>
+        <NickName>{mate.nickName}</NickName>
+        <Name>{mate.userRole}</Name>
       </Info>
     </Wrapper>
   );

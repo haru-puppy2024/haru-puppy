@@ -1,28 +1,30 @@
+import { IDogDetail } from '@/app/_types/user/Mate';
+import dayjs from 'dayjs';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import styled from 'styled-components';
 
-export interface IUserProfileProps {
-  user?: {
-    profileImg?: string;
-  };
+interface UserProfileProps {
+  user: IDogDetail;
 }
 
-const UserProfile = ({ user }: IUserProfileProps) => {
+const UserProfile = ({ user }: UserProfileProps) => {
   const router = useRouter();
+  const formattedBirthday = dayjs(user.birthday).format('YYYY.MM.DD');
+
   return (
     <Wrapper>
       <ImageWrapper>
-        {user && user.profileImg ? (
+        {user && user.imgUrl ? (
           <>
-            <Image
-              src={user.profileImg}
+            {/* <Image
+              src={user.imgUrl}
               alt="User Profile"
               layout="fill"
               objectFit="cover"
               objectPosition="center"
-            />
+            /> */}
 
           </>
         ) : (
@@ -38,15 +40,15 @@ const UserProfile = ({ user }: IUserProfileProps) => {
         )}
       </ImageWrapper>
       <UserInfo>
-        <p>멍순이</p>
+        <p>{user.name}</p>
         <div>
-          <span>성별</span> 여자
+          <span>성별</span> {user.gender === 'FEMALE' ? '여자' : '남자'}
         </div>
         <div>
-          <span>생일</span> 22.10.23
+          <span>생일</span> {formattedBirthday}
         </div>
         <div>
-          <span>체중</span> 4.3 kg
+          <span>체중</span> {user.weight} kg
         </div>
       </UserInfo>
       <EditBtn onClick={() => router.push('profile/dog')}>
