@@ -14,7 +14,7 @@ const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
   const onMateDelete = () => {
     console.log('mate 삭제');
   };
-  console.log('mate:', mate);
+
   return (
     <Wrapper>
       <ProfileContainer>
