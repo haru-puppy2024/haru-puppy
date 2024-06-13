@@ -23,21 +23,21 @@ export interface IScheduleAddFormProps {
 export const dummyMatesData: IMate[] = [
   {
     userId: 1,
-    user_img: '',
-    nickname: '송이엄마',
-    role: 'MOM',
+    imgUrl: '',
+    nickName: '송이엄마',
+    userRole: 'MOM',
   },
   {
     userId: 2,
-    user_img: '',
-    nickname: '송이아빠',
-    role: 'DAD',
+    imgUrl: '',
+    nickName: '송이아빠',
+    userRole: 'DAD',
   },
   {
     userId: 3,
-    user_img: '',
-    nickname: '송이언니',
-    role: 'UNNIE',
+    imgUrl: '',
+    nickName: '송이언니',
+    userRole: 'UNNIE',
   },
 ];
 

@@ -7,27 +7,28 @@ import { IMate } from '@/app/_types/user/Mate';
 interface IMateSelectProps {
   onValueChange: (value: IMate[]) => void;
   mates: IMate[] | [];
-  initialSelectedMates: IMate[];
+  initialSelectedMates: IMate[] | [];
 }
 
 const MateSelect = ({ onValueChange, mates, initialSelectedMates }: IMateSelectProps) => {
-  const [selectedMates, setSelectedMates] = useState<number[]>([]);
+  const [selectedMateId, setSelectedMateId] = useState<number[]>([]);
 
   useEffect(() => {
     if (initialSelectedMates && initialSelectedMates.length > 0) {
       const initialSelectedMateIds = initialSelectedMates.map((mate) => mate.userId);
-      setSelectedMates(initialSelectedMateIds);
+      setSelectedMateId(initialSelectedMateIds);
+      onValueChange(initialSelectedMates);
     }
   }, [initialSelectedMates]);
 
-  console.log('initialSelectedMates:', initialSelectedMates, 'selectedMates:', selectedMates); // 디버깅용
+  console.log('initialSelectedMates:', initialSelectedMates, 'selectedMates:', selectedMateId); // 디버깅용
 
   const handleMateClick = (userId: number) => {
-    const isSelected = selectedMates.includes(userId);
-    const newSelectedMates = isSelected ? selectedMates.filter((mateId) => mateId !== userId) : [...selectedMates, userId];
+    const isSelected = selectedMateId.includes(userId);
+    const newSelectedMates = isSelected ? selectedMateId.filter((mateId) => mateId !== userId) : [...selectedMateId, userId];
 
-    setSelectedMates(newSelectedMates);
-    const selectedMateObjects = newSelectedMates.map((mateId) => ({ userId: mateId }));
+    setSelectedMateId(newSelectedMates);
+    const selectedMateObjects = newSelectedMates.map((mateId) => mates.find((mate) => mate.userId === mateId)).filter((mate) => mate !== undefined) as IMate[];
 
     onValueChange(selectedMateObjects);
   };
@@ -40,7 +41,7 @@ const MateSelect = ({ onValueChange, mates, initialSelectedMates }: IMateSelectP
         </span>
         담당 선택
       </label>
-      <MateProfileWrapper>{mates?.map((mate) => <MateProfile key={mate.userId} mate={mate} isClicked={selectedMates.includes(mate.userId)} onClick={() => handleMateClick(mate.userId)} size='40' />)}</MateProfileWrapper>
+      <MateProfileWrapper>{mates?.map((mate) => <MateProfile key={mate.userId} mate={mate} isClicked={selectedMateId.includes(mate.userId)} onClick={() => handleMateClick(mate.userId)} size='40' />)}</MateProfileWrapper>
     </MateSelectWrap>
   );
 };
