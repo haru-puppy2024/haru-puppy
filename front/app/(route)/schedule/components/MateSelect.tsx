@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PeopleOutlineRoundedIcon from '@mui/icons-material/PeopleOutlineRounded';
@@ -7,30 +9,27 @@ import { IMate } from '@/app/_types/user/Mate';
 interface IMateSelectProps {
   onValueChange: (value: IMate[]) => void;
   mates: IMate[] | [];
-  initialSelectedMates: IMate[] | [];
+  initialSelectedMates: { userId: number }[] | [];
 }
 
 const MateSelect = ({ onValueChange, mates, initialSelectedMates }: IMateSelectProps) => {
-  const [selectedMateId, setSelectedMateId] = useState<number[]>([]);
+  const [selectedMates, setSelectedMates] = useState<{ userId: number }[]>([]);
 
   useEffect(() => {
     if (initialSelectedMates && initialSelectedMates.length > 0) {
-      const initialSelectedMateIds = initialSelectedMates.map((mate) => mate.userId);
-      setSelectedMateId(initialSelectedMateIds);
+      setSelectedMates(initialSelectedMates);
       onValueChange(initialSelectedMates);
     }
   }, [initialSelectedMates]);
 
-  console.log('initialSelectedMates:', initialSelectedMates, 'selectedMates:', selectedMateId); // 디버깅용
+  console.log('initialSelectedMates:', initialSelectedMates, 'selectedMates:', selectedMates); // 디버깅용
 
   const handleMateClick = (userId: number) => {
-    const isSelected = selectedMateId.includes(userId);
-    const newSelectedMates = isSelected ? selectedMateId.filter((mateId) => mateId !== userId) : [...selectedMateId, userId];
+    const isSelected = selectedMates.some((mate) => mate.userId === userId);
+    const newSelectedMates = isSelected ? selectedMates.filter((mate) => mate.userId !== userId) : [...selectedMates, { userId }];
 
-    setSelectedMateId(newSelectedMates);
-    const selectedMateObjects = newSelectedMates.map((mateId) => mates.find((mate) => mate.userId === mateId)).filter((mate) => mate !== undefined) as IMate[];
-
-    onValueChange(selectedMateObjects);
+    setSelectedMates(newSelectedMates);
+    onValueChange(newSelectedMates);
   };
 
   return (
@@ -41,7 +40,9 @@ const MateSelect = ({ onValueChange, mates, initialSelectedMates }: IMateSelectP
         </span>
         담당 선택
       </label>
-      <MateProfileWrapper>{mates?.map((mate) => <MateProfile key={mate.userId} mate={mate} isClicked={selectedMateId.includes(mate.userId)} onClick={() => handleMateClick(mate.userId)} size='40' />)}</MateProfileWrapper>
+      <MateProfileWrapper>
+        {mates?.map((mate) => <MateProfile key={mate.userId} mate={mate} isClicked={selectedMates.some((selectedMate) => selectedMate.userId === mate.userId)} onClick={() => handleMateClick(mate.userId)} size='40' />)}
+      </MateProfileWrapper>
     </MateSelectWrap>
   );
 };

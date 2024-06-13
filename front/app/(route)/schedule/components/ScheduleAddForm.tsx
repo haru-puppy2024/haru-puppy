@@ -1,4 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { mateState } from '@/app/_states/mateState';
 import Image from 'next/image';
 import dayjs from 'dayjs';
 import Button from '@/app/components/button/Button';
@@ -10,45 +14,27 @@ import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect
 import TimeSelect from './TimeSelect';
 import RepeatSelect from './RepeatSelect';
 import NotiSelect from './NotiSelect';
-import { IMate, IScheduleAddFormData } from '@/app/_types';
-import { usePostScheduleAPI, useGetScheduleAPI } from '@/app/_utils/apis';
+import { IScheduleAddFormData } from '@/app/_types';
+import { usePostScheduleAPI, useGetScheduleAPI, usePatchScheduleAPI } from '@/app/_utils/apis';
+import { formatDateToYMD, formatDateToHM, parseDateToYMD } from '@/app/_utils/formatDate';
 
 export interface IScheduleAddFormProps {
   isOpen: boolean;
   onToggle: () => void;
-  selectedDate: Date;
+  selectedDateFromCalender: Date;
   scheduleId?: number;
 }
 
-export const dummyMatesData: IMate[] = [
-  {
-    userId: 1,
-    imgUrl: '',
-    nickName: '송이엄마',
-    userRole: 'MOM',
-  },
-  {
-    userId: 2,
-    imgUrl: '',
-    nickName: '송이아빠',
-    userRole: 'DAD',
-  },
-  {
-    userId: 3,
-    imgUrl: '',
-    nickName: '송이언니',
-    userRole: 'UNNIE',
-  },
-];
-
-const ScheduleAddForm = ({ isOpen, onToggle, selectedDate, scheduleId }: IScheduleAddFormProps) => {
+const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleId }: IScheduleAddFormProps) => {
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
+  const { mutate: patchScheduleAPI } = usePatchScheduleAPI();
   const { data: loadedScheduleData, isLoading, isError } = useGetScheduleAPI(scheduleId);
+  const mates = useRecoilValue(mateState);
 
   const [formData, setFormData] = useState<IScheduleAddFormData>({
     scheduleType: 'WALK',
     mates: [],
-    scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
+    scheduleDate: formatDateToYMD(selectedDateFromCalender),
     scheduleTime: '',
     repeatType: 'NONE',
     alertType: 'NONE',
@@ -57,10 +43,13 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate, scheduleId }: ISchedu
 
   useEffect(() => {
     if (scheduleId && loadedScheduleData && !isLoading && !isError) {
+      const formattedMates = loadedScheduleData.mates.map((mateId: number) => ({
+        userId: mateId,
+      }));
       setFormData({
         scheduleType: loadedScheduleData.scheduleType || 'WALK',
-        mates: loadedScheduleData.mates || [],
-        scheduleDate: dayjs(loadedScheduleData.scheduleDate).format('YYYY-MM-DD'),
+        mates: formattedMates,
+        scheduleDate: parseDateToYMD(loadedScheduleData.scheduleDate),
         scheduleTime: loadedScheduleData.scheduleTime || '',
         repeatType: loadedScheduleData.repeatType || 'NONE',
         alertType: loadedScheduleData.alertType || 'NONE',
@@ -69,24 +58,26 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate, scheduleId }: ISchedu
     } else if (!scheduleId) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
+        scheduleDate: formatDateToYMD(selectedDateFromCalender),
       }));
     }
-  }, [scheduleId, loadedScheduleData, isLoading, isError, selectedDate]);
+  }, [scheduleId, loadedScheduleData, isLoading, isError, selectedDateFromCalender]);
 
-  const initialDate = scheduleId && loadedScheduleData ? new Date(loadedScheduleData.scheduleDate) : selectedDate;
+  const initialDate = scheduleId && loadedScheduleData ? parseDateToYMD(loadedScheduleData.scheduleDate) : formatDateToYMD(selectedDateFromCalender);
 
+  console.log('selectedDateFromCalender:', selectedDateFromCalender);
+  console.log('initialDate:', initialDate);
   console.log('formData:', formData);
 
   const handleSelectChange = (name: string, value: any) => {
     let formattedValue = value;
 
     if (name === 'scheduleDate' && value instanceof Date) {
-      value = dayjs(value).format('YYYY-MM-DD');
+      formattedValue = formatDateToYMD(value);
     }
 
     if (name === 'scheduleTime' && value instanceof Date) {
-      formattedValue = dayjs(value).format('HH:mm');
+      formattedValue = formatDateToHM(value);
     }
     if (name === 'mates' && value instanceof Array) {
       formattedValue = value;
@@ -94,7 +85,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate, scheduleId }: ISchedu
 
     const newFormData = {
       ...formData,
-      [name]: value,
+      [name]: formattedValue,
     };
 
     setFormData(newFormData);
@@ -106,7 +97,11 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate, scheduleId }: ISchedu
 
   const handleSave = () => {
     console.log('저장');
-    postScheduleAPI(formData);
+    if (scheduleId !== undefined) {
+      patchScheduleAPI({ scheduleId, data: formData });
+    } else {
+      postScheduleAPI(formData);
+    }
   };
 
   return (
@@ -115,7 +110,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate, scheduleId }: ISchedu
       <ScheduleAddWrap isOpen={isOpen}>
         <FormWrap method='POST'>
           <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('scheduleType', value)} initialValue={formData.scheduleType} />
-          <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={dummyMatesData} initialSelectedMates={formData.mates} />
+          <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={mates} initialSelectedMates={formData.mates} />
           <DateSelect onValueChange={(value) => handleSelectChange('scheduleDate', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={initialDate} />
           <TimeSelect onValueChange={(value) => handleSelectChange('scheduleTime', value)} initialValue={formData.scheduleTime} />
           <RepeatSelect onValueChange={(value) => handleSelectChange('repeatType', value)} />
