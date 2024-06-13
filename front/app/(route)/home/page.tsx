@@ -11,9 +11,10 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
+import { useRecoilState } from 'recoil';
 import instance from '@/app/_utils/apis/interceptors';
 import { IDogDetail, IHomeData, IMate, IRanking, IReport } from '@/app/_types/user/Mate';
-
+import { mateState } from '@/app/_states/mateState';
 
 const dummyReports = {
   today_poo_cnt: 2,
@@ -55,7 +56,8 @@ const fetchHomeData = async (): Promise<IHomeData> => {
 const Page = () => {
   const router = useRouter();
   const { data, isLoading, isError } = useQuery<IHomeData>('homeData', fetchHomeData);
-  console.log('home data:', data)
+  const [mates, setMates] = useRecoilState(mateState);
+  console.log('home data:', data);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
@@ -64,7 +66,12 @@ const Page = () => {
     }
   }, []);
 
-  const mates: IMate[] = data?.mateDto || [];
+  useEffect(() => {
+    if (data && data.mateDto) {
+      setMates(data.mateDto);
+    }
+  }, [data, setMates]);
+
   const user: IDogDetail = data?.dogDetailResponse || {
     dogId: 0,
     name: '',
@@ -82,13 +89,15 @@ const Page = () => {
     lastWash: '',
     lastHospitalDate: '',
   };
-  const ranking: IRanking[] = data?.rankingDto || [{
-    userId: 0,
-    imgUrl: 'src://',
-    nickName: '',
-    userRole: '',
-    count: 0,
-  }];
+  const ranking: IRanking[] = data?.rankingDto || [
+    {
+      userId: 0,
+      imgUrl: 'src://',
+      nickName: '',
+      userRole: '',
+      count: 0,
+    },
+  ];
 
   return (
     <main>
