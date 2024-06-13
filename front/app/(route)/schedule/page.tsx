@@ -22,6 +22,7 @@ const page = () => {
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
+    console.log('날짜선택', selectedDate);
   };
 
   return (
@@ -33,7 +34,7 @@ const page = () => {
           <Image src='/svgs/add_circle.svg' alt='add_circle' width={50} height={50} />
         </AddBtnWrapper>
       </Wrapper>
-      <ScheduleAddForm isOpen={isOpen} onToggle={onToggle} selectedDate={selectedDate} scheduleId={65} />
+      <ScheduleAddForm isOpen={isOpen} onToggle={onToggle} selectedDateFromCalender={selectedDate} scheduleId={72} />
       <BottomNavigation />
     </>
   );

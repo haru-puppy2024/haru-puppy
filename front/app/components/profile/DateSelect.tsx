@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import styled from 'styled-components';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import { formatDateToYMD, parseDateToYMD } from '@/app/_utils/formatDate';
 
 export enum DateSelectLabel {
   Birthday = '생일',
@@ -11,10 +12,10 @@ export enum DateSelectLabel {
 }
 
 interface IDateSelectProps {
-  onValueChange: (date: Date) => void;
+  onValueChange: (date: string) => void;
   label?: DateSelectLabel;
   isRequired?: boolean;
-  initialDate?: Date | string;
+  initialDate?: string;
 }
 
 const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSelectProps) => {
@@ -22,18 +23,20 @@ const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSele
   const dropdownRef = useRef<HTMLDivElement>(null);
   const width = label === DateSelectLabel.Birthday ? '340px' : '300px';
 
-  const parseDate = (date: Date | string | undefined): Date => {
-    if (typeof date === 'string') return new Date(date);
-    return date || new Date();
+  const parseDate = (date: string | undefined): Date => {
+    if (typeof date === 'string' && !isNaN(Date.parse(date))) return new Date(date);
+    return new Date();
   };
 
   const initialDateAsDate = parseDate(initialDate);
 
-  const [selectedDate, setSelectedDate] = useState<Date>(initialDateAsDate || new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(initialDateAsDate);
 
+  console.log('최종 DateSelect', selectedDate);
   const handleDateSelect = (date: Date) => {
+    const formattedDate = formatDateToYMD(date);
     setSelectedDate(date);
-    onValueChange(date);
+    onValueChange(formattedDate);
     setIsOpen(false);
   };
 
@@ -46,10 +49,7 @@ const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSele
   };
 
   useEffect(() => {
-    const newDate = parseDate(initialDate);
-    if (selectedDate.getTime() !== newDate.getTime()) {
-      setSelectedDate(newDate);
-    }
+    setSelectedDate(parseDate(initialDate));
   }, [initialDate]);
 
   useEffect(() => {
