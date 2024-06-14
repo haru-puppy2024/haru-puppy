@@ -4,9 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { mateState } from '@/app/_states/mateState';
 import Image from 'next/image';
-import dayjs from 'dayjs';
-import Button from '@/app/components/button/Button';
 import styled from 'styled-components';
+import Button from '@/app/components/button/Button';
 import MateSelect from './MateSelect';
 import MemoTextArea from '@/app/components/input/MemoTextArea';
 import ScheduleTypeSelect from './ScheduleTypeSelect';
@@ -15,7 +14,7 @@ import TimeSelect from './TimeSelect';
 import RepeatSelect from './RepeatSelect';
 import NotiSelect from './NotiSelect';
 import { IScheduleAddFormData } from '@/app/_types';
-import { usePostScheduleAPI, useGetScheduleAPI, usePatchScheduleAPI } from '@/app/_utils/apis';
+import { usePostScheduleAPI, useGetScheduleAPI, usePatchScheduleAPI, useDeleteScheduleAPI } from '@/app/_utils/apis';
 import { formatDateToYMD, formatDateToHM, parseDateToYMD } from '@/app/_utils/formatDate';
 
 export interface IScheduleAddFormProps {
@@ -28,6 +27,7 @@ export interface IScheduleAddFormProps {
 const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleId }: IScheduleAddFormProps) => {
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
   const { mutate: patchScheduleAPI } = usePatchScheduleAPI();
+  const { mutate: deleteScheduleAPI } = useDeleteScheduleAPI();
   const { data: loadedScheduleData, isLoading, isError } = useGetScheduleAPI(scheduleId);
   const mates = useRecoilValue(mateState);
 
@@ -93,14 +93,30 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
 
   const handleDelete = () => {
     console.log('삭제');
+    deleteScheduleAPI(scheduleId, {
+      onSuccess: () => {
+        onToggle();
+      },
+    });
   };
 
   const handleSave = () => {
     console.log('저장');
     if (scheduleId !== undefined) {
-      patchScheduleAPI({ scheduleId, data: formData });
+      patchScheduleAPI(
+        { scheduleId, data: formData },
+        {
+          onSuccess: () => {
+            onToggle();
+          },
+        },
+      );
     } else {
-      postScheduleAPI(formData);
+      postScheduleAPI(formData, {
+        onSuccess: () => {
+          onToggle();
+        },
+      });
     }
   };
 
