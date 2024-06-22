@@ -1,10 +1,9 @@
-import React from 'react'
-import styled from 'styled-components'
-import PetsIcon from '@mui/icons-material/Pets';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import instance from '@/app/_utils/apis/interceptors';
 import { IReport } from '@/app/_types/user/Mate';
-
 
 interface IReportCard {
     reports: IReport;
@@ -12,12 +11,41 @@ interface IReportCard {
 }
 
 const ReportCard = ({ reports, userName }: IReportCard) => {
+    const [todayPooCount, setTodayPooCount] = useState(reports.todayPooCount);
+
     const reportsArray = [
-        { title: '오늘의 배변활동', count: reports.todayPooCount, unit: '회', icon: <Image src={'/svgs/poop.svg'} alt="배변활동 아이콘" width={30} height={30} /> },
+        { title: '오늘의 배변활동', count: todayPooCount, unit: '회', icon: <Image src={'/svgs/poop.svg'} alt="배변활동 아이콘" width={30} height={30} /> },
         { title: '지난주 산책', count: reports.lastWalkCount, unit: '회', icon: <Image src={'/svgs/paw.svg'} alt="산책 아이콘" width={25} height={25} /> },
         { title: '마지막 목욕', count: reports.lastWash ? dayjs(reports.lastWash).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_bath.svg'} alt="마지막 목욕 아이콘" width={30} height={30} /> },
         { title: '마지막 검진', count: reports.lastHospitalDate ? dayjs(reports.lastHospitalDate).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_health_check.svg'} alt="마지막 검진 아이콘" width={30} height={30} /> },
     ];
+
+    const onMinusClick = async () => {
+        try {
+            const response = await instance.delete('/api/schedules/complete', {
+                data: { scheduleType: 'POO' }
+            });
+            console.log(response.data);
+
+            setTodayPooCount(prevCount => Math.max(prevCount - 1, 0));
+        } catch (error) {
+            console.error('Error deleting schedule:', error);
+        }
+    };
+
+    const onPlusClick = async () => {
+        try {
+            const response = await instance.post('/api/schedules/complete', {
+                scheduleType: 'POO'
+            });
+            console.log(response.data);
+
+            setTodayPooCount(prevCount => prevCount + 1);
+        } catch (error) {
+            console.error('Error creating schedule:', error);
+        }
+    };
+
     return (
         <>
             <ReportCardWrapper>
@@ -27,6 +55,7 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
                     <Wrapper key={index}>
                         <p>{report.title}</p>
                         <Info>
+                            {report.title === '오늘의 배변활동' && <StyledIconButton src="/svgs/minus-svgrepo-com 1.svg" alt="minus icon" width={30} height={30} onClick={onMinusClick} />}
                             {report.icon}
                             <Count>
                                 {report.count !== null && report.count !== 0 ? (
@@ -38,13 +67,20 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
                                     '-'
                                 )}
                             </Count>
+                            {report.title === '오늘의 배변활동' && <StyledIconButton src="/svgs/plus-circle-svgrepo-com 1.svg" alt="plus icon" width={30} height={30} onClick={onPlusClick} />}
                         </Info>
                     </Wrapper>
                 ))}
             </ReportCardWrapper>
         </>
-    )
+    );
 }
+
+const StyledIconButton = styled(Image)`
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+`;
 
 const ReportCardWrapper = styled.div`
     width: 370px;
@@ -52,7 +88,7 @@ const ReportCardWrapper = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     padding: 20px;
-    `;
+`;
 
 const Title = styled.span`
     font-size: 20px;
@@ -72,7 +108,6 @@ const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
     p {
-  
         font-size: 14px;
         color: ${({ theme }) => theme.colors.black90}
     }
@@ -80,14 +115,14 @@ const Wrapper = styled.div`
 
 const Info = styled.div`
     display: flex;
+    align-items: center;
     margin-top: 10px;
     svg {
-    width: 40px; 
-    height: 40px;
-    fill: purple;    
-  }
+        width: 40px; 
+        height: 40px;
+        fill: purple;    
+    }
 `;
-
 
 const Count = styled.div`
     font-size: 28px;
@@ -101,9 +136,7 @@ const Count = styled.div`
         font-size: 14px;
         margin-left: 5px;
         padding-bottom: 5px;
-     
     }
-
 `;
 
-export default ReportCard
+export default ReportCard;

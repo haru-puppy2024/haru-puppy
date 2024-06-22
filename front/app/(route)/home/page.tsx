@@ -115,7 +115,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 50px;
-  margin-top: 300px;
+  margin-top: 100px;
 `;
 
 export default Page;
