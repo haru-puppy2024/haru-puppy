@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -12,12 +12,22 @@ interface IReportCard {
 
 const ReportCard = ({ reports, userName }: IReportCard) => {
     const [todayPooCount, setTodayPooCount] = useState(reports.todayPooCount);
+    const [lastWalkCount, setLastWalkCount] = useState(reports.lastWalkCount);
+    const [lastWash, setLastWash] = useState(reports.lastWash);
+    const [lastHospitalDate, setLastHospitalDate] = useState(reports.lastHospitalDate);
+
+    useEffect(() => {
+        setTodayPooCount(reports.todayPooCount);
+        setLastWalkCount(reports.lastWalkCount);
+        setLastWash(reports.lastWash);
+        setLastHospitalDate(reports.lastHospitalDate);
+    }, [reports]);
 
     const reportsArray = [
         { title: '오늘의 배변활동', count: todayPooCount, unit: '회', icon: <Image src={'/svgs/poop.svg'} alt="배변활동 아이콘" width={30} height={30} /> },
-        { title: '지난주 산책', count: reports.lastWalkCount, unit: '회', icon: <Image src={'/svgs/paw.svg'} alt="산책 아이콘" width={25} height={25} /> },
-        { title: '마지막 목욕', count: reports.lastWash ? dayjs(reports.lastWash).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_bath.svg'} alt="마지막 목욕 아이콘" width={30} height={30} /> },
-        { title: '마지막 검진', count: reports.lastHospitalDate ? dayjs(reports.lastHospitalDate).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_health_check.svg'} alt="마지막 검진 아이콘" width={30} height={30} /> },
+        { title: '지난주 산책', count: lastWalkCount, unit: '회', icon: <Image src={'/svgs/paw.svg'} alt="산책 아이콘" width={25} height={25} /> },
+        { title: '마지막 목욕', count: lastWash ? dayjs(lastWash).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_bath.svg'} alt="마지막 목욕 아이콘" width={30} height={30} /> },
+        { title: '마지막 검진', count: lastHospitalDate ? dayjs(lastHospitalDate).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_health_check.svg'} alt="마지막 검진 아이콘" width={30} height={30} /> },
     ];
 
     const onMinusClick = async () => {
@@ -25,7 +35,7 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
             const response = await instance.delete('/api/schedules/complete', {
                 data: { scheduleType: 'POO' }
             });
-            console.log(response.data);
+            console.log('poo 삭제:', response.data);
 
             setTodayPooCount(prevCount => Math.max(prevCount - 1, 0));
         } catch (error) {
@@ -38,7 +48,7 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
             const response = await instance.post('/api/schedules/complete', {
                 scheduleType: 'POO'
             });
-            console.log(response.data);
+            console.log('poo 추가:', response.data);
 
             setTodayPooCount(prevCount => prevCount + 1);
         } catch (error) {
@@ -55,7 +65,15 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
                     <Wrapper key={index}>
                         <p>{report.title}</p>
                         <Info>
-                            {report.title === '오늘의 배변활동' && <StyledIconButton src="/svgs/minus-svgrepo-com 1.svg" alt="minus icon" width={30} height={30} onClick={onMinusClick} />}
+                            {report.title === '오늘의 배변활동' && (
+                                <StyledIconButton
+                                    src="/svgs/minus-svgrepo-com 1.svg"
+                                    alt="minus icon"
+                                    width={30}
+                                    height={30}
+                                    onClick={onMinusClick}
+                                />
+                            )}
                             {report.icon}
                             <Count>
                                 {report.count !== null && report.count !== 0 ? (
@@ -67,14 +85,22 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
                                     '-'
                                 )}
                             </Count>
-                            {report.title === '오늘의 배변활동' && <StyledIconButton src="/svgs/plus-circle-svgrepo-com 1.svg" alt="plus icon" width={30} height={30} onClick={onPlusClick} />}
+                            {report.title === '오늘의 배변활동' && (
+                                <StyledIconButton
+                                    src="/svgs/plus-circle-svgrepo-com 1.svg"
+                                    alt="plus icon"
+                                    width={30}
+                                    height={30}
+                                    onClick={onPlusClick}
+                                />
+                            )}
                         </Info>
                     </Wrapper>
                 ))}
             </ReportCardWrapper>
         </>
     );
-}
+};
 
 const StyledIconButton = styled(Image)`
     padding: 5px;
@@ -92,9 +118,9 @@ const ReportCardWrapper = styled.div`
 
 const Title = styled.span`
     font-size: 20px;
-    grid-column: span 2; 
-    text-align: start; 
-    margin-bottom: 10px; 
+    grid-column: span 2;
+    text-align: start;
+    margin-bottom: 10px;
 `;
 
 const Wrapper = styled.div`
@@ -118,9 +144,9 @@ const Info = styled.div`
     align-items: center;
     margin-top: 10px;
     svg {
-        width: 40px; 
+        width: 40px;
         height: 40px;
-        fill: purple;    
+        fill: purple;
     }
 `;
 
