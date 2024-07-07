@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { IScheduleItem } from '@/app/_types';
+import instance from '@/app/_utils/apis/interceptors';
 
 interface ITodoCardProps {
   todoList: IScheduleItem[];
@@ -10,10 +11,22 @@ interface ITodoCardProps {
 const TodoCard = ({ todoList }: ITodoCardProps) => {
   const [todos, setTodos] = useState(todoList);
 
-  const handleCheckboxChange = (scheduleId: number) => {
-    const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, active: !todo.isActive } : todo));
-    console.log('updatedTodos입니다', updatedTodos)
-    setTodos(updatedTodos);
+  const handleCheckboxChange = async (scheduleId: number, isActive: boolean) => {
+    // const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, active: !todo.isActive } : todo));
+    // console.log('updatedTodos입니다', updatedTodos)
+    // setTodos(updatedTodos);
+
+    try {
+      const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${isActive}`);
+      if (response.data.success) {
+        const updatedTodos = todos.map((todo) =>
+          todo.scheduleId === scheduleId ? { ...todo, isActive: !todo.isActive } : todo
+        );
+        setTodos(updatedTodos);
+      }
+    } catch (error) {
+      console.error('Error updating schedule status:', error);
+    }
   };
 
   const activeTodos = todoList.filter((todo) => todo.isActive);
@@ -29,7 +42,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           <CardTitle>완료</CardTitle>
           {activeTodos.map((todo, index) => (
             <TodoItem key={index}>
-              <Checkbox type='checkbox' checked onChange={() => handleCheckboxChange(todo.scheduleId)} />
+              <Checkbox type='checkbox' checked onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
               <TodoText active={!todo.active}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
