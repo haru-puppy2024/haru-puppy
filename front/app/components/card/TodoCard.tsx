@@ -55,7 +55,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           {activeTodos.map((todo, index) => (
             <TodoItem key={index}>
               <Checkbox type='checkbox' checked onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
-              <TodoText active={!todo.isActive}>{todo.scheduleType}</TodoText>
+              <TodoText active={todo.isActive}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
                   <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={mate.user_img} />
@@ -71,7 +71,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           <CardTitle>오늘</CardTitle>
           {inactiveTodos.map((todo, index) => (
             <TodoItem key={index}>
-              <Checkbox type='checkbox' checked={!todo.isActive} onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
+              <Checkbox type='checkbox' checked={todo.isActive} onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
               <TodoText active={!todo.isActive}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
