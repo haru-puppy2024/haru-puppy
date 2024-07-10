@@ -9,7 +9,6 @@ import WalkRank from '@/app/(route)/home/components/WalkRank';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import axios from 'axios';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
 import instance from '@/app/_utils/apis/interceptors';

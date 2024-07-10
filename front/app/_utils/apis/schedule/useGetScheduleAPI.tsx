@@ -17,10 +17,10 @@ export const useGetScheduleAPI = (scheduleId: number | undefined) => {
   return useQuery(['getSchedule', scheduleId], getSchedule, {
     enabled: !!scheduleId,
     onSuccess: (data) => {
-      console.log('스케줄 단일 데이터:', data);
+      console.log('서버에서 갖고온 스케줄 단일 데이터:', data);
     },
     onError: (error) => {
-      console.error('스케줄 가져오기 실패:', error);
+      console.error('서버에서 단일 스케줄 가져오기 실패:', error);
     },
   });
 };

@@ -22,7 +22,7 @@ const MateSelect = ({ onValueChange, mates, initialSelectedMates }: IMateSelectP
     }
   }, [initialSelectedMates]);
 
-  console.log('initialSelectedMates:', initialSelectedMates, 'selectedMates:', selectedMates); // 디버깅용
+  //   console.log('initialSelectedMates:', initialSelectedMates, 'selectedMates:', selectedMates);
 
   const handleMateClick = (userId: number) => {
     const isSelected = selectedMates.some((mate) => mate.userId === userId);

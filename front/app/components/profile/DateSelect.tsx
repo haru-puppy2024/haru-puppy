@@ -32,7 +32,6 @@ const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSele
 
   const [selectedDate, setSelectedDate] = useState<Date>(initialDateAsDate);
 
-  console.log('최종 DateSelect', selectedDate);
   const handleDateSelect = (date: Date) => {
     const formattedDate = formatDateToYMD(date);
     setSelectedDate(date);
