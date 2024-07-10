@@ -18,7 +18,7 @@ const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
   return (
     <Wrapper>
       <ProfileContainer>
-        <Profile isClicked={isClicked} onClick={onClick} size={size} />
+        <Profile data-clicked={isClicked} onClick={onClick} size={size} />
         {isClicked && <Image src='/svgs/mate_check.svg' alt='mate-check' width={20} height={20} />}
       </ProfileContainer>
       <Info size={size}>
@@ -50,15 +50,19 @@ const ProfileContainer = styled.div`
   }
 `;
 
-const Profile = styled.div<{ isClicked: boolean | undefined; size: string | undefined }>`
-  width: ${({ size }) => `${size}px`};
-  height: ${({ size }) => `${size}px`};
+const Profile = styled.div<{ size?: string }>`
+  width: ${({ size }) => (size ? `${size}px` : '60px')};
+  height: ${({ size }) => (size ? `${size}px` : '60px')};
   border-radius: 50%;
   background-color: ${({ theme }) => theme.colors.light};
   position: relative;
   box-sizing: border-box;
-  border: ${({ isClicked }) => (isClicked ? '2px solid #06acf4' : 'none')};
+  border: 2px solid transparent;
   cursor: pointer;
+
+  &[data-clicked='true'] {
+    border-color: #06acf4;
+  }
 `;
 
 const Info = styled.div<{ size?: string }>`
@@ -67,8 +71,9 @@ const Info = styled.div<{ size?: string }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* margin-top: ${({ size }) => (size === '60' ? '20px' : '0')} */
-  ${({ size }) => size === '60' && 'margin-top: 20px;'}
+
+  margin-top: ${({ size }) => (size === '60' ? '20px' : '0')};
+
   p {
     display: inline-block;
     margin: 3px;
