@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 import { userState } from '@/app/_states/userState';
 import Image from 'next/image';
 import kakaoMsgIcon from '@/public/svgs/message-circle.svg';
+import LogoImg from '@/public/svgs/logo.svg';
 import styled from 'styled-components';
 import ContainerLayout from '@/app/components/layout/layout';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -30,16 +31,24 @@ const LoginPage = () => {
 
   return (
     <ContainerLayout>
-      <main>
+      <StyledMain>
+        <Image src={LogoImg} alt='하루강아지 로고' />
         <LoginButtonWrap onClick={onLoginClick}>
           <Image priority src={kakaoMsgIcon} alt='카카오 메세지' />
           카카오톡 계정으로 시작
         </LoginButtonWrap>
-      </main>
+      </StyledMain>
     </ContainerLayout>
   );
 };
 
+const StyledMain = styled.main`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 11.0625rem;
+`;
 const LoginButtonWrap = styled.button`
   display: flex;
   justify-content: flex-start;

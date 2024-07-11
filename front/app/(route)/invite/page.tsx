@@ -1,13 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { userState } from '@/app/_states/userState';
-import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
 import styled from 'styled-components';
+import Image from 'next/image';
+import InviteImg from '@/public/svgs/invite.svg';
+import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
-import { useState } from 'react';
 import Modal from '@/app/components/modal/modal';
+import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 
 const InvitePage = () => {
   const userData = useRecoilValue(userState);
@@ -47,12 +50,13 @@ const InvitePage = () => {
       {isModalVisible && <Modal children='초대 링크가 클립보드에 복사되었습니다.' btn1='확인' onClose={handleCloseModal} />}
       <TopNavigation />
       <InvitePageWrap>
-        <strong>강아지를 같이 돌볼 메이트를 초대해주세요!</strong>
+        <Image src={InviteImg} alt='초대 이미지' />
         <InviteButtonWrap onClick={shareLink}>
           <ContentCopyIcon width={20} height={20} />
           초대 링크 복사하기
         </InviteButtonWrap>
       </InvitePageWrap>
+      <BottomNavigation />
     </ContainerLayout>
   );
 };
@@ -61,15 +65,12 @@ const InvitePageWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  & > strong {
-    font-weight: ${({ theme }) => theme.typo.semibold};
-  }
+  gap: 11.0625rem;
 `;
 const InviteButtonWrap = styled.button`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 300px;
   width: 370px;
   height: 56px;
   border-radius: 10px;

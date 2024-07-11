@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import styled from 'styled-components';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import { formatDateToYMD, parseDateToYMD } from '@/app/_utils/formatDate';
 
 export enum DateSelectLabel {
   Birthday = '생일',
@@ -11,22 +12,30 @@ export enum DateSelectLabel {
 }
 
 interface IDateSelectProps {
-  onValueChange: (date: Date) => void;
+  onValueChange: (date: string) => void;
   label?: DateSelectLabel;
   isRequired?: boolean;
-  initialDate?: Date;
+  initialDate?: string;
 }
 
 const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const width = label === DateSelectLabel.Birthday ? '340px' : '300px';
 
+  const parseDate = (date: string | undefined): Date => {
+    if (typeof date === 'string' && !isNaN(Date.parse(date))) return new Date(date);
+    return new Date();
+  };
+
+  const initialDateAsDate = parseDate(initialDate);
+
+  const [selectedDate, setSelectedDate] = useState<Date>(initialDateAsDate);
+
   const handleDateSelect = (date: Date) => {
+    const formattedDate = formatDateToYMD(date);
     setSelectedDate(date);
-    onValueChange(date);
+    onValueChange(formattedDate);
     setIsOpen(false);
   };
 
@@ -39,7 +48,7 @@ const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSele
   };
 
   useEffect(() => {
-    setSelectedDate(initialDate || new Date());
+    setSelectedDate(parseDate(initialDate));
   }, [initialDate]);
 
   useEffect(() => {

@@ -72,7 +72,7 @@ const TopNavigation = () => {
   }, [pathname]);
 
   return (
-    <TopNavigationWrap showBtns={showBtns}>
+    <TopNavigationWrap data-show-btns={showBtns}>
       <button onClick={handleGoBack}>
         <ArrowBackRoundedIcon />
       </button>
@@ -82,7 +82,7 @@ const TopNavigation = () => {
   );
 };
 
-const TopNavigationWrap = styled.nav<{ showBtns: boolean }>`
+const TopNavigationWrap = styled.nav`
   position: fixed;
   top: 0;
   z-index: 100;
@@ -105,11 +105,15 @@ const TopNavigationWrap = styled.nav<{ showBtns: boolean }>`
   & > button {
     padding: 12px 15px;
     color: ${({ theme }) => theme.colors.black80};
-    visibility: ${({ showBtns }) => (showBtns ? 'visible' : 'hidden')};
+    visibility: hidden;
 
     &:hover {
       color: ${({ theme }) => theme.colors.black90};
     }
+  }
+
+  &[data-show-btns='true'] > button {
+    visibility: visible;
   }
 `;
 

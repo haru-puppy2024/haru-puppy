@@ -1,8 +1,11 @@
+'use client';
+
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { mateState } from '@/app/_states/mateState';
 import Image from 'next/image';
-import dayjs from 'dayjs';
-import Button from '@/app/components/button/Button';
 import styled from 'styled-components';
+import Button from '@/app/components/button/Button';
 import MateSelect from './MateSelect';
 import MemoTextArea from '@/app/components/input/MemoTextArea';
 import ScheduleTypeSelect from './ScheduleTypeSelect';
@@ -10,65 +13,80 @@ import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect
 import TimeSelect from './TimeSelect';
 import RepeatSelect from './RepeatSelect';
 import NotiSelect from './NotiSelect';
-import { IMate, IScheduleAddFormData } from '@/app/_types';
-import { usePostScheduleAPI } from '@/app/_utils/apis/schedule/usePostScheduleAPI';
+import { IScheduleAddFormData } from '@/app/_types';
+import { usePostScheduleAPI, useGetScheduleAPI, usePatchSingleScheduleAPI, useDeleteScheduleAPI, usePatchRepeatMaintainScheduleAPI } from '@/app/_utils/apis';
+import { formatDateToYMD, formatTimeToHM, formatDateToHM, parseDateToYMD } from '@/app/_utils/formatDate';
+import { RadioModal } from '@/app/components/modal/RadioModal';
 
 export interface IScheduleAddFormProps {
   isOpen: boolean;
   onToggle: () => void;
-  selectedDate: Date;
+  selectedDateFromCalender: Date;
+  scheduleId?: number;
 }
 
-export const dummyMatesData: IMate[] = [
-  {
-    userId: 1,
-    user_img: '',
-    nickname: '송이엄마',
-    role: 'MOM',
-  },
-  {
-    userId: 2,
-    user_img: '',
-    nickname: '송이아빠',
-    role: 'DAD',
-  },
-  {
-    userId: 3,
-    user_img: '',
-    nickname: '송이언니',
-    role: 'UNNIE',
-  },
-];
-
-const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormProps) => {
+const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleId }: IScheduleAddFormProps) => {
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
+  const { mutate: patchScheduleAPI } = usePatchSingleScheduleAPI();
+  const { mutate: patchRepeatMaintainScheduleAPI } = usePatchRepeatMaintainScheduleAPI();
+  const { mutate: deleteScheduleAPI } = useDeleteScheduleAPI();
+  const { data: loadedScheduleData, isLoading, isError } = useGetScheduleAPI(scheduleId);
+  const mates = useRecoilValue(mateState);
+
   const [formData, setFormData] = useState<IScheduleAddFormData>({
     scheduleType: 'WALK',
-    mates: null,
-    scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
+    mates: [],
+    scheduleDate: formatDateToYMD(selectedDateFromCalender),
     scheduleTime: '',
     repeatType: 'NONE',
     alertType: 'NONE',
     memo: '',
   });
 
+  const [isRadioModalOpen, setIsRadioModalOpen] = useState(false);
+
   useEffect(() => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      scheduleDate: dayjs(selectedDate).format('YYYY-MM-DD'),
-    }));
-  }, [selectedDate]);
+    if (scheduleId && loadedScheduleData && !isLoading && !isError) {
+      const formattedMates = loadedScheduleData.mates.map((mateId: number) => ({
+        userId: mateId,
+      }));
+      setFormData({
+        scheduleType: loadedScheduleData.scheduleType || 'WALK',
+        mates: formattedMates,
+        scheduleDate: parseDateToYMD(loadedScheduleData.scheduleDate),
+        scheduleTime: formatTimeToHM(loadedScheduleData.scheduleTime) || '',
+        repeatType: loadedScheduleData.repeatType || 'NONE',
+        alertType: loadedScheduleData.alertType || 'NONE',
+        memo: loadedScheduleData.memo || '',
+      });
+      if (loadedScheduleData.repeatId === null) {
+        console.log('repeatId가 null이야 없어없어');
+      } else {
+        console.log('repeatId 있는 스케줄이다!', loadedScheduleData.repeatId);
+      }
+    } else if (!scheduleId) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        scheduleDate: formatDateToYMD(selectedDateFromCalender),
+      }));
+    }
+  }, [scheduleId, loadedScheduleData, isLoading, isError, selectedDateFromCalender]);
+
+  const initialDate = scheduleId && loadedScheduleData ? parseDateToYMD(loadedScheduleData.scheduleDate) : formatDateToYMD(selectedDateFromCalender);
+
+  //   console.log('selectedDateFromCalender:', selectedDateFromCalender);
+  //   console.log('initialDate:', initialDate);
   console.log('formData:', formData);
 
   const handleSelectChange = (name: string, value: any) => {
     let formattedValue = value;
 
     if (name === 'scheduleDate' && value instanceof Date) {
-      value = dayjs(value).format('YYYY-MM-DD');
+      formattedValue = formatDateToYMD(value);
     }
 
     if (name === 'scheduleTime' && value instanceof Date) {
-      formattedValue = dayjs(value).format('HH:mm');
+      formattedValue = formatDateToHM(value);
     }
     if (name === 'mates' && value instanceof Array) {
       formattedValue = value;
@@ -76,7 +94,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
 
     const newFormData = {
       ...formData,
-      [name]: value,
+      [name]: formattedValue,
     };
 
     setFormData(newFormData);
@@ -84,25 +102,93 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDate }: IScheduleAddFormPro
 
   const handleDelete = () => {
     console.log('삭제');
+    deleteScheduleAPI(scheduleId, {
+      onSuccess: () => {
+        onToggle();
+      },
+    });
   };
 
   const handleSave = () => {
     console.log('저장');
-    postScheduleAPI(formData);
+    if (scheduleId !== undefined) {
+      console.log('수정');
+      const isRepeat = formData.repeatType !== 'NONE' || loadedScheduleData.repeatType !== 'NONE';
+      if (isRepeat) {
+        console.log('반복 수정');
+        setIsRadioModalOpen(true);
+      } else {
+        console.log('단건 수정');
+        patchScheduleAPI(
+          { scheduleId, data: formData },
+          {
+            onSuccess: () => {
+              onToggle();
+            },
+          },
+        );
+      }
+    } else {
+      postScheduleAPI(formData, {
+        onSuccess: () => {
+          onToggle();
+        },
+      });
+    }
   };
 
   return (
     <>
       {isOpen && <Overlay onClick={onToggle} />}
-      <ScheduleAddWrap isOpen={isOpen}>
-        <FormWrap method='POST'>
-          <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('scheduleType', value)} />
-          <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={dummyMatesData} />
-          <DateSelect onValueChange={(value) => handleSelectChange('scheduleDate', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={selectedDate} />
-          <TimeSelect onValueChange={(value) => handleSelectChange('scheduleTime', value)} />
-          <RepeatSelect onValueChange={(value) => handleSelectChange('repeatType', value)} />
+      {isRadioModalOpen && (
+        <RadioModal
+          title='반복 스케줄 수정'
+          optionList={[
+            { key: 'all', label: '이 스케줄만 수정' },
+            { key: 'only', label: '반복 스케줄 수정' },
+          ]}
+          name='selectRepeat'
+          onSubmit={(key) => {
+            if (scheduleId === undefined) return;
+            if (key === 'only') {
+              patchScheduleAPI(
+                { scheduleId, data: formData },
+                {
+                  onSuccess: () => {
+                    onToggle();
+                  },
+                },
+              );
+            }
+            if (key === 'all') {
+              patchRepeatMaintainScheduleAPI(
+                { scheduleId, data: formData },
+                {
+                  onSuccess: () => {
+                    onToggle();
+                  },
+                },
+              );
+            }
+          }}
+          isOpen={isRadioModalOpen}
+          setOpen={setIsRadioModalOpen}
+        />
+      )}
+      <ScheduleAddWrap data-open={isOpen}>
+        <FormWrap
+          method='POST'
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('scheduleType', value)} initialValue={formData.scheduleType} />
+          <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={mates} initialSelectedMates={formData.mates} />
+          <DateSelect onValueChange={(value) => handleSelectChange('scheduleDate', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={initialDate} />
+          <TimeSelect onValueChange={(value) => handleSelectChange('scheduleTime', value)} initialValue={formData.scheduleTime} />
+          <RepeatSelect onValueChange={(value) => handleSelectChange('repeatType', value)} initialValue={formData.repeatType} />
           <NotiSelect onValueChange={(value) => handleSelectChange('alertType', value)} />
-          <MemoTextArea onValueChange={(value) => handleSelectChange('memo', value)} />
+          <MemoTextArea onValueChange={(value) => handleSelectChange('memo', value)} initialValue={formData.memo} />
           <ButtonGroupWrap>
             <Button onClick={handleDelete} width='135px' height='32px'>
               삭제
@@ -130,7 +216,7 @@ const Overlay = styled.div`
   z-index: 999;
 `;
 
-const ScheduleAddWrap = styled.main<{ isOpen: boolean }>`
+const ScheduleAddWrap = styled.main`
   padding: 37px 0 61px;
   width: 390px;
   height: 620px;
@@ -145,7 +231,10 @@ const ScheduleAddWrap = styled.main<{ isOpen: boolean }>`
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   transition: transform 0.3s ease-out;
-  transform: ${({ isOpen }) => (isOpen ? 'translateX(-50%)' : 'translateX(-50%) translateY(100%)')};
+  transform: translateX(-50%) translateY(100%);
+  &[data-open='true'] {
+    transform: translateX(-50%);
+  }
   z-index: 1000;
 `;
 const FormWrap = styled.form`

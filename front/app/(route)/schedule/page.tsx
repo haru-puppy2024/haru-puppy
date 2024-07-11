@@ -9,34 +9,35 @@ import TopNavigation from '@/app/components/navigation/TopNavigation';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 
 const page = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-    const onAddBtnClick = () => {
-        setIsOpen(true);
-    };
+  const onAddBtnClick = () => {
+    setIsOpen(true);
+  };
 
-    const onToggle = () => {
-        setIsOpen(!isOpen);
-    };
+  const onToggle = () => {
+    setIsOpen(!isOpen);
+  };
 
-    const handleDateChange = (date: Date) => {
-        setSelectedDate(date);
-    };
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+    console.log('날짜선택', selectedDate);
+  };
 
-    return (
-        <>
-            <TopNavigation />
-            <Wrapper>
-                <Calendar selectedDate={selectedDate} onDateChange={handleDateChange} />
-                <AddBtnWrapper onClick={onAddBtnClick}>
-                    <Image src='/svgs/add_circle.svg' alt='add_circle' width={50} height={50} />
-                </AddBtnWrapper>
-            </Wrapper>
-            <ScheduleAddForm isOpen={isOpen} onToggle={onToggle} selectedDate={selectedDate} />
-            <BottomNavigation />
-        </>
-    );
+  return (
+    <>
+      <TopNavigation />
+      <Wrapper>
+        <Calendar selectedDate={selectedDate} onDateChange={handleDateChange} />
+        <AddBtnWrapper onClick={onAddBtnClick}>
+          <Image src='/svgs/add_circle.svg' alt='add_circle' width={50} height={50} />
+        </AddBtnWrapper>
+      </Wrapper>
+      <ScheduleAddForm isOpen={isOpen} onToggle={onToggle} selectedDateFromCalender={selectedDate} />
+      <BottomNavigation />
+    </>
+  );
 };
 
 const Wrapper = styled.div`

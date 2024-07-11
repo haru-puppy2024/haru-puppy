@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
@@ -8,41 +8,39 @@ import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
 import styled from 'styled-components';
 
 interface ITimeSelectProps {
-    onValueChange: (value: any) => void;
+  onValueChange: (value: any) => void;
+  initialValue: string;
 }
 
-const TimeSelect = ({ onValueChange }: ITimeSelectProps) => {
-    const [selectedValue, setSelectedValue] = useState('');  
+const TimeSelect = ({ onValueChange, initialValue }: ITimeSelectProps) => {
+  const formattedInitialValue = initialValue ? initialValue.slice(0, 5) : '';
+  const [selectedValue, setSelectedValue] = useState(formattedInitialValue);
 
-    const handleSelect = (value: Date | null | string) => {
-        let formattedTime = '없음';
+  useEffect(() => {
+    setSelectedValue(formattedInitialValue);
+  }, [formattedInitialValue]);
 
-        if (value) {
-            const dayjsDate = dayjs(value);
-            if (dayjsDate.isValid()) {
-                formattedTime = dayjsDate.format('HH:mm');
-            }
-        }
+  const handleSelect = (value: Date | null | string) => {
+    let formattedTime = '없음';
 
-        setSelectedValue(formattedTime);
-        onValueChange(formattedTime);
-    };
+    if (value) {
+      const dayjsDate = dayjs(value);
+      if (dayjsDate.isValid()) {
+        formattedTime = dayjsDate.format('HH:mm');
+      }
+    }
 
-    return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Select
-            icon={<AccessTimeRoundedIcon />}
-            label="시간" 
-            selectId="schedule-time"
-            selectedValue={selectedValue}
-            onValueChange={handleSelect}  
-        >
-            <StyledClock
-                onChange={handleSelect}
-            />
-        </Select>
-        </LocalizationProvider>
-    );
+    setSelectedValue(formattedTime);
+    onValueChange(formattedTime);
+  };
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Select icon={<AccessTimeRoundedIcon />} label='시간' selectId='schedule-time' selectedValue={selectedValue} onValueChange={handleSelect}>
+        <StyledClock onChange={handleSelect} />
+      </Select>
+    </LocalizationProvider>
+  );
 };
 
 const StyledClock = styled(DigitalClock)`
@@ -51,17 +49,16 @@ const StyledClock = styled(DigitalClock)`
   }
 
   &::-webkit-scrollbar-track {
-    background: ${({theme}) => theme.colors.black50};
+    background: ${({ theme }) => theme.colors.black50};
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${({theme}) => theme.colors.main};
+    background-color: ${({ theme }) => theme.colors.main};
     border-radius: 10px;
   }
 
   scrollbar-width: thin;
-  scrollbar-color: ${({theme}) => theme.colors.main} ${({theme}) => theme.colors.black50};
+  scrollbar-color: ${({ theme }) => theme.colors.main} ${({ theme }) => theme.colors.black50};
 `;
-
 
 export default TimeSelect;
