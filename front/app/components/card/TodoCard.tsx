@@ -11,23 +11,35 @@ interface ITodoCardProps {
 const TodoCard = ({ todoList }: ITodoCardProps) => {
   const [todos, setTodos] = useState(todoList);
 
-  const handleCheckboxChange = async (scheduleId: number, isActive: boolean) => {
-    // const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, active: !todo.isActive } : todo));
-    // console.log('updatedTodos입니다', updatedTodos)
-    // setTodos(updatedTodos);
+  const handleCheckboxChange = async (scheduleId: number, currentIsActive: boolean) => {
+    const newIsActive = !currentIsActive;
+    console.log('scheduleId', scheduleId);
+    console.log('currentIsActive', currentIsActive);
+    console.log('newIsActive', newIsActive);
+
+    const updatedTodos = todos.map((todo) =>
+      todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo
+    );
+    setTodos(updatedTodos);
 
     try {
-      const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${isActive}`);
-      if (response.data.success) {
-        const updatedTodos = todos.map((todo) =>
-          todo.scheduleId === scheduleId ? { ...todo, isActive: !todo.isActive } : todo
+      const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${newIsActive}`, null);
+
+      if (!response.data.success) {
+        const revertedTodos = todos.map((todo) =>
+          todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
         );
-        setTodos(updatedTodos);
+        setTodos(revertedTodos);
       }
     } catch (error) {
-      console.error('Error updating schedule status:', error);
+      console.error('스케줄 수정 에러', error);
+      const revertedTodos = todos.map((todo) =>
+        todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
+      );
+      setTodos(revertedTodos);
     }
   };
+
 
   const activeTodos = todoList.filter((todo) => todo.isActive);
   console.log('액티브', activeTodos)
@@ -43,7 +55,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           {activeTodos.map((todo, index) => (
             <TodoItem key={index}>
               <Checkbox type='checkbox' checked onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
-              <TodoText active={!todo.active}>{todo.scheduleType}</TodoText>
+              <TodoText active={todo.isActive}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
                   <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={mate.user_img} />
@@ -59,8 +71,8 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           <CardTitle>오늘</CardTitle>
           {inactiveTodos.map((todo, index) => (
             <TodoItem key={index}>
-              <Checkbox type='checkbox' checked={!todo.active} onChange={() => handleCheckboxChange(todo.scheduleId)} />
-              <TodoText active={!todo.active}>{todo.scheduleType}</TodoText>
+              <Checkbox type='checkbox' checked={todo.isActive} onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
+              <TodoText active={!todo.isActive}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
                   <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={mate.user_img} />
