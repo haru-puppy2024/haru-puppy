@@ -1,6 +1,6 @@
 export interface IUser {
   userId?: number;
-  imgUrl?: string;
+  imgUrl: string;
   email?: string;
   nickName?: string;
   userRole?: string;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { userRoleOptions } from '@/app/constants/userRoleOptions';
 
 interface IRoleDropdownProps {
   onValueChange: (value: string) => void;
@@ -10,18 +11,11 @@ interface IRoleDropdownProps {
 const RoleDropdown = ({ onValueChange, value }: IRoleDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState('');
-  const options = [
-    { label: '아빠', value: 'DAD' },
-    { label: '엄마', value: 'MOM' },
-    { label: '언니/누나', value: 'UNNIE' },
-    { label: '오빠/형', value: 'OPPA' },
-    { label: '동생', value: 'YOUNGER' },
-  ];
 
   useEffect(() => {
     // 만약 value가 undefined이면 기본값 'DAD'를 사용합니다.
     const defaultValue = value ?? 'DAD';
-    const option = options.find((o) => o.value === defaultValue);
+    const option = userRoleOptions.find((o) => o.value === defaultValue);
     if (option) {
       setSelectedLabel(option.label);
       onValueChange(option.value);
@@ -42,7 +36,7 @@ const RoleDropdown = ({ onValueChange, value }: IRoleDropdownProps) => {
       </div>
       {isOpen && (
         <RoleDropdownWrap>
-          {options.map((option) => (
+          {userRoleOptions.map((option) => (
             <li key={option.value} onClick={() => handleSelect(option.value, option.label)}>
               {option.label}
             </li>

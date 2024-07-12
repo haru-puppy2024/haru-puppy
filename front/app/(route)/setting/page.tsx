@@ -1,39 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import NavMenu from './components/NavMenu';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import UpperUserProfile from './components/UpperUserProfile';
-import ToggleSwitch from '@/app/components/toggle/ToggleSwitch';
 import { useMutation, useQueryClient } from 'react-query';
-import axios from 'axios';
-import ContainerLayout from '@/app/components/layout/layout';
-import TopNavigation from '@/app/components/navigation/TopNavigation';
+import { useRecoilValue } from 'recoil';
+import { userState } from '@/app/_states/userState';
 import { useRouter } from 'next/navigation';
+import NavMenu from './components/NavMenu';
+import UpperUserProfile from './components/UpperUserProfile';
+import TopNavigation from '@/app/components/navigation/TopNavigation';
+import ToggleSwitch from '@/app/components/toggle/ToggleSwitch';
 import Modal from '@/app/components/modal/modal';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
-import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import { fetchNotification } from '@/app/_utils/apis/usePutAlarmApi';
 import { useTerminateAccount } from '@/app/_utils/apis/useTerminateAccount';
 import { useLogout } from '@/app/_utils/apis/user/useLogout';
-
-const UserDummy = {
-  userId: '11111',
-  nickname: '이로',
-  role: '엄마',
-  profileImg: '/svgs/user_profile.svg',
-};
-
-interface UserState {
-  userId: number;
-  email: string;
-  imgUrl: string;
-  nickName: string;
-  userRole: string;
-  allowNotification: boolean;
-  dogId: number;
-  homeId: string;
-}
 
 const page = () => {
   const [isToggled, setIsToggled] = useState(false);
@@ -42,6 +23,7 @@ const page = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const accessToken = localStorage.getItem('access_token');
+  const userData = useRecoilValue(userState);
 
   const { mutate: notification } = useMutation((active: boolean) => fetchNotification(active, accessToken), {
     onSuccess: () => {
@@ -88,31 +70,15 @@ const page = () => {
     <>
       <TopNavigation />
       <Wrapper>
-        <UpperUserProfile user={UserDummy} />
+        <UpperUserProfile imgUrl={userData.imgUrl} nickName={userData.nickName} userRole={userData.userRole} />
         <MenuWrapper>
           <NavMenu title='알림 설정'>
             <ToggleSwitch onToggle={handelToggle} isToggled={isToggled} />
           </NavMenu>
           <NavMenu title='로그아웃' onClick={toggleLogoutModal} />
-          {isLogoutModal && (
-            <Modal
-              children='로그아웃하시겠습니까?'
-              btn1='취소'
-              btn2='로그아웃'
-              onClose={toggleLogoutModal}
-              onBtn2Click={handleLogout}
-            />
-          )}
+          {isLogoutModal && <Modal children='로그아웃하시겠습니까?' btn1='취소' btn2='로그아웃' onClose={toggleLogoutModal} onBtn2Click={handleLogout} />}
           <NavMenu title='회원 탈퇴' onClick={toggleTerminateModal} />
-          {isTerminateModal && (
-            <Modal
-              children='정말 탈퇴 하시겠습니까?'
-              btn1='취소'
-              btn2='회원 탈퇴'
-              onClose={toggleTerminateModal}
-              onBtn2Click={handleTerminate}
-            />
-          )}
+          {isTerminateModal && <Modal children='정말 탈퇴 하시겠습니까?' btn1='취소' btn2='회원 탈퇴' onClose={toggleTerminateModal} onBtn2Click={handleTerminate} />}
           <NavMenu title='메이트 초대하기' onClick={handleMateInvite} />
         </MenuWrapper>
       </Wrapper>

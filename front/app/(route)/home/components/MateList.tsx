@@ -5,19 +5,18 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { IHomeData } from '@/app/_types/user/Mate';
 
-
 interface IMateListProps {
   mates: IMate[];
 }
 
 const MateList = ({ mates }: IMateListProps) => {
   const [isEdit, setIsedit] = useState(false);
-  console.log('mates data', mates)
+  console.log('mates data', mates);
 
   const onEditClick = () => {
     setIsedit(!isEdit);
   };
-  console.log('isEdit', isEdit);
+  //   console.log('isEdit', isEdit);
 
   return (
     <Wrapper>

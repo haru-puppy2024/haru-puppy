@@ -13,39 +13,31 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
 
   const handleCheckboxChange = async (scheduleId: number, currentIsActive: boolean) => {
     const newIsActive = !currentIsActive;
-    console.log('scheduleId', scheduleId);
-    console.log('currentIsActive', currentIsActive);
-    console.log('newIsActive', newIsActive);
+    // console.log('scheduleId', scheduleId);
+    // console.log('currentIsActive', currentIsActive);
+    // console.log('newIsActive', newIsActive);
 
-    const updatedTodos = todos.map((todo) =>
-      todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo
-    );
+    const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo));
     setTodos(updatedTodos);
 
     try {
       const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${newIsActive}`, null);
 
       if (!response.data.success) {
-        const revertedTodos = todos.map((todo) =>
-          todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
-        );
+        const revertedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo));
         setTodos(revertedTodos);
       }
     } catch (error) {
       console.error('스케줄 수정 에러', error);
-      const revertedTodos = todos.map((todo) =>
-        todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
-      );
+      const revertedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo));
       setTodos(revertedTodos);
     }
   };
 
-
   const activeTodos = todoList.filter((todo) => todo.isActive);
-  console.log('액티브', activeTodos)
+  //   console.log('액티브', activeTodos);
   const inactiveTodos = todoList.filter((todo) => !todo.isActive);
-  console.log('인액티브', inactiveTodos)
-
+  //   console.log('인액티브', inactiveTodos);
 
   return (
     <Wrapper>
@@ -176,7 +168,7 @@ const MateImgWrapper = styled.div`
   position: relative;
 `;
 
-const MateImg = styled(Image) <{ index: number }>`
+const MateImg = styled(Image)<{ index: number }>`
   width: 25px;
   height: 25px;
   border-radius: 50%;

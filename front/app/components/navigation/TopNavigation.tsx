@@ -83,7 +83,7 @@ const TopNavigation = () => {
 };
 
 const TopNavigationWrap = styled.nav`
-  position: fixed;
+  position: absolute;
   top: 0;
   z-index: 100;
   background-color: #ffffff;

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { IMate } from '@/app/_types';
+import { getUserRoleLabel } from '@/app/constants/userRoleOptions';
 
 interface IMateProfileProps {
   isClicked?: boolean;
@@ -15,6 +16,8 @@ const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
     console.log('mate 삭제');
   };
 
+  const userRoleLabel = mate.userRole ? getUserRoleLabel(mate.userRole) : null;
+
   return (
     <Wrapper>
       <ProfileContainer>
@@ -23,7 +26,7 @@ const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
       </ProfileContainer>
       <Info size={size}>
         <NickName>{mate.nickName}</NickName>
-        <Name>{mate.userRole}</Name>
+        <Name>{userRoleLabel}</Name>
       </Info>
     </Wrapper>
   );
