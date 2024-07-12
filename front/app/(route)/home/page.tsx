@@ -15,34 +15,6 @@ import instance from '@/app/_utils/apis/interceptors';
 import { IDogDetail, IHomeData, IMate, IRanking, IReport } from '@/app/_types/user/Mate';
 import { mateState } from '@/app/_states/mateState';
 
-const dummyReports = {
-  today_poo_cnt: 2,
-  last_week_walk_cnt: 7,
-  last_wash_date: '2023-12-13 00:00:00',
-  last_hospital_date: '2023-12-13 00:00:00',
-};
-
-const dummyRanking = [
-  {
-    user_id: 1,
-    user_img: '',
-    nickname: 'User1',
-    rank: 4,
-  },
-  {
-    user_id: 2,
-    user_img: '',
-    nickname: 'User2',
-    rank: 2,
-  },
-  {
-    user_id: 3,
-    user_img: '',
-    nickname: 'User3',
-    rank: 3,
-  },
-];
-
 const fetchHomeData = async (): Promise<IHomeData> => {
   try {
     const response = await instance.get('/api/home');
@@ -117,13 +89,13 @@ const Page = () => {
 const Wrapper = styled.div`
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
-  padding: 100px 20px;
+  padding: 0 20px 72px;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   gap: 50px;
-  margin-top: 100px;
 `;
 
 export default Page;
