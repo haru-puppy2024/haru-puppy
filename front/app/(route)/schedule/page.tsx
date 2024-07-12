@@ -4,7 +4,6 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import ScheduleAddForm from './components/ScheduleAddForm';
-import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 
@@ -22,7 +21,7 @@ const page = () => {
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
-    console.log('날짜선택', selectedDate);
+    // console.log('날짜선택', selectedDate);
   };
 
   return (

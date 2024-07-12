@@ -11,7 +11,7 @@ interface WeekCalendarProps {
 
 const WeekCalendar = ({ date, handleDateClick }: WeekCalendarProps) => {
   const startOfWeek = subDays(date, date.getDay());
-  console.log('startOfWeek', startOfWeek)
+  //   console.log('startOfWeek', startOfWeek)
 
   return (
     <Container>
@@ -21,16 +21,12 @@ const WeekCalendar = ({ date, handleDateClick }: WeekCalendarProps) => {
       <DayWrapper>
         {Array.from({ length: 7 }).map((_, index) => {
           const day = addDays(startOfWeek, index);
-          console.log('day', day)
+          //   console.log('day', day);
 
           const dayOfWeek = KOREAN_DAY_NAMES[index];
 
           return (
-            <Day
-              key={index}
-              onClick={() => handleDateClick(day)}
-              className={`weekDay ${format(day, 'd') === format(date, 'd') ? 'selectedDay' : ''}`}
-            >
+            <Day key={index} onClick={() => handleDateClick(day)} className={`weekDay ${format(day, 'd') === format(date, 'd') ? 'selectedDay' : ''}`}>
               <div className='dayOfWeek'>{dayOfWeek}</div>
               {format(day, 'd')}
             </Day>
@@ -46,7 +42,7 @@ const Container = styled.div`
   flex-direction: column;
   width: 340px;
   height: 140px;
-  border: 1px solid #DFDFDF;
+  border: 1px solid #dfdfdf;
   border-radius: 20px;
   padding: 0px 10px;
   justify-content: center;
@@ -70,7 +66,7 @@ const Day = styled.div`
     background-color: ${({ theme }) => theme.colors.main};
     color: white;
     .dayOfWeek {
-      color: white; 
+      color: white;
     }
   }
 
@@ -91,7 +87,7 @@ const Day = styled.div`
 
 const Month = styled.div`
   height: 10px;
-    margin: 0 auto;
+  margin: 0 auto;
   span {
     font-size: 20px;
     color: ${({ theme }) => theme.colors.black90};

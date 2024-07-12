@@ -43,7 +43,7 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
       try {
         const response = await instance.get(`/api/schedules?year=${year}&month=${month}`);
         const data: IScheduleItem[] = response.data.data;
-        console.log('Month 스케줄 패칭', data)
+        // console.log('Month 스케줄 패칭', data)
 
         if (data) {
           setScheduleData(data);
@@ -53,7 +53,7 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
           setScheduleData([]);
         }
       } catch (error) {
-        console.error('Month 스케줄 페칭 에러', error);
+        // console.error('Month 스케줄 페칭 에러', error);
         setScheduleData([]);
       }
     };
@@ -153,9 +153,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top:70px;
-  background-color: #FFFFFF;
-
+  margin-top: 70px;
+  background-color: #ffffff;
 `;
 
 const Dot = styled.div`
