@@ -1,18 +1,25 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useRecoilValue } from 'recoil';
 import { userState } from '@/app/_states/userState';
-import { useMutation } from 'react-query';
-import ProfileImg, { ProfileType } from '@/app/components/profile/ProfileImg';
-import Input, { InputType } from '@/app/components/input/Input';
+import { IUser } from '@/app/_types';
+import { usePostInviteRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
 import Button from '@/app/components/button/Button';
-import styled from 'styled-components';
+import Input, { InputType } from '@/app/components/input/Input';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
-import { IUser } from '@/app/_types';
+import ProfileImg from '@/app/components/profile/ProfileImg';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
-import { usePostInviteRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+const roleSvgDict = {
+  DAD: '/svgs/mate_father.svg',
+  MOM: '/svgs/mate_mother.svg',
+  UNNIE: '/svgs/mate_sister.svg',
+  OPPA: '/svgs/mate_brother.svg',
+  YOUNGER: '/svgs/mate_younger.svg',
+};
 
 const UserRegisterPage = () => {
   const searchParams = useSearchParams();
@@ -23,7 +30,7 @@ const UserRegisterPage = () => {
   const { mutate: inviteRegisterAPI } = usePostInviteRegisterAPI();
 
   const [formData, setFormData] = useState<IUser>({
-    imgUrl: 'src://',
+    imgUrl: '/svgs/mate_father.svg',
     email: '',
     nickName: '',
     userRole: '',
@@ -37,7 +44,11 @@ const UserRegisterPage = () => {
   }, [searchParams]);
 
   const [isFormIncomplete, setIsFormIncomplete] = useState(true);
-
+  //1. 디폴트 이미지인지..?
+  //2. role에 따라서 디폴트 이미지 바꿔주기
+  //3. 이미 사용자가 업로드한 이미지가 있으면 디폴트 이미지가 되어선 안됨...
+  const isDefaultImage = !formData.imgUrl?.startsWith('data');
+  console.log('폼데이터 img', formData.imgUrl);
   const handleSignupForm = (name: string, value: any) => {
     const newFormData = { ...formData, [name]: value };
     setFormData(newFormData);
@@ -45,6 +56,11 @@ const UserRegisterPage = () => {
     const formIncomplete = newFormData.nickName === '' || newFormData.userRole === '';
     setIsFormIncomplete(formIncomplete);
     console.log(newFormData);
+
+    if (name === 'userRole' && isDefaultImage) {
+      const defaultImage = roleSvgDict[value as keyof typeof roleSvgDict];
+      setFormData((prevFormData) => ({ ...prevFormData, imgUrl: defaultImage }));
+    }
   };
 
   const handleSubmit = () => {
@@ -68,11 +84,11 @@ const UserRegisterPage = () => {
     <ContainerLayout>
       <TopNavigation />
       <UserProfileFormWrap>
-        <ProfileImg profileType={ProfileType.User} onValueChange={(value) => handleSignupForm('imgUrl', value)} />
+        <ProfileImg onValueChange={(value) => handleSignupForm('imgUrl', value)} imgUrl={formData.imgUrl} />
         <Input inputType={InputType.NickName} onInputValue={(value) => handleSignupForm('nickName', value)} />
         <RoleDropdown onValueChange={(value) => handleSignupForm('userRole', value)} />
         <Button onClick={handleSubmit} disabled={isFormIncomplete}>
-          {isInvitedUser ? '가입하기' : '저장하기'}
+          가입하기
         </Button>
       </UserProfileFormWrap>
     </ContainerLayout>
