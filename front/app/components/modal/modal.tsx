@@ -30,7 +30,7 @@ const Modal = ({ children, btn1, btn2, onClose, onBtn1Click, onBtn2Click }: IMod
       <div onClick={(e) => e.stopPropagation()}>
         <ModalWrap>
           <strong>{children}</strong>
-          <ButtonGroup hasSecondButton={!!btn2}>
+          <ButtonGroup data-has-second-button={!!btn2}>
             <button onClick={handleBtn1Click}>{btn1}</button>
             {btn2 && <button onClick={handleBtn2Click}>{btn2}</button>}
           </ButtonGroup>
@@ -75,12 +75,12 @@ const ModalWrap = styled.div`
   }
 `;
 
-const ButtonGroup = styled.div<{ hasSecondButton: boolean }>`
+const ButtonGroup = styled.div`
   position: absolute;
   bottom: 25px;
 
   & > button {
-    width: ${({ hasSecondButton }) => (hasSecondButton ? '100px' : '120px')};
+    width: 120px;
     line-height: 26px;
     border-radius: 6px;
     background-color: ${({ theme }) => theme.colors.main};
@@ -90,8 +90,16 @@ const ButtonGroup = styled.div<{ hasSecondButton: boolean }>`
     margin-right: 8px;
   }
 
+  &[data-has-second-button='true'] > button {
+    width: 100px;
+  }
+
   & > button:first-child {
-    margin-right: ${({ hasSecondButton }) => (hasSecondButton ? '8px' : '0')};
+    margin-right: 0;
+  }
+
+  &[data-has-second-button='true'] > button:first-child {
+    margin-right: 8px;
   }
 
   & > button:last-child {
