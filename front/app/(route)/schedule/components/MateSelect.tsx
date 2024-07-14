@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import PeopleOutlineRoundedIcon from '@mui/icons-material/PeopleOutlineRounded';
-import MateProfile from '@/app/components/profile/MateProfile';
 import { IMate } from '@/app/_types/user/Mate';
+import MateProfile from '@/app/components/profile/MateProfile';
+import PeopleOutlineRoundedIcon from '@mui/icons-material/PeopleOutlineRounded';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 interface IMateSelectProps {
   onValueChange: (value: IMate[]) => void;
@@ -50,7 +50,9 @@ const MateSelect = ({ onValueChange, mates, initialSelectedMates }: IMateSelectP
 const MateProfileWrapper = styled.div`
   display: flex;
   justify-content: center;
+  gap: 10px;
 `;
+
 const MateSelectWrap = styled.div`
   position: relative;
   width: 300px;

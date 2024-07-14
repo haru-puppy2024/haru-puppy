@@ -1,27 +1,20 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 import { userState } from '@/app/_states/userState';
-import { AxiosError } from 'axios';
-import ProfileImg from '@/app/components/profile/ProfileImg';
-import Input, { InputType } from '@/app/components/input/Input';
-import Button from '@/app/components/button/Button';
-import styled from 'styled-components';
-import ContainerLayout from '@/app/components/layout/layout';
-import TopNavigation from '@/app/components/navigation/TopNavigation';
-import RoleDropdown from '@/app/components/profile/RoleDropdown';
-import Modal from '@/app/components/modal/modal';
 import { IUser } from '@/app/_types/user/User';
 import { usePutUserProfileAPI } from '@/app/_utils/apis';
+import Button from '@/app/components/button/Button';
+import Input, { InputType } from '@/app/components/input/Input';
+import ContainerLayout from '@/app/components/layout/layout';
+import Modal from '@/app/components/modal/modal';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
-
-const roleSvgDict = {
-  DAD: '/svgs/mate_father.svg',
-  MOM: '/svgs/mate_mother.svg',
-  UNNIE: '/svgs/mate_sister.svg',
-  OPPA: '/svgs/mate_brother.svg',
-  YOUNGER: '/svgs/mate_younger.svg',
-};
+import TopNavigation from '@/app/components/navigation/TopNavigation';
+import ProfileImg from '@/app/components/profile/ProfileImg';
+import RoleDropdown from '@/app/components/profile/RoleDropdown';
+import { getUserRoleSvgPath, UserRoleValue } from '@/app/constants/userRoleOptions';
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 
 const MyProfilePage = () => {
   const [formData, setFormData] = useState<IUser>({
@@ -70,7 +63,7 @@ const MyProfilePage = () => {
     setFormData(newFormData);
 
     if (name === 'userRole' && isDefaultImage) {
-      const defaultImage = roleSvgDict[value as keyof typeof roleSvgDict];
+      const defaultImage = getUserRoleSvgPath(value as UserRoleValue);
       setFormData((prevFormData) => ({ ...prevFormData, imgUrl: defaultImage }));
     }
   };
@@ -107,7 +100,7 @@ const UserProfileFormWrap = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 100px;
+  margin: 120px 0;
   & > div {
     margin-bottom: 45px;
   }

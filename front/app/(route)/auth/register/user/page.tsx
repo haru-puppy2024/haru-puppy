@@ -8,18 +8,11 @@ import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import ProfileImg from '@/app/components/profile/ProfileImg';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
+import { getUserRoleSvgPath, UserRoleValue } from '@/app/constants/userRoleOptions';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-
-const roleSvgDict = {
-  DAD: '/svgs/mate_father.svg',
-  MOM: '/svgs/mate_mother.svg',
-  UNNIE: '/svgs/mate_sister.svg',
-  OPPA: '/svgs/mate_brother.svg',
-  YOUNGER: '/svgs/mate_younger.svg',
-};
 
 const UserRegisterPage = () => {
   const searchParams = useSearchParams();
@@ -58,7 +51,7 @@ const UserRegisterPage = () => {
     console.log(newFormData);
 
     if (name === 'userRole' && isDefaultImage) {
-      const defaultImage = roleSvgDict[value as keyof typeof roleSvgDict];
+      const defaultImage = getUserRoleSvgPath(value as UserRoleValue);
       setFormData((prevFormData) => ({ ...prevFormData, imgUrl: defaultImage }));
     }
   };
@@ -99,7 +92,7 @@ const UserProfileFormWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 100px;
+  margin: 7.5rem 0;
   & > div {
     margin-bottom: 45px;
   }
