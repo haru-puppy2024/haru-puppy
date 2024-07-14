@@ -1,5 +1,5 @@
-import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 interface ISelectProps {
@@ -81,7 +81,7 @@ const SelectDiv = styled.div`
     color: ${({ theme }) => theme.colors.black70};
   }
 
-  &[data-selected-value]:not([data-selected-value='없음']) {
+  &[data-selected-value]:not([data-selected-value='없음']):not([data-selected-value='']) {
     color: ${({ theme }) => theme.colors.main};
   }
 
