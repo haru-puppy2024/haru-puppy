@@ -81,7 +81,7 @@ const DogProfilePage = () => {
         <Input inputType={InputType.Weight} onInputValue={(value) => handleSelectChange('weight', value)} />
         <ButtonWrapper>
           <Button onClick={handleSignUpClick} disabled={!areAllFieldsFilled}>
-            가입 완료하기
+            저장하기
           </Button>
         </ButtonWrapper>
       </ComponentsWrapper>
