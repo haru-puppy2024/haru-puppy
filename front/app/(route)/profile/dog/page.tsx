@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
-import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
-import dayjs from 'dayjs';
-import ProfileImg from '@/app/components/profile/ProfileImg';
-import Input, { InputType } from '@/app/components/input/Input';
-import styled from 'styled-components';
-import Button from '@/app/components/button/Button';
-import ContainerLayout from '@/app/components/layout/layout';
-import TopNavigation from '@/app/components/navigation/TopNavigation';
-import GenderSelect from '@/app/components/profile/GenderSelect';
-import { updateDogProfileAPI } from '@/app/_utils/apis/useDogProfileApi';
 import { IDogProfile } from '@/app/_types/user/Dog';
+import { updateDogProfileAPI } from '@/app/_utils/apis/useDogProfileApi';
+import Button from '@/app/components/button/Button';
+import Input, { InputType } from '@/app/components/input/Input';
+import ContainerLayout from '@/app/components/layout/layout';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
+import TopNavigation from '@/app/components/navigation/TopNavigation';
+import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
+import GenderSelect from '@/app/components/profile/GenderSelect';
+import ProfileImg from '@/app/components/profile/ProfileImg';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+import styled from 'styled-components';
 
 const DogProfilePage = () => {
   const [formData, setFormData] = useState<IDogProfile>({
@@ -100,7 +100,7 @@ const ComponentsWrapper = styled.div`
   grid-gap: 30px;
   justify-content: center;
   align-items: center;
-  width: 390px;
+  margin: 7.5rem 0;
   & > div:first-of-type {
     width: 100%;
     display: flex;

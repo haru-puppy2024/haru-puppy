@@ -1,22 +1,22 @@
 'use client';
 
+import { mateState } from '@/app/_states/mateState';
+import { IScheduleAddFormData } from '@/app/_types';
+import { useDeleteScheduleAPI, useGetScheduleAPI, usePatchRepeatMaintainScheduleAPI, usePatchSingleScheduleAPI, usePostScheduleAPI } from '@/app/_utils/apis';
+import { formatDateToHM, formatDateToYMD, formatTimeToHM, parseDateToYMD } from '@/app/_utils/formatDate';
+import Button from '@/app/components/button/Button';
+import MemoTextArea from '@/app/components/input/MemoTextArea';
+import { RadioModal } from '@/app/components/modal/RadioModal';
+import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { mateState } from '@/app/_states/mateState';
-import Image from 'next/image';
 import styled from 'styled-components';
-import Button from '@/app/components/button/Button';
 import MateSelect from './MateSelect';
-import MemoTextArea from '@/app/components/input/MemoTextArea';
-import ScheduleTypeSelect from './ScheduleTypeSelect';
-import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
-import TimeSelect from './TimeSelect';
-import RepeatSelect from './RepeatSelect';
 import NotiSelect from './NotiSelect';
-import { IScheduleAddFormData } from '@/app/_types';
-import { usePostScheduleAPI, useGetScheduleAPI, usePatchSingleScheduleAPI, useDeleteScheduleAPI, usePatchRepeatMaintainScheduleAPI } from '@/app/_utils/apis';
-import { formatDateToYMD, formatTimeToHM, formatDateToHM, parseDateToYMD } from '@/app/_utils/formatDate';
-import { RadioModal } from '@/app/components/modal/RadioModal';
+import RepeatSelect from './RepeatSelect';
+import ScheduleTypeSelect from './ScheduleTypeSelect';
+import TimeSelect from './TimeSelect';
 
 export interface IScheduleAddFormProps {
   isOpen: boolean;
@@ -236,6 +236,10 @@ const ScheduleAddWrap = styled.main`
     transform: translateX(-50%);
   }
   z-index: 1000;
+
+  @media (max-height: 740px) {
+    padding: 20px 0 14px;
+  }
 `;
 const FormWrap = styled.form`
   overflow: hideen;

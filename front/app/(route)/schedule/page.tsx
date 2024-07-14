@@ -1,11 +1,11 @@
 'use client';
+import BottomNavigation from '@/app/components/navigation/BottomNavigation';
+import TopNavigation from '@/app/components/navigation/TopNavigation';
 import Calendar from '@/app/components/schedule/FullCalendar';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import ScheduleAddForm from './components/ScheduleAddForm';
-import TopNavigation from '@/app/components/navigation/TopNavigation';
-import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 
 const page = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +46,7 @@ const Wrapper = styled.div`
   width: 390px;
   justify-content: center;
   top: 0;
-  margin: 0 auto;
+  margin: 7.5rem auto;
 `;
 
 const AddBtnWrapper = styled.div`

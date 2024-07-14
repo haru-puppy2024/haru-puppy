@@ -4,85 +4,83 @@
 */
 html,
 body {
+  margin: 0;
+  padding: 0;
+  .react-datepicker {
+    border: 1px solid #dcdde1;
+    border-radius: 20px;
 
-	.react-datepicker {
-		border: 1px solid #dcdde1;
-		border-radius: 20px;
+    .react-datepicker__day--outside-month {
+      cursor: default;
+      visibility: hidden;
+    }
 
-		.react-datepicker__day--outside-month {
+    .calenderWrapper {
+      background-color: #0e0e0e;
+    }
 
-			cursor: default;
-			visibility: hidden;
-		}
+    .react-datepicker__day {
+      position: relative;
+    }
 
-		.calenderWrapper {
-			background-color: #0E0E0E;
-		}
+    .selectedDay,
+    .unselectedDay {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a4a4a;
+      padding: 2px;
+      width: 40px;
+      height: 40px;
+    }
 
-		.react-datepicker__day {
-			position: relative;
-		}
+    .selectedDay {
+      background-color: #fa9e52;
+      border-radius: 30%;
+      color: white;
 
-		.selectedDay,
-		.unselectedDay {
-			position: relative;
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			color: #4A4A4A;
-			padding: 2px;
-			width: 40px;
-			height: 40px;
+      &:hover {
+        border-radius: 30%;
+        background-color: #fa9e52;
+      }
+    }
 
+    .unselectedDay {
+      &:hover {
+        border-radius: 30%;
+        background-color: rgba(#fcfcfc, 0.08);
+      }
+    }
 
-		}
+    .react-datepicker__header {
+      background-color: #ffffff;
+      color: white;
+      border-bottom: none;
+      border-radius: 20px;
 
-		.selectedDay {
-			background-color: #FA9E52;
-			border-radius: 30%;
-			color: white;
+      .react-datepicker__day-names {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+        height: 30px;
+        padding: 0 14px;
 
-			&:hover {
-				border-radius: 30%;
-				background-color: #FA9E52;
-			}
-		}
+        .react-datepicker__day-name {
+          color: #5b5b5b;
+        }
+      }
+    }
 
-		.unselectedDay {
-			&:hover {
-				border-radius: 30%;
-				background-color: rgba(#FCFCFC, 0.08);
-			}
-		}
+    .react-datepicker__triangle {
+      display: none;
+    }
+  }
 
-		.react-datepicker__header {
-			background-color: #FFFFFF;
-			color: white;
-			border-bottom: none;
-			border-radius: 20px;
-
-			.react-datepicker__day-names {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-top: 5px;
-				height: 30px;
-				padding: 0 14px;
-
-				.react-datepicker__day-name {
-					color: #5b5b5b;
-				}
-			}
-		}
-
-		.react-datepicker__triangle {
-			display: none;
-		}
-	}
-
-	.calenderWrapper {
-		background-color: #FFFFFF;
-	}
+  .calenderWrapper {
+    background-color: #ffffff;
+  }
 }
 
 div,
@@ -164,12 +162,12 @@ time,
 mark,
 audio,
 video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
 /* HTML5 display-role reset for older browsers */
@@ -184,70 +182,70 @@ hgroup,
 menu,
 nav,
 section {
-	display: block;
+  display: block;
 }
 
 body {
-	line-height: 1;
+  line-height: 1;
 }
 
 ol,
 ul {
-	list-style: none;
+  list-style: none;
 }
 
 blockquote,
 q {
-	quotes: none;
+  quotes: none;
 }
 
 blockquote:before,
 blockquote:after,
 q:before,
 q:after {
-	content: "";
-	content: none;
+  content: '';
+  content: none;
 }
 
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 input:focus {
-	outline: none;
+  outline: none;
 }
 
 a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 input {
-	border: none;
+  border: none;
 }
 
 .ir {
-	position: absolute;
-	clip: rect(0 0 0 0);
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	overflow: hidden;
+  position: absolute;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
 }
 
 button {
-	border: none;
-	cursor: pointer;
-	background-color: transparent;
-	font-family: 'Pretendard';
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  font-family: 'Pretendard';
 }
 
 textarea {
-	border: none;
-	resize: none;
-	overflow: hidden;
+  border: none;
+  resize: none;
+  overflow: hidden;
 }
 
 textarea:focus {
-	outline: none;
+  outline: none;
 }

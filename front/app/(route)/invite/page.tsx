@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { userState } from '@/app/_states/userState';
-import styled from 'styled-components';
-import Image from 'next/image';
-import InviteImg from '@/public/svgs/invite.svg';
-import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
 import ContainerLayout from '@/app/components/layout/layout';
-import TopNavigation from '@/app/components/navigation/TopNavigation';
 import Modal from '@/app/components/modal/modal';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
+import TopNavigation from '@/app/components/navigation/TopNavigation';
+import InviteImg from '@/public/svgs/invite.svg';
+import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 const InvitePage = () => {
   const userData = useRecoilValue(userState);
@@ -65,7 +65,8 @@ const InvitePageWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 11.0625rem;
+  gap: 7.5rem;
+  margin-top: 7.5rem;
 `;
 const InviteButtonWrap = styled.button`
   display: flex;
@@ -75,9 +76,10 @@ const InviteButtonWrap = styled.button`
   height: 56px;
   border-radius: 10px;
   font-size: 18px;
-  font-weight: ${({ theme }) => theme.typo.regular};
-  background-color: #ffd06c;
-  color: #000000;
+  font-weight: ${({ theme }) => theme.typo.semibold};
+  background-color: #48d0f6;
+  color: #ffffff;
+
   & > :nth-child(1) {
     margin: 0 50px 0 53px;
   }

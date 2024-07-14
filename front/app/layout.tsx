@@ -1,12 +1,12 @@
 'use client';
-import Script from 'next/script';
-import { theme } from '@/styles/theme';
-import './globals.css';
-import { ThemeProvider } from 'styled-components';
-import StyledComponentsRegistry from './registry';
 import { Pretendard } from '@/public/fonts/fonts';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { theme } from '@/styles/theme';
+import Script from 'next/script';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
+import { ThemeProvider } from 'styled-components';
+import './globals.css';
+import StyledComponentsRegistry from './registry';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();

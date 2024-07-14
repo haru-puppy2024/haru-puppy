@@ -2,7 +2,6 @@ import { IDogDetail } from '@/app/_types/user/Mate';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 import styled from 'styled-components';
 
 interface UserProfileProps {
@@ -36,7 +35,7 @@ const UserProfile = ({ user }: UserProfileProps) => {
 };
 
 const Wrapper = styled.div`
-  width: 370px;
+  min-width: 340px;
   height: 140px;
   display: flex;
   justify-content: flex-end;

@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import Image from 'next/image';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneRounded';
-import NotificationUnreadIcon from '../../../public/svgs/notifications_unread.svg';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import NotificationUnreadIcon from '../../../public/svgs/notifications_unread.svg';
 
 const TopNavigation = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -93,13 +93,20 @@ const TopNavigationWrap = styled.nav`
   align-items: center;
   justify-content: space-between;
   width: 390px;
+
   height: 48px;
   border-bottom: 0.5px solid ${({ theme }) => theme.colors.black60};
   background-color: #ffffff;
 
   & > strong {
+    flex-grow: 1;
+    text-align: center;
     font-size: 16px;
     font-weight: ${({ theme }) => theme.typo.semibold};
+  }
+
+  & > *:not(strong) {
+    flex-shrink: 0;
   }
 
   & > button {

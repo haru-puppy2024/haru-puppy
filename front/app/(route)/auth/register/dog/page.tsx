@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
-import dayjs from 'dayjs';
-import ProfileImg from '@/app/components/profile/ProfileImg';
-import Input, { InputType } from '@/app/components/input/Input';
-import styled from 'styled-components';
-import Button from '@/app/components/button/Button';
-import ContainerLayout from '@/app/components/layout/layout';
-import TopNavigation from '@/app/components/navigation/TopNavigation';
-import GenderSelect from '@/app/components/profile/GenderSelect';
 import { IRegisterData } from '@/app/_types';
 import { usePostRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
+import Button from '@/app/components/button/Button';
+import Input, { InputType } from '@/app/components/input/Input';
+import ContainerLayout from '@/app/components/layout/layout';
+import TopNavigation from '@/app/components/navigation/TopNavigation';
+import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
+import GenderSelect from '@/app/components/profile/GenderSelect';
+import ProfileImg from '@/app/components/profile/ProfileImg';
+import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 const DogRegisterPage = () => {
   const router = useRouter();
@@ -126,7 +126,7 @@ const ComponentsWrapper = styled.div`
   grid-gap: 30px;
   justify-content: center;
   align-items: center;
-  width: 390px;
+  margin: 7.5rem 0;
   & > div:first-of-type {
     width: 100%;
     display: flex;

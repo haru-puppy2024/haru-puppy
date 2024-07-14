@@ -1,19 +1,19 @@
 'use client';
-import styled from 'styled-components';
-import ContainerLayout from '@/app/components/layout/layout';
-import TopNavigation from '@/app/components/navigation/TopNavigation';
-import UserProfile from '@/app/(route)/home/components/UserProfile';
 import MateList from '@/app/(route)/home/components/MateList';
 import ReportCard from '@/app/(route)/home/components/ReportCard';
+import UserProfile from '@/app/(route)/home/components/UserProfile';
 import WalkRank from '@/app/(route)/home/components/WalkRank';
+import { mateState } from '@/app/_states/mateState';
+import { IDogDetail, IHomeData, IRanking, IReport } from '@/app/_types/user/Mate';
+import instance from '@/app/_utils/apis/interceptors';
+import ContainerLayout from '@/app/components/layout/layout';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
+import TopNavigation from '@/app/components/navigation/TopNavigation';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
-import instance from '@/app/_utils/apis/interceptors';
-import { IDogDetail, IHomeData, IMate, IRanking, IReport } from '@/app/_types/user/Mate';
-import { mateState } from '@/app/_states/mateState';
+import styled from 'styled-components';
 
 const fetchHomeData = async (): Promise<IHomeData> => {
   try {
@@ -72,8 +72,8 @@ const Page = () => {
 
   return (
     <main>
+      <TopNavigation />
       <ContainerLayout>
-        <TopNavigation />
         <Wrapper>
           <UserProfile user={user} />
           <MateList mates={mates} />
@@ -91,11 +91,15 @@ const Wrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
-  padding: 0 20px 72px;
+  padding: 120px 0;
   flex-direction: column;
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
   gap: 50px;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export default Page;
