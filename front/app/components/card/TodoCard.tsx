@@ -10,52 +10,33 @@ interface ITodoCardProps {
 
 const TodoCard = ({ todoList }: ITodoCardProps) => {
   const [todos, setTodos] = useState<IScheduleItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentScheduleId, setCurrentScheduleId] = useState<number | null>(null);
-  const [currentIsActive, setCurrentIsActive] = useState<boolean | null>(null);
 
   useEffect(() => {
     setTodos(todoList);
   }, [todoList]);
 
-  useEffect(() => {
-    const updateTodoStatus = async () => {
-      if (currentScheduleId !== null && currentIsActive !== null) {
-        const newIsActive = !currentIsActive;
-        const updatedTodos = todos.map((todo) =>
-          todo.scheduleId === currentScheduleId ? { ...todo, isActive: newIsActive } : todo
-        );
-        setTodos(updatedTodos);
+  const handleCheckboxChange = async (scheduleId: number, currentIsActive: boolean) => {
+    const newIsActive = !currentIsActive;
+    const updatedTodos = todos.map((todo) =>
+      todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo
+    );
+    setTodos(updatedTodos);
 
-        try {
-          const response = await instance.patch(`/api/schedules/${currentScheduleId}/status?active=${newIsActive}`, null);
+    try {
+      const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${newIsActive}`);
+      console.log('상태 response', response);
 
-          if (!response.data || response.data.success === false) {
-            throw new Error('Server response not successful');
-          }
-        } catch (error) {
-          console.error('스케줄 수정 에러', error);
-          const revertedTodos = todos.map((todo) =>
-            todo.scheduleId === currentScheduleId ? { ...todo, isActive: currentIsActive } : todo
-          );
-          setTodos(revertedTodos);
-        } finally {
-          setIsLoading(false);
-          setCurrentScheduleId(null);
-          setCurrentIsActive(null);
-        }
+      if (!response.data.success) {
+        throw new Error('서버 응답 에러');
       }
-    };
-
-    if (isLoading) {
-      updateTodoStatus();
+    } catch (error) {
+      console.error('스케줄 수정 에러', error);
+      // 에러가 발생하면 상태를 되돌림
+      const revertedTodos = todos.map((todo) =>
+        todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
+      );
+      setTodos(revertedTodos);
     }
-  }, [isLoading, currentScheduleId, currentIsActive, todos]);
-
-  const handleCheckboxChange = (scheduleId: number, isActive: boolean) => {
-    setCurrentScheduleId(scheduleId);
-    setCurrentIsActive(isActive);
-    setIsLoading(true);
   };
 
   const activeTodos = todos.filter((todo) => todo.isActive);
