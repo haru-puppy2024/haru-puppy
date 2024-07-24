@@ -65,8 +65,8 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
           <Wrapper key={index}>
             <p>{report.title}</p>
             <Info>
-              {report.title === '오늘의 배변활동' && <StyledIconButton src='/svgs/minus-svgrepo-com 1.svg' alt='minus icon' width={30} height={30} onClick={onMinusClick} />}
-              {report.icon}
+              {report.title === '오늘의 배변활동' && <StyledIconButtonMinus src='/svgs/minus-svgrepo-com 1.svg' alt='minus icon' width={24} height={24} onClick={onMinusClick} />}
+              <IconImg>{report.icon}</IconImg>
               <Count>
                 {report.count !== null && report.count !== 0 ? (
                   <>
@@ -74,10 +74,12 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
                     <p>{report.unit}</p>
                   </>
                 ) : (
-                  '-'
+                  <>
+                    0<p>{report.unit}</p>
+                  </>
                 )}
               </Count>
-              {report.title === '오늘의 배변활동' && <StyledIconButton src='/svgs/plus-circle-svgrepo-com 1.svg' alt='plus icon' width={30} height={30} onClick={onPlusClick} />}
+              {report.title === '오늘의 배변활동' && <StyledIconButtonPlus src='/svgs/plus-circle-svgrepo-com 1.svg' alt='plus icon' width={24} height={24} onClick={onPlusClick} />}
             </Info>
           </Wrapper>
         ))}
@@ -86,10 +88,21 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
   );
 };
 
-const StyledIconButton = styled(Image)`
-  padding: 5px;
-  border-radius: 50%;
+const IconImg = styled.div`
+  position: absolute;
+  left: 32px;
+`;
+
+const StyledIconButtonPlus = styled(Image)`
   cursor: pointer;
+  position: absolute;
+  right: 8px;
+`;
+
+const StyledIconButtonMinus = styled(Image)`
+  cursor: pointer;
+  position: absolute;
+  left: 8px;
 `;
 
 const ReportCardWrapper = styled.div`
@@ -107,6 +120,7 @@ const Title = styled.span`
 `;
 
 const Wrapper = styled.div`
+  position: relative;
   width: 156px;
   height: 84px;
   margin: 0 auto;
@@ -136,7 +150,7 @@ const Info = styled.div`
 const Count = styled.div`
   font-size: 28px;
   color: ${({ theme }) => theme.colors.black90};
-  margin-left: 14px;
+  margin-left: 20px;
   display: flex;
   align-items: flex-end;
   padding-bottom: 5px;
