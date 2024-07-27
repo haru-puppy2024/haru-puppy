@@ -43,7 +43,8 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
     memo: '',
   });
 
-  const [isRadioModalOpen, setIsRadioModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (scheduleId && loadedScheduleData && !isLoading && !isError) {
@@ -102,12 +103,13 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
 
   const handleDelete = () => {
     console.log('삭제');
-    deleteScheduleAPI(scheduleId, {
-      onSuccess: () => {
-        onToggle();
-        resetFormData();
-      },
-    });
+    if (loadedScheduleData.repeatId !== null) {
+      setIsDeleteModalOpen(true);
+    } else {
+      deleteScheduleAPI({ scheduleId: scheduleId!, all: true });
+      onToggle();
+      resetFormData();
+    }
   };
 
   const handleSave = () => {
@@ -117,7 +119,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
       const isRepeat = formData.repeatType !== 'NONE' || loadedScheduleData.repeatType !== 'NONE';
       if (isRepeat) {
         console.log('반복 수정');
-        setIsRadioModalOpen(true);
+        setIsUpdateModalOpen(true);
       } else {
         console.log('단건 수정');
         patchScheduleAPI(
@@ -154,7 +156,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
   return (
     <>
       {isOpen && <Overlay onClick={onToggle} />}
-      {isRadioModalOpen && (
+      {isUpdateModalOpen && (
         <RadioModal
           title='반복 스케줄 수정'
           optionList={[
@@ -185,8 +187,30 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
               );
             }
           }}
-          isOpen={isRadioModalOpen}
-          setOpen={setIsRadioModalOpen}
+          isOpen={isUpdateModalOpen}
+          setOpen={setIsUpdateModalOpen}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <RadioModal
+          title='반복 스케줄 삭제'
+          optionList={[
+            { key: 'all', label: '반복 스케줄 삭제' },
+            { key: 'only', label: '이 스케줄만 삭제' },
+          ]}
+          name='deleteRepeat'
+          onSubmit={(key) => {
+            if (scheduleId === undefined) return;
+            if (key === 'only') {
+              deleteScheduleAPI({ scheduleId, all: false });
+            } else if (key === 'all') {
+              deleteScheduleAPI({ scheduleId, all: true });
+            }
+            onToggle();
+            resetFormData();
+          }}
+          isOpen={isDeleteModalOpen}
+          setOpen={setIsDeleteModalOpen}
         />
       )}
       <ScheduleAddWrap data-open={isOpen}>
