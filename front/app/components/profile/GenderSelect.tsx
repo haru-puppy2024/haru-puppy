@@ -1,60 +1,65 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface DogGenderSelectorProps {
-    onValueChange: (value: string) => void;
+  onValueChange: (value: string) => void;
+  value?: string;
 }
 
-const GenderSelect = ({ onValueChange }: DogGenderSelectorProps) => {
+const GenderSelect = ({ onValueChange, value }: DogGenderSelectorProps) => {
+  const genderOptions = ['MALE', 'FEMALE'];
 
-    const genderOptions = ['MALE', 'FEMALE'];
+  const [selectedGender, setSelectedGender] = useState<string>('');
 
-    const [selectedGender, setSelectedGender] = useState<string>('');
+  useEffect(() => {
+    value && setSelectedGender(value);
+  }, [value]);
 
-    const handleGenderClick = (gender: string) => {
-        console.log('gender', gender)
-        setSelectedGender(gender);
-        onValueChange(gender);
-    };
+  const handleGenderClick = (gender: string) => {
+    console.log('gender', gender);
+    setSelectedGender(gender);
+    onValueChange(gender);
+  };
 
-    return (
-        <Wrapper>
-            <Title><p>성별</p><span>*</span></Title>
-            <GenderWrapper>
-                {genderOptions.map((gender) => (
-                    <GenderButton key={gender} selected={selectedGender === gender} onClick={() => handleGenderClick(gender)}>
-                        {gender === 'FEMALE' ? '여아' : '남아'}
-                    </GenderButton>
-                ))}
-            </GenderWrapper>
-        </Wrapper>
-    );
+  return (
+    <Wrapper>
+      <Title>
+        <p>성별</p>
+        <span>*</span>
+      </Title>
+      <GenderWrapper>
+        {genderOptions.map((gender) => (
+          <GenderButton key={gender} selected={selectedGender === gender} onClick={() => handleGenderClick(gender)}>
+            {gender === 'FEMALE' ? '여아' : '남아'}
+          </GenderButton>
+        ))}
+      </GenderWrapper>
+    </Wrapper>
+  );
 };
 
 const Wrapper = styled.div`
-    width: 340px;
-    height: 74px;
-    margin: 0 auto;
-
+  width: 340px;
+  height: 74px;
+  margin: 0 auto;
 `;
 
-
 const Title = styled.div`
-    display: flex;  
-    margin-bottom: 5px;
-    & span {
+  display: flex;
+  margin-bottom: 5px;
+  & span {
     margin-left: 8px;
     color: ${({ theme }) => theme.colors.alert};
-   }
-     & > p {
-        font-size: 14px;
-    }
-`
+  }
+  & > p {
+    font-size: 14px;
+  }
+`;
 
 const GenderWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const GenderButton = styled.div<{ selected: boolean }>`

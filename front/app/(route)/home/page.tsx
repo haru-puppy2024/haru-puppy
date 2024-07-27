@@ -4,6 +4,7 @@ import ReportCard from '@/app/(route)/home/components/ReportCard';
 import UserProfile from '@/app/(route)/home/components/UserProfile';
 import WalkRank from '@/app/(route)/home/components/WalkRank';
 import { mateState } from '@/app/_states/mateState';
+import { dogState } from '@/app/_states/dogState';
 import { IDogDetail, IHomeData, IRanking, IReport } from '@/app/_types/user/Mate';
 import instance from '@/app/_utils/apis/interceptors';
 import ContainerLayout from '@/app/components/layout/layout';
@@ -28,6 +29,7 @@ const Page = () => {
   const router = useRouter();
   const { data, isLoading, isError } = useQuery<IHomeData>('homeData', fetchHomeData);
   const [mates, setMates] = useRecoilState(mateState);
+  const [dog, setDog] = useRecoilState(dogState);
   console.log('home data:', data);
 
   useEffect(() => {
@@ -40,8 +42,9 @@ const Page = () => {
   useEffect(() => {
     if (data && data.mateDto) {
       setMates(data.mateDto);
+      setDog(data.dogDetailResponse);
     }
-  }, [data, setMates]);
+  }, [data, setMates, setDog]);
 
   const user: IDogDetail = data?.dogDetailResponse || {
     dogId: 0,

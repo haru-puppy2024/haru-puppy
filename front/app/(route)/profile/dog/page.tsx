@@ -1,5 +1,6 @@
 'use client';
 
+import { dogState } from '@/app/_states/dogState';
 import { IDogProfile } from '@/app/_types/user/Dog';
 import { updateDogProfileAPI } from '@/app/_utils/apis/useDogProfileApi';
 import Button from '@/app/components/button/Button';
@@ -11,18 +12,25 @@ import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect
 import GenderSelect from '@/app/components/profile/GenderSelect';
 import ProfileImg from '@/app/components/profile/ProfileImg';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 const DogProfilePage = () => {
+  const defaultImage = '/svgs/dog_profile.svg';
+
   const [formData, setFormData] = useState<IDogProfile>({
-    dogId: '13',
+    dogId: 0,
     name: '',
     gender: '',
     birthday: '',
     weight: 0,
-    imgUrl: '/svgs/dog_profile.svg',
+    imgUrl: defaultImage,
   });
+
+  const isDefaultImage = !formData.imgUrl?.startsWith('data');
+
+  const [dogData, setDogData] = useRecoilState<any>(dogState);
 
   //필수입력 상태값
   const [requiredField, setRequiredField] = useState<{ name: boolean; gender: boolean; weight: boolean }>({
@@ -31,9 +39,26 @@ const DogProfilePage = () => {
     weight: false,
   });
 
-  const handleSelectChange = (name: string, value: any) => {
-    let formattedValue = value;
+  useEffect(() => {
+    if (dogData) {
+      setFormData({
+        dogId: dogData.dogId,
+        name: dogData.name || '',
+        gender: dogData.gender || '',
+        birthday: dogData.birthday || '',
+        weight: dogData.weight || 0,
+        imgUrl: dogData.imgUrl || defaultImage,
+      });
 
+      setRequiredField({
+        name: !!dogData.name,
+        gender: !!dogData.gender,
+        weight: !!dogData.weight,
+      });
+    }
+  }, [dogData]);
+
+  const handleSelectChange = (name: string, value: any) => {
     if (name === 'birthday' && value instanceof Date) {
       value = dayjs(value).format('YYYY-MM-DD');
     }
@@ -44,23 +69,21 @@ const DogProfilePage = () => {
     };
 
     setFormData(newFormData);
-    console.log('업데이트 된 formData:', newFormData);
 
     setRequiredField({
       ...requiredField,
       [name]: value !== '' && value !== null,
     });
+
+    if (isDefaultImage) {
+      setFormData((prevFormData) => ({ ...prevFormData, imgUrl: defaultImage }));
+    }
+
+    console.log('업데이트 된 formData:', newFormData);
   };
 
   //필수 입력란 체크 boolean
   const areAllFieldsFilled = requiredField.name && requiredField.gender && requiredField.weight;
-
-  //signUp 요청 함수
-  // const handleSignUpClick = () => {
-  //     const accessToken = localStorage.getItem('access_token')
-  //     updateDogProfileAPI({ accessToken, formData });
-  //     console.log('signUp 성공')
-  // };
 
   const accessToken = localStorage.getItem('access_token');
   const { mutate: updateDogProfileMutation } = updateDogProfileAPI({ accessToken, formData });
@@ -74,11 +97,11 @@ const DogProfilePage = () => {
     <ContainerLayout>
       <TopNavigation />
       <ComponentsWrapper>
-        <ProfileImg onValueChange={(value) => handleSelectChange('img', value)} imgUrl={formData.imgUrl} />
-        <Input inputType={InputType.DogName} onInputValue={(value) => handleSelectChange('name', value)} />
-        <GenderSelect onValueChange={(value) => handleSelectChange('gender', value)} />
-        <DateSelect onValueChange={(value) => handleSelectChange('birthday', value)} label={DateSelectLabel.Birthday} isRequired={false} />
-        <Input inputType={InputType.Weight} onInputValue={(value) => handleSelectChange('weight', value)} />
+        <ProfileImg onValueChange={(value) => handleSelectChange('imgUrl', value)} imgUrl={formData.imgUrl} />
+        <Input inputType={InputType.DogName} onInputValue={(value) => handleSelectChange('name', value)} value={formData.name} />
+        <GenderSelect onValueChange={(value) => handleSelectChange('gender', value)} value={formData.gender} />
+        <DateSelect onValueChange={(value) => handleSelectChange('birthday', value)} label={DateSelectLabel.Birthday} isRequired={false} initialDate={formData.birthday} />
+        <Input inputType={InputType.Weight} onInputValue={(value) => handleSelectChange('weight', value)} value={formData.weight} />
         <ButtonWrapper>
           <Button onClick={handleSignUpClick} disabled={!areAllFieldsFilled}>
             저장하기
