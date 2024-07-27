@@ -15,6 +15,7 @@ import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 import { fetchNotification } from '@/app/_utils/apis/usePutAlarmApi';
 import { useTerminateAccount } from '@/app/_utils/apis/useTerminateAccount';
 import { useLogout } from '@/app/_utils/apis/user/useLogout';
+import { getImgUrlSrc, getUserRoleLabel, UserRoleValue } from '@/app/constants/userRoleOptions';
 
 const page = () => {
   const [isToggled, setIsToggled] = useState(false);
@@ -30,6 +31,10 @@ const page = () => {
       queryClient.invalidateQueries('notifications');
     },
   });
+
+  const defaultImg = userData.imgUrl && getImgUrlSrc(userData.imgUrl, userData.userRole as UserRoleValue);
+  const validImgUrl = userData.imgUrl && userData.imgUrl?.startsWith('data') ? userData.imgUrl : defaultImg;
+  const userRoleLabel = userData.userRole && getUserRoleLabel(userData.userRole);
 
   // 알림 토글 함수
   const handelToggle = (toggled: boolean) => {
@@ -70,7 +75,7 @@ const page = () => {
     <>
       <TopNavigation />
       <Wrapper>
-        <UpperUserProfile imgUrl={userData.imgUrl} nickName={userData.nickName} userRole={userData.userRole} />
+        <UpperUserProfile imgUrl={validImgUrl} nickName={userData.nickName} userRole={userRoleLabel} />
         <MenuWrapper>
           <NavMenu title='알림 설정'>
             <ToggleSwitch onToggle={handelToggle} isToggled={isToggled} />

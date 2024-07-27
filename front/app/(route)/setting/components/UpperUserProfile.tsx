@@ -4,7 +4,7 @@ import Image from 'next/image';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import { StyledArrowIcon } from './NavMenu';
 import { useRouter } from 'next/navigation';
-import { getUserRoleLabel } from '@/app/constants/userRoleOptions';
+import { getImgUrlSrc, getUserRoleLabel } from '@/app/constants/userRoleOptions';
 
 interface IUserInfo {
   nickName: string | null;
@@ -18,17 +18,14 @@ const UpperUserProfile = ({ nickName, userRole, imgUrl }: IUserInfo) => {
     router.push('/profile/my');
   };
 
-  const validImgUrl = imgUrl && imgUrl?.startsWith('data') ? imgUrl : '/svgs/mate_father.svg';
-  const userRoleLabel = userRole ? getUserRoleLabel(userRole) : null;
-
   return (
     <Wrapper onClick={onUserProfileClick}>
-      {imgUrl ? <Image src={validImgUrl} alt='User Profile' width={70} height={70} /> : <Image src='/svgs/mate_father.svg' alt='Default User Profile' width={70} height={70} />}
+      {imgUrl ? <Image src={imgUrl} alt='User Profile' width={70} height={70} /> : <Image src='/svgs/mate_father.svg' alt='Default User Profile' width={70} height={70} />}
       <InfoWrapper>
         <Info>
           <UserDetails>
             <UserName>{nickName}</UserName>
-            <UserRole>{userRoleLabel}</UserRole>
+            <UserRole>{userRole}</UserRole>
           </UserDetails>
           <div>
             <StyledArrowIcon />
