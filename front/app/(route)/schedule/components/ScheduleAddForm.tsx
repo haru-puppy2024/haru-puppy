@@ -105,6 +105,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
     deleteScheduleAPI(scheduleId, {
       onSuccess: () => {
         onToggle();
+        resetFormData();
       },
     });
   };
@@ -132,9 +133,22 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
       postScheduleAPI(formData, {
         onSuccess: () => {
           onToggle();
+          resetFormData();
         },
       });
     }
+  };
+
+  const resetFormData = () => {
+    setFormData({
+      scheduleType: 'WALK',
+      mates: [],
+      scheduleDate: formatDateToYMD(selectedDateFromCalender),
+      scheduleTime: '',
+      repeatType: 'NONE',
+      alertType: 'NONE',
+      memo: '',
+    });
   };
 
   return (
