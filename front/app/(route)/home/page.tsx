@@ -30,7 +30,7 @@ const Page = () => {
   const { data, isLoading, isError } = useQuery<IHomeData>('homeData', fetchHomeData);
   const [mates, setMates] = useRecoilState(mateState);
   const [dog, setDog] = useRecoilState(dogState);
-  console.log('home data:', data);
+  //   console.log('home data:', data);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
@@ -54,8 +54,6 @@ const Page = () => {
     birthday: '',
     imgUrl: 'src://',
   };
-
-  console.log('mates 데이터', mates);
 
   const reports: IReport = data?.reportDto || {
     todayPooCount: 0,
