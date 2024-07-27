@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../button/Button';
@@ -64,7 +63,7 @@ const ProfileImg = ({ onValueChange, imgUrl }: IProfileImgProps) => {
       <ProfileImgWrap onClick={handleImageClick}>
         <input type='file' ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
         <ImgWrap>
-          <Image src={currentImgUrl} alt='프로필 이미지' width={140} height={140} />
+          <StyledCurrentImage src={currentImgUrl} alt='프로필 이미지' />
         </ImgWrap>
         <EditableIcon src='/svgs/editable.svg' alt='편집' width={30} height={30} />
       </ProfileImgWrap>
@@ -72,9 +71,9 @@ const ProfileImg = ({ onValueChange, imgUrl }: IProfileImgProps) => {
         <ModalOverlay onClick={() => setIsModalOpen(false)}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <CloseButton onClick={() => setIsModalOpen(false)}>
-              <Image src='/svgs/close_grey.svg' alt='닫기' width={28} height={28} />
+              <StyledCurrentImage src='/svgs/close_grey.svg' alt='닫기' />
             </CloseButton>
-            <Image src={currentImgUrl} alt='프로필 이미지' width={140} height={140} />
+            <img src={currentImgUrl} alt='프로필 이미지' />
             <ButtonGroup>
               <Button onClick={handleDeleteImage} width='120px' height='32px'>
                 삭제
@@ -100,12 +99,16 @@ const ProfileImgWrap = styled.div`
   position: relative;
   cursor: pointer;
 `;
+const StyledCurrentImage = styled.img`
+  width: 140px;
+  height: 140px;
+`;
 const ImgWrap = styled.div`
   border-radius: 50%;
   overflow: hidden;
 `;
 
-const EditableIcon = styled(Image)`
+const EditableIcon = styled.img`
   position: absolute;
   top: 9px;
   right: 5.9px;
@@ -142,6 +145,11 @@ const CloseButton = styled.button`
   border: none;
   font-size: 20px;
   cursor: pointer;
+
+  & > img {
+    width: 28px;
+    height: 28px;
+  }
 `;
 
 const ButtonGroup = styled.div`

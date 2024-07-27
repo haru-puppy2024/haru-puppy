@@ -21,13 +21,13 @@ export const getUserRoleValue = (label: UserRoleLabel): UserRoleValue | undefine
 
 export const getUserRoleSvgPath = (value: UserRoleValue): string => {
   const option = userRoleOptions.find((option) => option.value === value);
-  console.log('getUserRoleSvgPath의 이미지 경로', option?.svgPath);
+  //   console.log('getUserRoleSvgPath의 이미지 경로', option?.svgPath);
   return option ? option.svgPath : '';
 };
 
 export const getImgUrlSrc = (imgUrl: string | undefined, userRole: UserRoleValue): string => {
   if (imgUrl && imgUrl.startsWith('data:')) {
-    console.log('getImgUrlSrc의 이미지 경로', imgUrl);
+    // console.log('getImgUrlSrc의 이미지 경로', imgUrl);
     return imgUrl;
   }
 

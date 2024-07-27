@@ -13,7 +13,6 @@ const MateList = ({ mates }: IMateListProps) => {
   const [isEdit, setIsedit] = useState(false);
 
   const router = useRouter();
-  console.log('mates data', mates);
 
   const onEditClick = () => {
     setIsedit(!isEdit);

@@ -1,13 +1,11 @@
 import { IRanking } from '@/app/_types/user/Mate';
-import { getImgUrlSrc, getUserRoleValue, UserRoleValue } from '@/app/constants/userRoleOptions';
+import { getImgUrlSrc, getUserRoleLabel, UserRoleValue } from '@/app/constants/userRoleOptions';
 import styled from 'styled-components';
 interface IWalkRank {
   ranking: IRanking[];
 }
 
 const WalkRank = ({ ranking }: IWalkRank) => {
-  console.log(ranking);
-
   const topRanking = ranking.sort((a, b) => b.count - a.count).slice(0, 3);
 
   return (
@@ -16,8 +14,8 @@ const WalkRank = ({ ranking }: IWalkRank) => {
         <Title>주간 산책 메이트 랭킹</Title>
         <ChartWrapper>
           {topRanking?.map((user, index) => {
-            const mateRoleValue = getUserRoleValue(user.userRole);
-            const imgUrlSrc = getImgUrlSrc(user.imgUrl, mateRoleValue as UserRoleValue);
+            const userRoleLabel = user.userRole && getUserRoleLabel(user.userRole);
+            const imgUrlSrc = getImgUrlSrc(user.imgUrl, user.userRole as UserRoleValue);
 
             let barHeight;
             if (user.count === 0) {
@@ -43,9 +41,6 @@ const WalkRank = ({ ranking }: IWalkRank) => {
               barColor = '#dbdbdb';
             }
 
-            console.log('유저 정보', user.userRole);
-            console.log('유저정보 이미지', imgUrlSrc);
-            console.log('유저 정보', ranking);
             return (
               <BoxWrapper key={index}>
                 <UserContainer data-walk-count={user.count}>
@@ -53,7 +48,7 @@ const WalkRank = ({ ranking }: IWalkRank) => {
                     <img src={imgUrlSrc} alt='프로필 이미지' width={60} />
                   </UserProfileImage>
                   <Nickname>{user.nickName}</Nickname>
-                  <Role>{user.userRole}</Role>
+                  <Role>{userRoleLabel}</Role>
                   <WalkCount>{user.count}회</WalkCount>
                 </UserContainer>
                 <Bar style={{ height: `${barHeight}px`, backgroundColor: barColor }} />

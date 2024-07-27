@@ -43,7 +43,7 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
       try {
         const response = await instance.get(`/api/schedules?year=${year}&month=${month}`);
         const data: IScheduleItem[] = response.data.data;
-        // console.log('Month 스케줄 패칭', data)
+        console.log('Month 스케줄 패칭', data);
 
         if (data) {
           setScheduleData(data);

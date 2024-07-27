@@ -3,11 +3,13 @@ import { useMutation } from 'react-query';
 import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import { useRecoilState } from 'recoil';
 import { userState } from '@/app/_states/userState';
+import { dogState } from '@/app/_states/dogState';
 import { useRouter } from 'next/navigation';
 import { IRegisterData, IUser } from '@/app/_types';
 
 export const usePostRegisterAPI = () => {
   const [, setUser] = useRecoilState(userState);
+  const [, setDog] = useRecoilState(dogState);
   const router = useRouter();
   const postRegisterData = (data: IRegisterData) => {
     return instance.post('/api/users/register', data);
@@ -18,8 +20,9 @@ export const usePostRegisterAPI = () => {
       const resData = res.data.data;
       const accessToken = resData.token.accessToken;
       localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-      if (setUser) {
+      if (resData) {
         setUser(resData.userResponse);
+        setDog(resData.dogResponse);
       }
 
       if (accessToken) {
@@ -38,6 +41,7 @@ export const usePostRegisterAPI = () => {
 export const usePostInviteRegisterAPI = () => {
   const router = useRouter();
   const [, setUser] = useRecoilState(userState);
+  const [, setDog] = useRecoilState(dogState);
   const postInviteRegisterData = async (data: { requestData: IUser; homeId: string }) => {
     const { requestData, homeId } = data;
     return instance.post(`/api/users/invitation/${homeId}`, requestData);
@@ -48,8 +52,9 @@ export const usePostInviteRegisterAPI = () => {
       const resData = res.data.data;
       const accessToken = resData.token.accessToken;
       localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-      if (setUser) {
+      if (resData) {
         setUser(resData.userResponse);
+        setDog(resData.dogResponse);
       }
 
       if (accessToken) {
