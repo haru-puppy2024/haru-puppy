@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { IScheduleItem } from '@/app/_types';
@@ -9,35 +9,38 @@ interface ITodoCardProps {
 }
 
 const TodoCard = ({ todoList }: ITodoCardProps) => {
-  const [todos, setTodos] = useState(todoList);
+  const [todos, setTodos] = useState<IScheduleItem[]>([]);
+
+  useEffect(() => {
+    setTodos(todoList);
+  }, [todoList]);
 
   const handleCheckboxChange = async (scheduleId: number, currentIsActive: boolean) => {
     const newIsActive = !currentIsActive;
-    // console.log('scheduleId', scheduleId);
-    // console.log('currentIsActive', currentIsActive);
-    // console.log('newIsActive', newIsActive);
-
-    const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo));
+    const updatedTodos = todos.map((todo) =>
+      todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo
+    );
     setTodos(updatedTodos);
 
     try {
-      const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${newIsActive}`, null);
+      const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${newIsActive}`);
+      console.log('상태 response', response);
 
       if (!response.data.success) {
-        const revertedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo));
-        setTodos(revertedTodos);
+        throw new Error('서버 응답 에러');
       }
     } catch (error) {
       console.error('스케줄 수정 에러', error);
-      const revertedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo));
+      // 에러가 발생하면 상태를 되돌림
+      const revertedTodos = todos.map((todo) =>
+        todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
+      );
       setTodos(revertedTodos);
     }
   };
 
-  const activeTodos = todoList.filter((todo) => todo.isActive);
-  //   console.log('액티브', activeTodos);
-  const inactiveTodos = todoList.filter((todo) => !todo.isActive);
-  //   console.log('인액티브', inactiveTodos);
+  const activeTodos = todos.filter((todo) => todo.isActive);
+  const inactiveTodos = todos.filter((todo) => !todo.isActive);
 
   return (
     <Wrapper>
@@ -46,7 +49,11 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           <CardTitle>완료</CardTitle>
           {activeTodos.map((todo, index) => (
             <TodoItem key={index}>
-              <Checkbox type='checkbox' checked onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
+              <Checkbox
+                type='checkbox'
+                checked
+                onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)}
+              />
               <TodoText active={todo.isActive}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
@@ -63,7 +70,11 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
           <CardTitle>오늘</CardTitle>
           {inactiveTodos.map((todo, index) => (
             <TodoItem key={index}>
-              <Checkbox type='checkbox' checked={todo.isActive} onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
+              <Checkbox
+                type='checkbox'
+                checked={todo.isActive}
+                onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)}
+              />
               <TodoText active={!todo.isActive}>{todo.scheduleType}</TodoText>
               <MateImgWrapper>
                 {todo.mates.map((mate, mateIndex) => (
@@ -76,7 +87,9 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
       )}
 
       <RegisteredMate></RegisteredMate>
-      {activeTodos.length === 0 && inactiveTodos.length === 0 && <CenteredMessage>일정이 없습니다.</CenteredMessage>}
+      {activeTodos.length === 0 && inactiveTodos.length === 0 && (
+        <CenteredMessage>일정이 없습니다.</CenteredMessage>
+      )}
     </Wrapper>
   );
 };
@@ -168,7 +181,7 @@ const MateImgWrapper = styled.div`
   position: relative;
 `;
 
-const MateImg = styled(Image)<{ index: number }>`
+const MateImg = styled(Image) <{ index: number }>`
   width: 25px;
   height: 25px;
   border-radius: 50%;
