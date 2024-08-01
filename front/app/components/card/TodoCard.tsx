@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
-import { IScheduleItem } from '@/app/_types';
+import { IMate, IScheduleItem } from '@/app/_types';
 import instance from '@/app/_utils/apis/interceptors';
+import { getUserRoleSvgPath } from '@/app/constants/userRoleOptions';
+import { mateState } from '@/app/_states/mateState';
+import { useRecoilValue } from 'recoil';
+import { scheduleTypeOptions } from '@/app/constants/scheduleTypeOptions';
+
+const getDefaultImgUrl = (userId: number, mates: IMate[]): string => {
+  const mate = mates.find((mate) => mate.userId === userId);
+  const role = mate ? mate.userRole : undefined;
+  return role ? getUserRoleSvgPath(role) : '';
+};
+
+const getScheduleTypeDetails = (scheduleType: string) => {
+  const type = scheduleTypeOptions.find((option) => option.value === scheduleType);
+  return type ? { label: type.label, icon: type.icon } : { label: scheduleType, icon: null };
+};
 
 interface ITodoCardProps {
   todoList: IScheduleItem[];
@@ -10,16 +24,17 @@ interface ITodoCardProps {
 
 const TodoCard = ({ todoList }: ITodoCardProps) => {
   const [todos, setTodos] = useState<IScheduleItem[]>([]);
+  const mates = useRecoilValue(mateState);
 
   useEffect(() => {
     setTodos(todoList);
   }, [todoList]);
 
+  console.log('이게 todos', todos);
+
   const handleCheckboxChange = async (scheduleId: number, currentIsActive: boolean) => {
     const newIsActive = !currentIsActive;
-    const updatedTodos = todos.map((todo) =>
-      todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo
-    );
+    const updatedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo));
     setTodos(updatedTodos);
 
     try {
@@ -32,9 +47,7 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
     } catch (error) {
       console.error('스케줄 수정 에러', error);
       // 에러가 발생하면 상태를 되돌림
-      const revertedTodos = todos.map((todo) =>
-        todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
-      );
+      const revertedTodos = todos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo));
       setTodos(revertedTodos);
     }
   };
@@ -47,49 +60,47 @@ const TodoCard = ({ todoList }: ITodoCardProps) => {
       {activeTodos.length > 0 && (
         <TodoListWrapper>
           <CardTitle>완료</CardTitle>
-          {activeTodos.map((todo, index) => (
-            <TodoItem key={index}>
-              <Checkbox
-                type='checkbox'
-                checked
-                onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)}
-              />
-              <TodoText active={todo.isActive}>{todo.scheduleType}</TodoText>
-              <MateImgWrapper>
-                {todo.mates.map((mate, mateIndex) => (
-                  <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={mate.user_img} />
-                ))}
-              </MateImgWrapper>
-            </TodoItem>
-          ))}
+          {activeTodos.map((todo, index) => {
+            const { label, icon } = getScheduleTypeDetails(todo.scheduleType);
+            return (
+              <TodoItem key={index}>
+                <Checkbox type='checkbox' checked onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
+                <TodoIcon>{icon}</TodoIcon>
+                <TodoText data-active={todo.isActive}>{label}</TodoText>
+                <MateImgWrapper>
+                  {todo.mates.map((mateId, mateIndex) => (
+                    <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={getDefaultImgUrl(mateId, mates)} />
+                  ))}
+                </MateImgWrapper>
+              </TodoItem>
+            );
+          })}
         </TodoListWrapper>
       )}
 
       {inactiveTodos.length > 0 && (
         <TodoListWrapper>
           <CardTitle>오늘</CardTitle>
-          {inactiveTodos.map((todo, index) => (
-            <TodoItem key={index}>
-              <Checkbox
-                type='checkbox'
-                checked={todo.isActive}
-                onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)}
-              />
-              <TodoText active={!todo.isActive}>{todo.scheduleType}</TodoText>
-              <MateImgWrapper>
-                {todo.mates.map((mate, mateIndex) => (
-                  <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={mate.user_img} />
-                ))}
-              </MateImgWrapper>
-            </TodoItem>
-          ))}
+          {inactiveTodos.map((todo, index) => {
+            const { label, icon } = getScheduleTypeDetails(todo.scheduleType);
+            return (
+              <TodoItem key={index}>
+                <Checkbox type='checkbox' checked={todo.isActive} onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)} />
+                <TodoIcon>{icon}</TodoIcon>
+                <TodoText data-active={todo.isActive}>{label}</TodoText>
+                <MateImgWrapper>
+                  {todo.mates.map((mateId, mateIndex) => (
+                    <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={getDefaultImgUrl(mateId, mates)} />
+                  ))}
+                </MateImgWrapper>
+              </TodoItem>
+            );
+          })}
         </TodoListWrapper>
       )}
 
       <RegisteredMate></RegisteredMate>
-      {activeTodos.length === 0 && inactiveTodos.length === 0 && (
-        <CenteredMessage>일정이 없습니다.</CenteredMessage>
-      )}
+      {activeTodos.length === 0 && inactiveTodos.length === 0 && <CenteredMessage>일정이 없습니다.</CenteredMessage>}
     </Wrapper>
   );
 };
@@ -166,11 +177,22 @@ const Checkbox = styled.input.attrs<{ checked?: boolean }>(({ checked }) => ({
   }
 `;
 
-const TodoText = styled.p<{ active: boolean }>`
+const TodoIcon = styled.div`
+  margin-right: 8px;
+  margin-left: 4px;
+  display: inline-flex;
+`;
+
+const TodoText = styled.p`
   font-weight: ${({ theme }) => theme.typo.regular};
   flex: 1;
   color: ${({ theme }) => theme.colors.black90};
-  text-decoration: ${({ active }) => (active ? 'line-through' : 'none')};
+  &[data-active='true'] {
+    text-decoration: line-through;
+  }
+  &[data-active='false'] {
+    text-decoration: none;
+  }
 `;
 
 const MateImgWrapper = styled.div`
@@ -181,11 +203,10 @@ const MateImgWrapper = styled.div`
   position: relative;
 `;
 
-const MateImg = styled(Image) <{ index: number }>`
+const MateImg = styled.img<{ index: number }>`
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.black70};
   position: absolute;
   left: ${(props) => props.index * 18}px;
 `;
