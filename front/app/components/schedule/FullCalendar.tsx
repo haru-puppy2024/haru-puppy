@@ -31,7 +31,7 @@ const MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', 
 const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
   const [date, setDate] = useState(new Date());
   const [selectedDateTasks, setSelectedDateTasks] = useState<IScheduleItem[]>([]);
-  const [markedDates, setMarkedDates] = useState<Date[]>([]);
+  const [markedDates, setMarkedDates] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const month = getMonth(date) + 1;
@@ -43,8 +43,12 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
 
   useEffect(() => {
     if (monthData) {
-      const dateObjects = monthData.map((item: IScheduleItem) => new Date(item.scheduleDate || ''));
-      setMarkedDates(dateObjects);
+      const dateStrings = monthData.map((item: IScheduleItem) => {
+        const scheduleDate = new Date(item.scheduleDate || '');
+        // 문자열로 변환
+        return new Date(scheduleDate.getFullYear(), scheduleDate.getMonth(), scheduleDate.getDate()).toISOString().split('T')[0];
+      });
+      setMarkedDates(dateStrings);
     }
   }, [monthData]);
 
@@ -57,8 +61,8 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
   const renderDayContents = (dayOfMonth: number, date?: Date | null): React.ReactNode => {
     if (!date) return null;
 
-    const formattedDate = date.toISOString().split('T')[0];
-    const isDateMarked = markedDates.some((markedDate) => formattedDate === markedDate.toISOString().split('T')[0]);
+    const formattedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()).toISOString().split('T')[0];
+    const isDateMarked = markedDates.includes(formattedDate);
 
     return (
       <div>
@@ -139,7 +143,7 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
           </>
         ) : (
           <>
-            <WeekCalendar date={date} handleDateClick={handleDateClick} />
+            <WeekCalendar date={date} handleDateClick={handleDateClick} markedDates={markedDates} />
             <ArrowDropDownIcon onClick={() => setShowDatePicker(!showDatePicker)} fontSize='large' color='action' />
           </>
         )}

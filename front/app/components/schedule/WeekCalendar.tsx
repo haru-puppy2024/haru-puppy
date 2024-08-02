@@ -7,11 +7,11 @@ const KOREAN_DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 interface WeekCalendarProps {
   date: Date;
   handleDateClick: (day: Date) => void;
+  markedDates: string[];
 }
 
-const WeekCalendar = ({ date, handleDateClick }: WeekCalendarProps) => {
+const WeekCalendar = ({ date, handleDateClick, markedDates }: WeekCalendarProps) => {
   const startOfWeek = subDays(date, date.getDay());
-  //   console.log('startOfWeek', startOfWeek)
 
   return (
     <Container>
@@ -21,14 +21,15 @@ const WeekCalendar = ({ date, handleDateClick }: WeekCalendarProps) => {
       <DayWrapper>
         {Array.from({ length: 7 }).map((_, index) => {
           const day = addDays(startOfWeek, index);
-          //   console.log('day', day);
-
+          const formattedDate = format(day, 'yyyy-MM-dd');
+          const isDateMarked = markedDates.includes(formattedDate);
           const dayOfWeek = KOREAN_DAY_NAMES[index];
 
           return (
             <Day key={index} onClick={() => handleDateClick(day)} className={`weekDay ${format(day, 'd') === format(date, 'd') ? 'selectedDay' : ''}`}>
               <div className='dayOfWeek'>{dayOfWeek}</div>
               {format(day, 'd')}
+              {isDateMarked && <Dot />}
             </Day>
           );
         })}
@@ -52,6 +53,17 @@ const Container = styled.div`
 const DayWrapper = styled.div`
   display: flex;
   margin-top: 5px;
+`;
+
+const Dot = styled.div`
+  width: 5px;
+  height: 5px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const Day = styled.div`
