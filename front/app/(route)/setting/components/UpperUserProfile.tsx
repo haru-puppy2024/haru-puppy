@@ -20,7 +20,7 @@ const UpperUserProfile = ({ nickName, userRole, imgUrl }: IUserInfo) => {
 
   return (
     <Wrapper onClick={onUserProfileClick}>
-      {imgUrl ? <Image src={imgUrl} alt='User Profile' width={70} height={70} /> : <Image src='/svgs/mate_father.svg' alt='Default User Profile' width={70} height={70} />}
+      {imgUrl ? <Image src={imgUrl} alt='User Profile' width={70} height={70} priority /> : <Image src='/svgs/mate_father.svg' alt='Default User Profile' width={70} height={70} priority />}
       <InfoWrapper>
         <Info>
           <UserDetails>
