@@ -1,6 +1,5 @@
 'use client';
 
-import { getYear, getMonth } from 'date-fns';
 import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -13,7 +12,6 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import WeekCalendar from './WeekCalendar';
 import { IScheduleItem } from '@/app/_types';
-import { useGetTodoScheduleAPI } from '@/app/_utils/apis';
 
 export interface ScheduleResponse {
   schedule: IScheduleItem[];
@@ -22,30 +20,26 @@ export interface ScheduleResponse {
 interface ICalendarProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
+  onTodoClick: (scheduleId: number) => void;
+  monthData?: IScheduleItem[];
+  dayData?: IScheduleItem[];
+  refetchTodos: () => void;
 }
 
-const currentYear = getYear(new Date());
+const currentYear = new Date().getFullYear();
 const YEARS = [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
 const MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
-const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
+const Calendar = ({ selectedDate, onDateChange, onTodoClick, monthData, dayData, refetchTodos }: ICalendarProps) => {
   const [date, setDate] = useState(new Date());
   const [selectedDateTasks, setSelectedDateTasks] = useState<IScheduleItem[]>([]);
   const [markedDates, setMarkedDates] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const month = getMonth(date) + 1;
-  const year = getYear(date);
-  const day = date.getDate();
-
-  const { data: monthData, refetch: refetchMonthData } = useGetTodoScheduleAPI(year, month);
-  const { data: dayData } = useGetTodoScheduleAPI(year, month, day);
-
   useEffect(() => {
     if (monthData) {
       const dateStrings = monthData.map((item: IScheduleItem) => {
         const scheduleDate = new Date(item.scheduleDate || '');
-        // 문자열로 변환
         return new Date(scheduleDate.getFullYear(), scheduleDate.getMonth(), scheduleDate.getDate()).toISOString().split('T')[0];
       });
       setMarkedDates(dateStrings);
@@ -75,11 +69,12 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
   const handleDateClick = (clickedDate: Date) => {
     setDate(clickedDate);
     onDateChange(clickedDate);
+    refetchTodos();
   };
 
   const handleMonthChange = (newDate: Date) => {
     setDate(newDate);
-    refetchMonthData();
+    refetchTodos();
   };
 
   useEffect(() => {
@@ -116,14 +111,14 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
                     <ChevronLeftIcon />
                   </Button>
                   <div>
-                    <select value={getYear(date)} onChange={({ target: { value } }) => changeYear(+value)}>
+                    <select value={date.getFullYear()} onChange={({ target: { value } }) => changeYear(+value)}>
                       {YEARS.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
                       ))}
                     </select>
-                    <span>{MONTHS[getMonth(date)]}</span>
+                    <span>{MONTHS[date.getMonth()]}</span>
                   </div>
 
                   <Button
@@ -148,7 +143,7 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
           </>
         )}
       </Wrapper>
-      <TodoCard todoList={selectedDateTasks} year={year} month={month} day={day} />
+      <TodoCard todoList={selectedDateTasks} year={date.getFullYear()} month={date.getMonth() + 1} day={date.getDate()} onTodoClick={onTodoClick} />
     </>
   );
 };

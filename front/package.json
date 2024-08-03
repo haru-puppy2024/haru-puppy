@@ -24,6 +24,7 @@
     "debug": "^4.3.4",
     "material-icons": "^1.13.12",
     "next": "^14.2.5",
+    "overlay-kit": "^1.4.1",
     "react": "18.2.0",
     "react-datepicker": "^4.24.0",
     "react-dom": "18.2.0",

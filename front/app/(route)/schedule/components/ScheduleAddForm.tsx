@@ -19,13 +19,13 @@ import ScheduleTypeSelect from './ScheduleTypeSelect';
 import TimeSelect from './TimeSelect';
 
 export interface IScheduleAddFormProps {
-  isOpen: boolean;
-  onToggle: () => void;
   selectedDateFromCalender: Date;
   scheduleId?: number;
+  refetchTodos: () => void;
+  close: () => void;
 }
 
-const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleId }: IScheduleAddFormProps) => {
+const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, close }: IScheduleAddFormProps) => {
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
   const { mutate: patchScheduleAPI } = usePatchSingleScheduleAPI();
   const { mutate: patchRepeatMaintainScheduleAPI } = usePatchRepeatMaintainScheduleAPI();
@@ -60,16 +60,8 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
         alertType: loadedScheduleData.alertType || 'NONE',
         memo: loadedScheduleData.memo || '',
       });
-      if (loadedScheduleData.repeatId === null) {
-        console.log('repeatId가 null이야 없어없어');
-      } else {
-        console.log('repeatId 있는 스케줄이다!', loadedScheduleData.repeatId);
-      }
     } else if (!scheduleId) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        scheduleDate: formatDateToYMD(selectedDateFromCalender),
-      }));
+      resetFormData();
     }
   }, [scheduleId, loadedScheduleData, isLoading, isError, selectedDateFromCalender]);
 
@@ -102,31 +94,31 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
   };
 
   const handleDelete = () => {
-    console.log('삭제');
     if (loadedScheduleData.repeatId !== null) {
       setIsDeleteModalOpen(true);
     } else {
       deleteScheduleAPI({ scheduleId: scheduleId!, all: true });
-      onToggle();
+      close();
       resetFormData();
+      refetchTodos();
     }
   };
 
   const handleSave = () => {
-    console.log('저장');
     if (scheduleId !== undefined) {
       console.log('수정');
       const isRepeat = formData.repeatType !== 'NONE' || loadedScheduleData.repeatType !== 'NONE';
       if (isRepeat) {
-        console.log('반복 수정');
+        // console.log('반복 수정');
         setIsUpdateModalOpen(true);
       } else {
-        console.log('단건 수정');
+        // console.log('단건 수정');
         patchScheduleAPI(
           { scheduleId, data: formData },
           {
             onSuccess: () => {
-              onToggle();
+              close();
+              refetchTodos();
             },
           },
         );
@@ -134,7 +126,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
     } else {
       postScheduleAPI(formData, {
         onSuccess: () => {
-          onToggle();
+          close();
           resetFormData();
         },
       });
@@ -155,7 +147,6 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
 
   return (
     <>
-      {isOpen && <Overlay onClick={onToggle} />}
       {isUpdateModalOpen && (
         <RadioModal
           title='반복 스케줄 수정'
@@ -171,7 +162,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
                 { scheduleId, data: formData },
                 {
                   onSuccess: () => {
-                    onToggle();
+                    close();
                   },
                 },
               );
@@ -181,7 +172,7 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
                 { scheduleId, data: formData },
                 {
                   onSuccess: () => {
-                    onToggle();
+                    close();
                   },
                 },
               );
@@ -206,14 +197,14 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
             } else if (key === 'all') {
               deleteScheduleAPI({ scheduleId, all: true });
             }
-            onToggle();
+            close();
             resetFormData();
           }}
           isOpen={isDeleteModalOpen}
           setOpen={setIsDeleteModalOpen}
         />
       )}
-      <ScheduleAddWrap data-open={isOpen}>
+      <ScheduleAddWrap>
         <FormWrap
           method='POST'
           onSubmit={(e) => {
@@ -236,23 +227,13 @@ const ScheduleAddForm = ({ isOpen, onToggle, selectedDateFromCalender, scheduleI
             </Button>
           </ButtonGroupWrap>
         </FormWrap>
-        <CloseButton onClick={onToggle}>
+        <CloseButton onClick={close}>
           <Image src='/svgs/close_grey.svg' alt='닫기' width={24} height={24} />
         </CloseButton>
       </ScheduleAddWrap>
     </>
   );
 };
-
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-`;
 
 const ScheduleAddWrap = styled.main`
   padding: 37px 0 61px;
@@ -261,19 +242,7 @@ const ScheduleAddWrap = styled.main`
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border: 1px solid #e6e6e6;
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  right: 50%;
   background: white;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  transition: transform 0.3s ease-out;
-  transform: translateX(-50%) translateY(100%);
-  &[data-open='true'] {
-    transform: translateX(-50%);
-  }
-  z-index: 1000;
 
   @media (max-height: 740px) {
     padding: 20px 0 14px;
