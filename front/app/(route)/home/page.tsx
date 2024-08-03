@@ -1,4 +1,5 @@
 'use client';
+
 import MateList from '@/app/(route)/home/components/MateList';
 import ReportCard from '@/app/(route)/home/components/ReportCard';
 import UserProfile from '@/app/(route)/home/components/UserProfile';
@@ -25,19 +26,18 @@ const fetchHomeData = async (): Promise<IHomeData> => {
   }
 };
 
-const Page = () => {
+const HomePage = () => {
   const router = useRouter();
   const { data, isLoading, isError } = useQuery<IHomeData>('homeData', fetchHomeData);
   const [mates, setMates] = useRecoilState(mateState);
   const [dog, setDog] = useRecoilState(dogState);
-  //   console.log('home data:', data);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
     if (!accessToken) {
       router.push('/auth/login');
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (data && data.mateDto) {
@@ -45,6 +45,14 @@ const Page = () => {
       setDog(data.dogDetailResponse);
     }
   }, [data, setMates, setDog]);
+
+  if (isLoading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>; // 로딩 상태 표시
+  }
+
+  if (isError) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Error loading data</div>; // 에러 상태 표시
+  }
 
   const user: IDogDetail = data?.dogDetailResponse || {
     dogId: 0,
@@ -103,4 +111,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default Page;
+export default HomePage;

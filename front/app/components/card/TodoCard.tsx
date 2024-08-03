@@ -1,95 +1,100 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
-import { IScheduleItem } from '@/app/_types';
-import instance from '@/app/_utils/apis/interceptors';
+import { IMate, IScheduleItem } from '@/app/_types';
+import { getUserRoleSvgPath } from '@/app/constants/userRoleOptions';
+import { mateState } from '@/app/_states/mateState';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { scheduleTypeOptions } from '@/app/constants/scheduleTypeOptions';
+import { useGetTodoScheduleAPI, usePatchTodoScheduleAPI } from '@/app/_utils/apis';
+
+const getDefaultImgUrl = (userId: number, mates: IMate[]): string => {
+  const mate = mates.find((mate) => mate.userId === userId);
+  const role = mate ? mate.userRole : undefined;
+  return role ? getUserRoleSvgPath(role) : '';
+};
+
+const getScheduleTypeDetails = (scheduleType: string) => {
+  const type = scheduleTypeOptions.find((option) => option.value === scheduleType);
+  return type ? { label: type.label, icon: type.icon } : { label: scheduleType, icon: null };
+};
 
 interface ITodoCardProps {
+  year: number;
+  month: number;
+  day?: number;
   todoList: IScheduleItem[];
+  onTodoClick: (scheduleId: number) => void;
 }
 
-const TodoCard = ({ todoList }: ITodoCardProps) => {
-  const [todos, setTodos] = useState<IScheduleItem[]>([]);
+const TodoCard = ({ year, month, day, todoList, onTodoClick }: ITodoCardProps) => {
+  const [todos, setTodos] = useState<IScheduleItem[]>(todoList);
+  const { data: fetchedTodos, refetch } = useGetTodoScheduleAPI(year, month, day);
+  const mates = useRecoilValue(mateState);
+  const mutation = usePatchTodoScheduleAPI();
 
   useEffect(() => {
     setTodos(todoList);
-  }, [todoList]);
+  }, [todoList, setTodos]);
 
-  const handleCheckboxChange = async (scheduleId: number, currentIsActive: boolean) => {
-    const newIsActive = !currentIsActive;
-    const updatedTodos = todos.map((todo) =>
-      todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo
-    );
-    setTodos(updatedTodos);
-
-    try {
-      const response = await instance.patch(`/api/schedules/${scheduleId}/status?active=${newIsActive}`);
-      console.log('상태 response', response);
-
-      if (!response.data.success) {
-        throw new Error('서버 응답 에러');
-      }
-    } catch (error) {
-      console.error('스케줄 수정 에러', error);
-      // 에러가 발생하면 상태를 되돌림
-      const revertedTodos = todos.map((todo) =>
-        todo.scheduleId === scheduleId ? { ...todo, isActive: currentIsActive } : todo
-      );
-      setTodos(revertedTodos);
+  useEffect(() => {
+    if (fetchedTodos) {
+      setTodos(fetchedTodos);
     }
+  }, [fetchedTodos, setTodos]);
+
+  useEffect(() => {
+    if (fetchedTodos) {
+      setTodos(fetchedTodos);
+    }
+  }, [fetchedTodos, setTodos]);
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, scheduleId: number, currentIsActive: boolean) => {
+    e.stopPropagation();
+    const newIsActive = !currentIsActive;
+    setTodos((prevTodos) => prevTodos.map((todo) => (todo.scheduleId === scheduleId ? { ...todo, isActive: newIsActive } : todo)));
+    mutation.mutate(
+      { scheduleId, newIsActive },
+      {
+        onSuccess: () => {
+          refetch();
+        },
+      },
+    );
   };
 
   const activeTodos = todos.filter((todo) => todo.isActive);
   const inactiveTodos = todos.filter((todo) => !todo.isActive);
 
+  const renderTodoList = (todos: IScheduleItem[], title: string) => (
+    <TodoListWrapper>
+      <CardTitle>{title}</CardTitle>
+      {todos.map((todo, index) => {
+        const { label, icon } = getScheduleTypeDetails(todo.scheduleType);
+        return (
+          <TodoItemWrapper key={index}>
+            <Checkbox checked={!!todo.isActive} onChange={(e) => handleCheckboxChange(e, todo.scheduleId, todo.isActive)} />
+            <TodoItem onClick={() => onTodoClick(todo.scheduleId)}>
+              <TodoIcon>{icon}</TodoIcon>
+              <TodoText data-active={todo.isActive}>{label}</TodoText>
+              <MateImgWrapper>
+                {todo.mates.map((mateId, mateIndex) => (
+                  <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={getDefaultImgUrl(mateId, mates)} />
+                ))}
+              </MateImgWrapper>
+            </TodoItem>
+          </TodoItemWrapper>
+        );
+      })}
+    </TodoListWrapper>
+  );
+
   return (
     <Wrapper>
-      {activeTodos.length > 0 && (
-        <TodoListWrapper>
-          <CardTitle>완료</CardTitle>
-          {activeTodos.map((todo, index) => (
-            <TodoItem key={index}>
-              <Checkbox
-                type='checkbox'
-                checked
-                onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)}
-              />
-              <TodoText active={todo.isActive}>{todo.scheduleType}</TodoText>
-              <MateImgWrapper>
-                {todo.mates.map((mate, mateIndex) => (
-                  <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={mate.user_img} />
-                ))}
-              </MateImgWrapper>
-            </TodoItem>
-          ))}
-        </TodoListWrapper>
-      )}
-
-      {inactiveTodos.length > 0 && (
-        <TodoListWrapper>
-          <CardTitle>오늘</CardTitle>
-          {inactiveTodos.map((todo, index) => (
-            <TodoItem key={index}>
-              <Checkbox
-                type='checkbox'
-                checked={todo.isActive}
-                onChange={() => handleCheckboxChange(todo.scheduleId, todo.isActive)}
-              />
-              <TodoText active={!todo.isActive}>{todo.scheduleType}</TodoText>
-              <MateImgWrapper>
-                {todo.mates.map((mate, mateIndex) => (
-                  <MateImg alt='메이트 이미지' key={mateIndex} index={mateIndex} src={mate.user_img} />
-                ))}
-              </MateImgWrapper>
-            </TodoItem>
-          ))}
-        </TodoListWrapper>
-      )}
-
-      <RegisteredMate></RegisteredMate>
-      {activeTodos.length === 0 && inactiveTodos.length === 0 && (
-        <CenteredMessage>일정이 없습니다.</CenteredMessage>
-      )}
+      {inactiveTodos.length > 0 && renderTodoList(inactiveTodos, '오늘')}
+      {activeTodos.length > 0 && renderTodoList(activeTodos, '완료')}
+      {activeTodos.length === 0 && inactiveTodos.length === 0 && <CenteredMessage>일정이 없습니다.</CenteredMessage>}
     </Wrapper>
   );
 };
@@ -113,8 +118,7 @@ const TodoListWrapper = styled.div`
   background-color: #ffffff;
   margin: 20px;
   border-radius: 15px;
-  padding-top: 3px;
-  padding-left: 10px;
+  padding: 3px 10px 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -122,14 +126,21 @@ const TodoListWrapper = styled.div`
   min-height: 70px;
 `;
 
+const TodoItemWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+`;
+
 const TodoItem = styled.div`
   display: flex;
-  width: 340px;
+  width: 330px;
   height: 50px;
   border-radius: 15px;
   align-items: center;
-  margin-bottom: 10px;
   transition: background-color 0.3s ease;
+  margin-left: 4px;
   &:hover {
     background-color: #f0f0f0;
   }
@@ -138,24 +149,17 @@ const TodoItem = styled.div`
 const CardTitle = styled.div`
   color: ${({ theme }) => theme.colors.black80};
   font-size: 16px;
-  margin-top: 15px;
-  margin-left: 5px;
-  margin-bottom: 10px;
+  margin: 15px 0 10px 5px;
 `;
 
-const Checkbox = styled.input.attrs<{ checked?: boolean }>(({ checked }) => ({
-  checked: checked || false,
-}))`
-  margin: 10px;
+const Checkbox = styled.input.attrs({ type: 'checkbox' })`
   border: none;
   border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  appearance: none;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 24px;
+  height: 24px;
   border: 1.5px solid gainsboro;
-  border-radius: 50%;
+  appearance: none;
+  cursor: pointer;
   &:checked {
     border-color: transparent;
     background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
@@ -165,12 +169,21 @@ const Checkbox = styled.input.attrs<{ checked?: boolean }>(({ checked }) => ({
     background-color: #06acf4;
   }
 `;
+const TodoIcon = styled.div`
+  margin: 2px 8px 2px 4px;
+  display: inline-flex;
+`;
 
-const TodoText = styled.p<{ active: boolean }>`
+const TodoText = styled.p`
   font-weight: ${({ theme }) => theme.typo.regular};
   flex: 1;
   color: ${({ theme }) => theme.colors.black90};
-  text-decoration: ${({ active }) => (active ? 'line-through' : 'none')};
+  &[data-active='true'] {
+    text-decoration: line-through;
+  }
+  &[data-active='false'] {
+    text-decoration: none;
+  }
 `;
 
 const MateImgWrapper = styled.div`
@@ -181,18 +194,12 @@ const MateImgWrapper = styled.div`
   position: relative;
 `;
 
-const MateImg = styled(Image) <{ index: number }>`
+const MateImg = styled.img<{ index: number }>`
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.black70};
   position: absolute;
   left: ${(props) => props.index * 18}px;
-`;
-
-const RegisteredMate = styled.div`
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.black60};
 `;
 
 export default TodoCard;

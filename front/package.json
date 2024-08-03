@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ariakit/react": "^0.4.7",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.19",
@@ -24,6 +25,7 @@
     "debug": "^4.3.4",
     "material-icons": "^1.13.12",
     "next": "^14.2.5",
+    "overlay-kit": "^1.4.1",
     "react": "18.2.0",
     "react-datepicker": "^4.24.0",
     "react-dom": "18.2.0",

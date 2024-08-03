@@ -6,34 +6,52 @@ import Image from 'next/image';
 import { useState } from 'react';
 import styled from 'styled-components';
 import ScheduleAddForm from './components/ScheduleAddForm';
+import { useGetTodoScheduleAPI } from '@/app/_utils/apis';
+import { getYear, getMonth } from 'date-fns';
+import { overlay } from 'overlay-kit';
 
-const page = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const SchedulePage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
 
-  const onAddBtnClick = () => {
-    setIsOpen(true);
+  const year = getYear(selectedDate);
+  const month = getMonth(selectedDate) + 1;
+  const day = selectedDate.getDate();
+
+  const { data: monthData, refetch: refetchMonthData } = useGetTodoScheduleAPI(year, month);
+  const { data: dayData, refetch: refetchDayData } = useGetTodoScheduleAPI(year, month, day);
+
+  const refetchTodos = () => {
+    refetchMonthData();
+    refetchDayData();
   };
 
-  const onToggle = () => {
-    setIsOpen(!isOpen);
+  const openScheduleForm = (scheduleId: number | null) => {
+    setSelectedScheduleId(scheduleId);
+    overlay.open(({ isOpen, close }) => {
+      return (
+        <OverlayBackground data-open={isOpen}>
+          <ScheduleAddForm selectedDateFromCalender={selectedDate} scheduleId={scheduleId !== null ? scheduleId : undefined} refetchTodos={refetchTodos} close={close} />
+        </OverlayBackground>
+      );
+    });
   };
 
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
-    // console.log('날짜선택', selectedDate);
-  };
+  const onAddBtnClick = () => openScheduleForm(null);
+
+  const handleDateChange = (date: Date) => setSelectedDate(date);
+
+  const handleTodoClick = (scheduleId: number) => openScheduleForm(scheduleId);
 
   return (
     <>
       <TopNavigation />
       <Wrapper>
-        <Calendar selectedDate={selectedDate} onDateChange={handleDateChange} />
+        <Calendar selectedDate={selectedDate} onDateChange={handleDateChange} onTodoClick={handleTodoClick} monthData={monthData} dayData={dayData} refetchTodos={refetchTodos} />
         <AddBtnWrapper onClick={onAddBtnClick}>
           <Image src='/svgs/add_circle.svg' alt='add_circle' width={50} height={50} />
         </AddBtnWrapper>
       </Wrapper>
-      <ScheduleAddForm isOpen={isOpen} onToggle={onToggle} selectedDateFromCalender={selectedDate} />
       <BottomNavigation />
     </>
   );
@@ -62,4 +80,37 @@ const AddBtnWrapper = styled.div`
   cursor: pointer;
 `;
 
-export default page;
+const OverlayBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+
+  opacity: 0;
+  display: none;
+  &[data-open='true'] {
+    opacity: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+  & > main {
+    position: fixed;
+    left: 50%;
+    right: 50%;
+    bottom: 700px;
+    z-index: 1000;
+    transform: translateX(-50%) translateY(100%);
+    transition: transform 0.3s ease-out;
+
+    &[data-open='true'] {
+      transform: translateY(0);
+    }
+  }
+`;
+
+export default SchedulePage;

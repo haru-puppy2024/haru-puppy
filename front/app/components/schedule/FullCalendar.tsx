@@ -1,6 +1,5 @@
 'use client';
 
-import { getYear, getMonth } from 'date-fns';
 import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -13,8 +12,6 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import WeekCalendar from './WeekCalendar';
 import { IScheduleItem } from '@/app/_types';
-import axios from 'axios';
-import instance from '@/app/_utils/apis/interceptors';
 
 export interface ScheduleResponse {
   schedule: IScheduleItem[];
@@ -23,49 +20,43 @@ export interface ScheduleResponse {
 interface ICalendarProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
+  onTodoClick: (scheduleId: number) => void;
+  monthData?: IScheduleItem[];
+  dayData?: IScheduleItem[];
+  refetchTodos: () => void;
 }
 
-const currentYear = getYear(new Date());
+const currentYear = new Date().getFullYear();
 const YEARS = [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
 const MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
-const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
+const Calendar = ({ selectedDate, onDateChange, onTodoClick, monthData, dayData, refetchTodos }: ICalendarProps) => {
   const [date, setDate] = useState(new Date());
-  const [scheduleData, setScheduleData] = useState<IScheduleItem[]>([]);
   const [selectedDateTasks, setSelectedDateTasks] = useState<IScheduleItem[]>([]);
-  const [markedDates, setMarkedDates] = useState<Date[]>([new Date('2023-12-01'), new Date('2023-12-05'), new Date('2023-12-10')]);
-  const month = getMonth(date) + 1;
-  const year = getYear(date);
+  const [markedDates, setMarkedDates] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
-    const fetchScheduleData = async () => {
-      try {
-        const response = await instance.get(`/api/schedules?year=${year}&month=${month}`);
-        const data: IScheduleItem[] = response.data.data;
-        console.log('Month 스케줄 패칭', data);
+    if (monthData) {
+      const dateStrings = monthData.map((item: IScheduleItem) => {
+        const scheduleDate = new Date(item.scheduleDate || '');
+        return new Date(scheduleDate.getFullYear(), scheduleDate.getMonth(), scheduleDate.getDate()).toISOString().split('T')[0];
+      });
+      setMarkedDates(dateStrings);
+    }
+  }, [monthData]);
 
-        if (data) {
-          setScheduleData(data);
-          const dateObjects = data?.map((item: IScheduleItem) => new Date(item.scheduleDate || ''));
-          setMarkedDates(dateObjects);
-        } else {
-          setScheduleData([]);
-        }
-      } catch (error) {
-        // console.error('Month 스케줄 페칭 에러', error);
-        setScheduleData([]);
-      }
-    };
-
-    fetchScheduleData();
-  }, [date]);
+  useEffect(() => {
+    if (dayData) {
+      setSelectedDateTasks(dayData);
+    }
+  }, [dayData]);
 
   const renderDayContents = (dayOfMonth: number, date?: Date | null): React.ReactNode => {
     if (!date) return null;
 
-    const formattedDate = date.toISOString().split('T')[0];
-    const isDateMarked = markedDates.some((markedDate) => formattedDate === markedDate.toISOString().split('T')[0]);
+    const formattedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()).toISOString().split('T')[0];
+    const isDateMarked = markedDates.includes(formattedDate);
 
     return (
       <div>
@@ -75,20 +66,15 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
     );
   };
 
-  const handleDateClick = async (clickedDate: Date) => {
-    try {
-      const year = getYear(clickedDate);
-      const month = getMonth(clickedDate) + 1;
-      const day = clickedDate.getDate();
-      const response = await instance.get(`/api/schedules?year=${year}&month=${month}&day=${day}`);
-      const DayData = response.data.data;
+  const handleDateClick = (clickedDate: Date) => {
+    setDate(clickedDate);
+    onDateChange(clickedDate);
+    refetchTodos();
+  };
 
-      setSelectedDateTasks(DayData);
-      setDate(clickedDate);
-      onDateChange(clickedDate);
-    } catch (error) {
-      console.error('특정 날짜 스케줄 목록 조회 에러', error);
-    }
+  const handleMonthChange = (newDate: Date) => {
+    setDate(newDate);
+    refetchTodos();
   };
 
   useEffect(() => {
@@ -114,21 +100,35 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
               closeOnScroll={true}
               renderCustomHeader={({ date, changeYear, decreaseMonth, increaseMonth, prevMonthButtonDisabled, nextMonthButtonDisabled }) => (
                 <CustomHeaderContainer>
-                  <Button type='button' onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
+                  <Button
+                    type='button'
+                    onClick={() => {
+                      decreaseMonth();
+                      handleMonthChange(new Date(date.getFullYear(), date.getMonth() - 1, date.getDate()));
+                    }}
+                    disabled={prevMonthButtonDisabled}
+                  >
                     <ChevronLeftIcon />
                   </Button>
                   <div>
-                    <select value={getYear(date)} onChange={({ target: { value } }) => changeYear(+value)}>
+                    <select value={date.getFullYear()} onChange={({ target: { value } }) => changeYear(+value)}>
                       {YEARS.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
                       ))}
                     </select>
-                    <span>{MONTHS[getMonth(date)]}</span>
+                    <span>{MONTHS[date.getMonth()]}</span>
                   </div>
 
-                  <Button type='button' onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
+                  <Button
+                    type='button'
+                    onClick={() => {
+                      increaseMonth();
+                      handleMonthChange(new Date(date.getFullYear(), date.getMonth() + 1, date.getDate()));
+                    }}
+                    disabled={nextMonthButtonDisabled}
+                  >
                     <ChevronRightIcon />
                   </Button>
                 </CustomHeaderContainer>
@@ -138,12 +138,12 @@ const Calendar = ({ selectedDate, onDateChange }: ICalendarProps) => {
           </>
         ) : (
           <>
-            <WeekCalendar date={date} handleDateClick={handleDateClick} />
+            <WeekCalendar date={date} handleDateClick={handleDateClick} markedDates={markedDates} />
             <ArrowDropDownIcon onClick={() => setShowDatePicker(!showDatePicker)} fontSize='large' color='action' />
           </>
         )}
       </Wrapper>
-      <TodoCard todoList={selectedDateTasks} />
+      <TodoCard todoList={selectedDateTasks} year={date.getFullYear()} month={date.getMonth() + 1} day={date.getDate()} onTodoClick={onTodoClick} />
     </>
   );
 };

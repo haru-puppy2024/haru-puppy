@@ -11,7 +11,7 @@ const logoutRequest = async ({ accessToken }: { accessToken: string | null }) =>
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  console.log('로그아웃 성공', response.data);
+
   return response.data;
 };
 

@@ -16,7 +16,6 @@ const GenderSelect = ({ onValueChange, value }: DogGenderSelectorProps) => {
   }, [value]);
 
   const handleGenderClick = (gender: string) => {
-    console.log('gender', gender);
     setSelectedGender(gender);
     onValueChange(gender);
   };

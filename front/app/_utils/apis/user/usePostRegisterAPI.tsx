@@ -27,7 +27,6 @@ export const usePostRegisterAPI = () => {
 
       if (accessToken) {
         router.push('/');
-        console.log('가입 성공:', resData.userResponse);
       } else {
         console.error('accessToken이 응답에 포함되지 않았습니다.');
       }
@@ -59,7 +58,6 @@ export const usePostInviteRegisterAPI = () => {
 
       if (accessToken) {
         router.push('/');
-        console.log('가입 성공:', resData.userResponse);
       } else {
         console.error('accessToken이 응답에 포함되지 않았습니다.');
       }

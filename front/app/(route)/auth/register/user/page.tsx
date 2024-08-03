@@ -19,7 +19,7 @@ const UserRegisterPage = () => {
   const router = useRouter();
   const userData = useRecoilValue(userState);
   const isInvitedUser = userData.homeId !== '';
-  console.log(userData.homeId);
+
   const { mutate: inviteRegisterAPI } = usePostInviteRegisterAPI();
 
   const [formData, setFormData] = useState<IUser>({
@@ -41,14 +41,12 @@ const UserRegisterPage = () => {
   //2. role에 따라서 디폴트 이미지 바꿔주기
   //3. 이미 사용자가 업로드한 이미지가 있으면 디폴트 이미지가 되어선 안됨...
   const isDefaultImage = !formData.imgUrl?.startsWith('data');
-  console.log('폼데이터 img', formData.imgUrl);
   const handleSignupForm = (name: string, value: any) => {
     const newFormData = { ...formData, [name]: value };
     setFormData(newFormData);
 
     const formIncomplete = newFormData.nickName === '' || newFormData.userRole === '';
     setIsFormIncomplete(formIncomplete);
-    console.log(newFormData);
 
     if (name === 'userRole' && isDefaultImage) {
       const defaultImage = getUserRoleSvgPath(value as UserRoleValue);
@@ -65,7 +63,6 @@ const UserRegisterPage = () => {
     };
 
     if (isInvitedUser) {
-      console.log(userRequestData, userData.homeId);
       inviteRegisterAPI({ requestData: userRequestData, homeId: userData.homeId });
     } else {
       sessionStorage.setItem('userRequestData', JSON.stringify(userRequestData));

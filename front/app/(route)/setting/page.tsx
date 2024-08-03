@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRecoilValue } from 'recoil';
@@ -17,14 +17,24 @@ import { useTerminateAccount } from '@/app/_utils/apis/useTerminateAccount';
 import { useLogout } from '@/app/_utils/apis/user/useLogout';
 import { getImgUrlSrc, getUserRoleLabel, UserRoleValue } from '@/app/constants/userRoleOptions';
 
-const page = () => {
+const SettingPage = () => {
   const [isToggled, setIsToggled] = useState(false);
   const [isLogoutModal, setLogoutIsModal] = useState(false);
   const [isTerminateModal, setTerminateModal] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
-  const accessToken = localStorage.getItem('access_token');
   const userData = useRecoilValue(userState);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const token = localStorage.getItem('access_token');
+    setAccessToken(token);
+    if (!token) {
+      router.push('/auth/login');
+    }
+  }, [router]);
 
   const { mutate: notification } = useMutation((active: boolean) => fetchNotification(active, accessToken), {
     onSuccess: () => {
@@ -61,15 +71,19 @@ const page = () => {
   const { mutate: logoutMutation } = useLogout();
 
   const handleLogout = () => {
-    logoutMutation({ accessToken });
+    logoutMutation({ accessToken: accessToken || '' });
   };
 
   // 회원탈퇴
   const { mutate: terminateMutation } = useTerminateAccount();
 
   const handleTerminate = () => {
-    terminateMutation({ accessToken });
+    terminateMutation({ accessToken: accessToken || '' });
   };
+
+  if (!isClient) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>; // 로딩 상태 표시
+  }
 
   return (
     <>
@@ -106,4 +120,4 @@ const Wrapper = styled.div`
   margin-top: 50px;
 `;
 
-export default page;
+export default SettingPage;

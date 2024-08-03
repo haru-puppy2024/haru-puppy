@@ -26,7 +26,6 @@ const InvitePage = () => {
         console.error('클립보드 복사에 실패했습니다.', error);
       }
     } else {
-      console.log('이 브라우저는 클립보드 복사 기능을 지원하지 않습니다.');
       alert('이 브라우저는 클립보드 복사 기능을 지원하지 않습니다.');
     }
   };
@@ -35,11 +34,6 @@ const InvitePage = () => {
     const inviteUrl = `http://localhost:3000/auth/login?homeId=${homeId}`;
     copyToClipboard(inviteUrl);
   };
-
-  //   const shareLink = () => {
-  //     const inviteUrl = `https://haru-puppy-front.vercel.app/auth/login?homeId=${homeId}`;
-  //     copyToClipboard(inviteUrl);
-  //   };
 
   const handleCloseModal = () => {
     setIsModalVisible(false);

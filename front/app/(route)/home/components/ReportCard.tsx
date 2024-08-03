@@ -35,7 +35,6 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
       const response = await instance.delete('/api/schedules/complete', {
         data: { scheduleType: 'POO' },
       });
-      console.log('poo 삭제:', response.data);
 
       setTodayPooCount((prevCount) => Math.max(prevCount - 1, 0));
     } catch (error) {
@@ -48,7 +47,6 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
       const response = await instance.post('/api/schedules/complete', {
         scheduleType: 'POO',
       });
-      console.log('poo 추가:', response.data);
 
       setTodayPooCount((prevCount) => prevCount + 1);
     } catch (error) {

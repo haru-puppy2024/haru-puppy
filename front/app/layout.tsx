@@ -7,6 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import './globals.css';
 import StyledComponentsRegistry from './registry';
+import { OverlayProvider } from 'overlay-kit';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               />
             </head>
             <body className={Pretendard.className}>
-              <ThemeProvider theme={theme}>{children}</ThemeProvider>
+              <ThemeProvider theme={theme}>
+                <OverlayProvider>{children} </OverlayProvider>
+              </ThemeProvider>
             </body>
           </html>
         </StyledComponentsRegistry>
