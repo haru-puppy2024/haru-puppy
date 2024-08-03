@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -59,4 +60,7 @@ const StyledLink = styled(Link)`
   border-radius: 50%;
   padding: 15px 30px;
 `;
-export default KakaoCallbackPage;
+
+export default dynamic(() => Promise.resolve(KakaoCallbackPage), {
+  ssr: false,
+});
