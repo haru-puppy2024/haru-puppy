@@ -27,10 +27,8 @@ const MyProfilePage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const isDefaultImage = !formData.imgUrl?.startsWith('data');
-  console.log('수정 폼데이터 img', formData.imgUrl);
 
   const onSuccess = (userInfo: IUser) => {
-    console.log('프로필 업데이트 성공:', userInfo);
     setUserData((currentData: IUser) => ({
       ...currentData,
       nickName: userInfo.nickName,

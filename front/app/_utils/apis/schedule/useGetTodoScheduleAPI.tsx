@@ -10,9 +10,6 @@ const fetchTodos = async ({ queryKey }: QueryFunctionContext<[string, number, nu
 
 export const useGetTodoScheduleAPI = (year: number, month: number, day?: number) => {
   return useQuery(['todos', year, month, day], fetchTodos, {
-    onSuccess: (data) => {
-      console.log('Fetched todos:', data);
-    },
     onError: (error) => {
       console.error('Failed to fetch todos:', error);
     },

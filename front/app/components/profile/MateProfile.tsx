@@ -10,10 +10,6 @@ interface IMateProfileProps {
 }
 
 const MateProfile = ({ isClicked, onClick, mate, size }: IMateProfileProps) => {
-  const onMateDelete = () => {
-    console.log('mate 삭제');
-  };
-
   const userRoleLabel = mate.userRole ? getUserRoleLabel(mate.userRole) : null;
   const imgUrlSrc = getImgUrlSrc(mate.imgUrl, mate.userRole as UserRoleValue);
 

@@ -67,10 +67,6 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
 
   const initialDate = scheduleId && loadedScheduleData ? parseDateToYMD(loadedScheduleData.scheduleDate) : formatDateToYMD(selectedDateFromCalender);
 
-  //   console.log('selectedDateFromCalender:', selectedDateFromCalender);
-  //   console.log('initialDate:', initialDate);
-  console.log('formData:', formData);
-
   const handleSelectChange = (name: string, value: any) => {
     let formattedValue = value;
 
@@ -106,13 +102,10 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
 
   const handleSave = () => {
     if (scheduleId !== undefined) {
-      console.log('수정');
       const isRepeat = formData.repeatType !== 'NONE' || loadedScheduleData.repeatType !== 'NONE';
       if (isRepeat) {
-        // console.log('반복 수정');
         setIsUpdateModalOpen(true);
       } else {
-        // console.log('단건 수정');
         patchScheduleAPI(
           { scheduleId, data: formData },
           {

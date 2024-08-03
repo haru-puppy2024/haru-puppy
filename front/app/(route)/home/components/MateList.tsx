@@ -17,7 +17,6 @@ const MateList = ({ mates }: IMateListProps) => {
   const onEditClick = () => {
     setIsedit(!isEdit);
   };
-  //   console.log('isEdit', isEdit);
 
   return (
     <Wrapper>

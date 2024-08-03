@@ -17,8 +17,6 @@ export const useDeleteScheduleAPI = () => {
 
   return useMutation(deleteSchedule, {
     onSuccess: (data, scheduleId) => {
-      console.log('스케줄 삭제 성공!:', data);
-
       queryClient.invalidateQueries(['getSchedule', scheduleId]);
     },
     onError: (error) => {

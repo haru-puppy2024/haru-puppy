@@ -78,8 +78,6 @@ const DogProfilePage = () => {
     if (isDefaultImage) {
       setFormData((prevFormData) => ({ ...prevFormData, imgUrl: defaultImage }));
     }
-
-    console.log('업데이트 된 formData:', newFormData);
   };
 
   //필수 입력란 체크 boolean
@@ -89,7 +87,6 @@ const DogProfilePage = () => {
   const { mutate: updateDogProfileMutation } = updateDogProfileAPI({ accessToken, formData });
 
   const handleSignUpClick = () => {
-    console.log('Sending FormData:', formData);
     updateDogProfileMutation();
   };
 

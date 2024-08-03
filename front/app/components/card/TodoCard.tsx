@@ -67,8 +67,6 @@ const TodoCard = ({ year, month, day, todoList, onTodoClick }: ITodoCardProps) =
   const activeTodos = todos.filter((todo) => todo.isActive);
   const inactiveTodos = todos.filter((todo) => !todo.isActive);
 
-  console.log('이게 todos', todos);
-
   const renderTodoList = (todos: IScheduleItem[], title: string) => (
     <TodoListWrapper>
       <CardTitle>{title}</CardTitle>

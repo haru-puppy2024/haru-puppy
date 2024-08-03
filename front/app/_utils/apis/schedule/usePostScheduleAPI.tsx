@@ -15,7 +15,6 @@ export const usePostScheduleAPI = () => {
       console.log('resData:', resData);
 
       if (resData) {
-        // router.push('/schedule');
         console.log('스케줄 생성 성공!:', resData);
       } else {
         console.error('스케줄 생성 실패');

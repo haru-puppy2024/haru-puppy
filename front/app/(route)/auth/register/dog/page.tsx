@@ -79,8 +79,6 @@ const DogRegisterPage = () => {
       };
     });
 
-    console.log('업데이트 된 requestData:', newData);
-
     setRequiredField({
       ...requiredField,
       [name]: value !== '' && value !== null,
