@@ -14,12 +14,12 @@ const KakaoCallbackPage = () => {
     setIsClient(true);
   }, []);
 
+  const code = useCode();
+  const { isLoading } = useLoginQuery(code);
+
   if (!isClient) {
     return <Loading />;
   }
-
-  const code = useCode();
-  const { isLoading } = useLoginQuery(code);
 
   if (error) {
     return (
