@@ -16,11 +16,10 @@ import { getUserRoleSvgPath, UserRoleValue } from '@/app/constants/userRoleOptio
 import Loading from '@/app/components/loading/loading';
 
 const UserRegisterPage = () => {
-  const searchParams = useSearchParams();
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const userData = useRecoilValue(userState);
   const isInvitedUser = userData.homeId !== '';
-  const [isClient, setIsClient] = useState(false);
 
   const { mutate: inviteRegisterAPI } = usePostInviteRegisterAPI();
 
@@ -36,13 +35,14 @@ const UserRegisterPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isClient && searchParams) {
-      const email = searchParams.get('email');
-      if (email) {
-        setFormData((prevFormData) => ({ ...prevFormData, email }));
+    if (isClient) {
+      const searchParams = useSearchParams();
+      const emailParam = searchParams.get('email');
+      if (emailParam) {
+        setFormData((prevFormData) => ({ ...prevFormData, email: emailParam }));
       }
     }
-  }, [isClient, searchParams]);
+  }, [isClient]);
 
   const [isFormIncomplete, setIsFormIncomplete] = useState(true);
   //1. 디폴트 이미지인지..?

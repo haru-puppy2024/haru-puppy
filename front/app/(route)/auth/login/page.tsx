@@ -1,21 +1,20 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 import { userState } from '@/app/_states/userState';
 import ContainerLayout from '@/app/components/layout/layout';
 import { KAKAO_AUTH_URL } from '@/app/constants/api';
 import LogoImg from '@/public/svgs/logo.svg';
 import kakaoMsgIcon from '@/public/svgs/message-circle.svg';
-import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useRecoilState } from 'recoil';
-import styled from 'styled-components';
 import Loading from '@/app/components/loading/loading';
 
 const LoginPage = () => {
   const [isClient, setIsClient] = useState(false);
   const [, setUserData] = useRecoilState(userState);
   const router = useRouter();
-  const params = useSearchParams();
 
   useEffect(() => {
     setIsClient(true);
@@ -26,14 +25,17 @@ const LoginPage = () => {
   }
 
   useEffect(() => {
-    const homeId = params?.get('homeId') || null;
-    if (homeId) {
-      setUserData((prevUserData) => ({
-        ...prevUserData,
-        homeId: homeId,
-      }));
+    if (isClient) {
+      const searchParams = useSearchParams();
+      const homeId = searchParams.get('homeId') || null;
+      if (homeId) {
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          homeId: homeId,
+        }));
+      }
     }
-  }, [setUserData, params]);
+  }, [isClient, setUserData]);
 
   const onLoginClick = () => {
     router.push(KAKAO_AUTH_URL);
