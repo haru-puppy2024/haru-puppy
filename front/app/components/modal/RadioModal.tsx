@@ -38,17 +38,26 @@ export const RadioModal = ({ title, name, optionList, onSubmit, isOpen, setOpen 
             </label>
           ))}
         </fieldset>
-        <button
-          onClick={() => {
-            if (selectedOption) {
-              onSubmit(selectedOption);
+        <ButtonGroup>
+          <button
+            onClick={() => {
               setOpen(false);
-            }
-          }}
-          disabled={selectedOption === null}
-        >
-          확인
-        </button>
+            }}
+          >
+            취소
+          </button>
+          <button
+            onClick={() => {
+              if (selectedOption) {
+                onSubmit(selectedOption);
+                setOpen(false);
+              }
+            }}
+            disabled={selectedOption === null}
+          >
+            확인
+          </button>
+        </ButtonGroup>
       </RadioModalWrap>
     </>
   );
@@ -108,6 +117,13 @@ const RadioModalWrap = styled.div`
     white-space: nowrap;
     border-width: 0;
   }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
 
   & button {
     border-radius: 6px;
@@ -115,9 +131,8 @@ const RadioModalWrap = styled.div`
     font-weight: 400;
     padding: 4px 10px;
     background-color: #06acf4;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    bottom: 10px;
+    &:first-of-type {
+      background-color: #ccc;
+    }
   }
 `;
