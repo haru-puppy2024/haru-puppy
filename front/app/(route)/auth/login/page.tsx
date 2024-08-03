@@ -1,4 +1,5 @@
 'use client';
+import { Suspense, useEffect, useState } from 'react';
 import { userState } from '@/app/_states/userState';
 import ContainerLayout from '@/app/components/layout/layout';
 import { KAKAO_AUTH_URL } from '@/app/constants/api';
@@ -6,9 +7,9 @@ import LogoImg from '@/public/svgs/logo.svg';
 import kakaoMsgIcon from '@/public/svgs/message-circle.svg';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
+import Loading from '@/app/components/loading/loading';
 
 const LoginPage = () => {
   const [isClient, setIsClient] = useState(false);
@@ -40,13 +41,15 @@ const LoginPage = () => {
 
   return (
     <ContainerLayout>
-      <StyledMain>
-        <Image src={LogoImg} alt='하루강아지 로고' priority />
-        <LoginButtonWrap onClick={onLoginClick}>
-          <Image priority src={kakaoMsgIcon} alt='카카오 메세지' />
-          카카오톡 계정으로 시작
-        </LoginButtonWrap>
-      </StyledMain>
+      <Suspense fallback={<Loading />}>
+        <StyledMain>
+          <Image src={LogoImg} alt='하루강아지 로고' priority />
+          <LoginButtonWrap onClick={onLoginClick}>
+            <Image priority src={kakaoMsgIcon} alt='카카오 메세지' />
+            카카오톡 계정으로 시작
+          </LoginButtonWrap>
+        </StyledMain>
+      </Suspense>
     </ContainerLayout>
   );
 };

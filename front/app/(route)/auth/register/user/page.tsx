@@ -1,7 +1,6 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { userState } from '@/app/_states/userState';
@@ -36,16 +35,14 @@ const UserRegisterPage = () => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) {
-    return null;
-  }
-
   useEffect(() => {
-    const email = searchParams?.get('email');
-    if (email) {
-      setFormData((prevFormData) => ({ ...prevFormData, email }));
+    if (isClient && searchParams) {
+      const email = searchParams.get('email');
+      if (email) {
+        setFormData((prevFormData) => ({ ...prevFormData, email }));
+      }
     }
-  }, [searchParams]);
+  }, [isClient, searchParams]);
 
   const [isFormIncomplete, setIsFormIncomplete] = useState(true);
   //1. 디폴트 이미지인지..?
