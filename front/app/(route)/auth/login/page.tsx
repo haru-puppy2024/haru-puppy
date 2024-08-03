@@ -6,14 +6,23 @@ import LogoImg from '@/public/svgs/logo.svg';
 import kakaoMsgIcon from '@/public/svgs/message-circle.svg';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 const LoginPage = () => {
+  const [isClient, setIsClient] = useState(false);
   const [, setUserData] = useRecoilState(userState);
   const router = useRouter();
   const params = useSearchParams();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
 
   useEffect(() => {
     const homeId = params?.get('homeId') || null;
