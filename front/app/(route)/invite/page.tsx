@@ -31,7 +31,7 @@ const InvitePage = () => {
   };
 
   const shareLink = () => {
-    const inviteUrl = `http://localhost:3000/auth/login?homeId=${homeId}`;
+    const inviteUrl = `http://haru-puppy-frontend.vercel.app/auth/login?homeId=${homeId}`;
     copyToClipboard(inviteUrl);
   };
 
