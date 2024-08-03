@@ -1,4 +1,8 @@
 'use client';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 import { userState } from '@/app/_states/userState';
 import { IUser } from '@/app/_types';
 import { usePostInviteRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
@@ -9,10 +13,7 @@ import TopNavigation from '@/app/components/navigation/TopNavigation';
 import ProfileImg from '@/app/components/profile/ProfileImg';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
 import { getUserRoleSvgPath, UserRoleValue } from '@/app/constants/userRoleOptions';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import Loading from '@/app/components/loading/loading';
 
 const UserRegisterPage = () => {
   const searchParams = useSearchParams();
@@ -73,14 +74,16 @@ const UserRegisterPage = () => {
   return (
     <ContainerLayout>
       <TopNavigation />
-      <UserProfileFormWrap>
-        <ProfileImg onValueChange={(value) => handleSignupForm('imgUrl', value)} imgUrl={formData.imgUrl} />
-        <Input inputType={InputType.NickName} onInputValue={(value) => handleSignupForm('nickName', value)} />
-        <RoleDropdown onValueChange={(value) => handleSignupForm('userRole', value)} />
-        <Button onClick={handleSubmit} disabled={isFormIncomplete}>
-          가입하기
-        </Button>
-      </UserProfileFormWrap>
+      <Suspense fallback={<Loading />}>
+        <UserProfileFormWrap>
+          <ProfileImg onValueChange={(value) => handleSignupForm('imgUrl', value)} imgUrl={formData.imgUrl} />
+          <Input inputType={InputType.NickName} onInputValue={(value) => handleSignupForm('nickName', value)} />
+          <RoleDropdown onValueChange={(value) => handleSignupForm('userRole', value)} />
+          <Button onClick={handleSubmit} disabled={isFormIncomplete}>
+            가입하기
+          </Button>
+        </UserProfileFormWrap>
+      </Suspense>
     </ContainerLayout>
   );
 };

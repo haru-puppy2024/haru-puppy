@@ -1,20 +1,20 @@
 'use client';
-
+import { Suspense, useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 import { dogState } from '@/app/_states/dogState';
 import { IDogProfile } from '@/app/_types/user/Dog';
 import { updateDogProfileAPI } from '@/app/_utils/apis/useDogProfileApi';
+import dayjs from 'dayjs';
+import ContainerLayout from '@/app/components/layout/layout';
 import Button from '@/app/components/button/Button';
 import Input, { InputType } from '@/app/components/input/Input';
-import ContainerLayout from '@/app/components/layout/layout';
+
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
 import GenderSelect from '@/app/components/profile/GenderSelect';
 import ProfileImg from '@/app/components/profile/ProfileImg';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import styled from 'styled-components';
 
 const DogProfilePage = () => {
   const defaultImage = '/svgs/dog_profile.svg';
@@ -83,7 +83,11 @@ const DogProfilePage = () => {
   //필수 입력란 체크 boolean
   const areAllFieldsFilled = requiredField.name && requiredField.gender && requiredField.weight;
 
-  const accessToken = localStorage.getItem('access_token');
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  useEffect(() => {
+    setAccessToken(localStorage.getItem('access_token'));
+  }, []);
+
   const { mutate: updateDogProfileMutation } = updateDogProfileAPI({ accessToken, formData });
 
   const handleSignUpClick = () => {
@@ -94,16 +98,18 @@ const DogProfilePage = () => {
     <ContainerLayout>
       <TopNavigation />
       <ComponentsWrapper>
-        <ProfileImg onValueChange={(value) => handleSelectChange('imgUrl', value)} imgUrl={formData.imgUrl} />
-        <Input inputType={InputType.DogName} onInputValue={(value) => handleSelectChange('name', value)} value={formData.name} />
-        <GenderSelect onValueChange={(value) => handleSelectChange('gender', value)} value={formData.gender} />
-        <DateSelect onValueChange={(value) => handleSelectChange('birthday', value)} label={DateSelectLabel.Birthday} isRequired={false} initialDate={formData.birthday} />
-        <Input inputType={InputType.Weight} onInputValue={(value) => handleSelectChange('weight', value)} value={formData.weight} />
-        <ButtonWrapper>
-          <Button onClick={handleSignUpClick} disabled={!areAllFieldsFilled}>
-            저장하기
-          </Button>
-        </ButtonWrapper>
+        <Suspense fallback={<div>Loading...</div>}>
+          <ProfileImg onValueChange={(value) => handleSelectChange('imgUrl', value)} imgUrl={formData.imgUrl} />
+          <Input inputType={InputType.DogName} onInputValue={(value) => handleSelectChange('name', value)} value={formData.name} />
+          <GenderSelect onValueChange={(value) => handleSelectChange('gender', value)} value={formData.gender} />
+          <DateSelect onValueChange={(value) => handleSelectChange('birthday', value)} label={DateSelectLabel.Birthday} isRequired={false} initialDate={formData.birthday} />
+          <Input inputType={InputType.Weight} onInputValue={(value) => handleSelectChange('weight', value)} value={formData.weight} />
+          <ButtonWrapper>
+            <Button onClick={handleSignUpClick} disabled={!areAllFieldsFilled}>
+              저장하기
+            </Button>
+          </ButtonWrapper>
+        </Suspense>
       </ComponentsWrapper>
       <BottomNavigation />
     </ContainerLayout>

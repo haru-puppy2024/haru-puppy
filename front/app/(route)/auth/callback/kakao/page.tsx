@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCode, useLoginQuery } from '@/app/_utils/apis/usePostLoginApi';
+import Loading from '@/app/components/loading/loading';
 
-const Page = () => {
+const KakaoCallbackPage = () => {
   const code = useCode();
   const [error, setError] = useState<string>();
   const { isLoading } = useLoginQuery(code);
@@ -20,7 +21,7 @@ const Page = () => {
     );
   }
 
-  return <>{isLoading && <p>Loading...</p>}</>;
+  return <>{isLoading && <Loading />}</>;
 };
 
 const Wrapper = styled.div`
@@ -48,4 +49,4 @@ const StyledLink = styled(Link)`
   border-radius: 50%;
   padding: 15px 30px;
 `;
-export default Page;
+export default KakaoCallbackPage;

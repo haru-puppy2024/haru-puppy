@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
+import Loading from '@/app/components/loading/loading';
 
 const fetchHomeData = async (): Promise<IHomeData> => {
   try {
@@ -47,7 +48,7 @@ const HomePage = () => {
   }, [data, setMates, setDog]);
 
   if (isLoading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>; // 로딩 상태 표시
+    return <Loading />; // 로딩 상태 표시
   }
 
   if (isError) {
