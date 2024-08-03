@@ -1,6 +1,6 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import Image from 'next/image';
 import ContainerLayout from '@/app/components/layout/layout';
@@ -18,8 +18,8 @@ const WelcomePage = () => {
 
   useEffect(() => {
     if (isClient) {
-      const searchParams = useSearchParams();
-      const emailParam = searchParams?.get('email');
+      const searchParams = new URLSearchParams(window.location.search);
+      const emailParam = searchParams.get('email');
       setEmail(emailParam);
     }
   }, [isClient]);
