@@ -21,7 +21,7 @@ const WeekCalendar = ({ date, handleDateClick, markedDates }: WeekCalendarProps)
       <DayWrapper>
         {Array.from({ length: 7 }).map((_, index) => {
           const day = addDays(startOfWeek, index);
-          const formattedDate = format(day, 'yyyy-MM-dd');
+          const formattedDate = new Date(day.getFullYear(), day.getMonth(), day.getDate()).toISOString().split('T')[0];
           const isDateMarked = markedDates.includes(formattedDate);
           const dayOfWeek = KOREAN_DAY_NAMES[index];
 
