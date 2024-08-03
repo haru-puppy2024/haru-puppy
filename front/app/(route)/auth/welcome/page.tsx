@@ -1,5 +1,5 @@
 'use client';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 import Image from 'next/image';
@@ -7,10 +7,23 @@ import ContainerLayout from '@/app/components/layout/layout';
 import Button from '@/app/components/button/Button';
 import Loading from '@/app/components/loading/loading';
 
-const page = () => {
+const WelcomePage = () => {
+  const [isClient, setIsClient] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams?.get('email');
+
+  useEffect(() => {
+    setIsClient(true); // 클라이언트에서만 렌더링되도록 설정
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      const searchParams = useSearchParams();
+      const emailParam = searchParams?.get('email');
+      setEmail(emailParam);
+    }
+  }, [isClient]);
+
   const onBtnClick = () => {
     router.push(`/auth/register/user?email=${email}`);
   };
@@ -35,4 +48,4 @@ const Wrapper = styled.div`
   gap: 9.375rem;
 `;
 
-export default page;
+export default WelcomePage;

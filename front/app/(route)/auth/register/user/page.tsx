@@ -1,6 +1,7 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { userState } from '@/app/_states/userState';
@@ -20,6 +21,7 @@ const UserRegisterPage = () => {
   const router = useRouter();
   const userData = useRecoilValue(userState);
   const isInvitedUser = userData.homeId !== '';
+  const [isClient, setIsClient] = useState(false);
 
   const { mutate: inviteRegisterAPI } = usePostInviteRegisterAPI();
 
@@ -29,6 +31,14 @@ const UserRegisterPage = () => {
     nickName: '',
     userRole: '',
   });
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
 
   useEffect(() => {
     const email = searchParams?.get('email');
