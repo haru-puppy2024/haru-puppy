@@ -16,6 +16,7 @@ import { fetchNotification } from '@/app/_utils/apis/usePutAlarmApi';
 import { useTerminateAccount } from '@/app/_utils/apis/useTerminateAccount';
 import { useLogout } from '@/app/_utils/apis/user/useLogout';
 import { getImgUrlSrc, getUserRoleLabel, UserRoleValue } from '@/app/constants/userRoleOptions';
+import Loading from '@/app/components/loading/loading';
 
 const SettingPage = () => {
   const [isToggled, setIsToggled] = useState(false);
@@ -82,7 +83,7 @@ const SettingPage = () => {
   };
 
   if (!isClient) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>; // 로딩 상태 표시
+    return <Loading />; // 로딩 상태 표시
   }
 
   return (

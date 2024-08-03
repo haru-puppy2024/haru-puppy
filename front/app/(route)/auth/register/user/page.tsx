@@ -13,6 +13,7 @@ import TopNavigation from '@/app/components/navigation/TopNavigation';
 import ProfileImg from '@/app/components/profile/ProfileImg';
 import RoleDropdown from '@/app/components/profile/RoleDropdown';
 import { getUserRoleSvgPath, UserRoleValue } from '@/app/constants/userRoleOptions';
+import Loading from '@/app/components/loading/loading';
 
 const UserRegisterPage = () => {
   const searchParams = useSearchParams();
@@ -73,7 +74,7 @@ const UserRegisterPage = () => {
   return (
     <ContainerLayout>
       <TopNavigation />
-      <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>}>
+      <Suspense fallback={<Loading />}>
         <UserProfileFormWrap>
           <ProfileImg onValueChange={(value) => handleSignupForm('imgUrl', value)} imgUrl={formData.imgUrl} />
           <Input inputType={InputType.NickName} onInputValue={(value) => handleSignupForm('nickName', value)} />
