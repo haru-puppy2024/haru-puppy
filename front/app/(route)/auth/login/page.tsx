@@ -1,6 +1,6 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -20,13 +20,9 @@ const LoginPage = () => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) {
-    return null;
-  }
-
   useEffect(() => {
     if (isClient) {
-      const searchParams = useSearchParams();
+      const searchParams = new URLSearchParams(window.location.search);
       const homeId = searchParams.get('homeId') || null;
       if (homeId) {
         setUserData((prevUserData) => ({
@@ -40,6 +36,10 @@ const LoginPage = () => {
   const onLoginClick = () => {
     router.push(KAKAO_AUTH_URL);
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <ContainerLayout>

@@ -1,6 +1,6 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { userState } from '@/app/_states/userState';
@@ -36,7 +36,7 @@ const UserRegisterPage = () => {
 
   useEffect(() => {
     if (isClient) {
-      const searchParams = useSearchParams();
+      const searchParams = new URLSearchParams(window.location.search);
       const emailParam = searchParams.get('email');
       if (emailParam) {
         setFormData((prevFormData) => ({ ...prevFormData, email: emailParam }));
