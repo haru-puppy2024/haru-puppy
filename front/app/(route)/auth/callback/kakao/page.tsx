@@ -8,13 +8,17 @@ import Loading from '@/app/components/loading/loading';
 
 const KakaoCallbackPage = () => {
   const [isClient, setIsClient] = useState(false);
-  const code = useCode();
+  const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string>();
-  const { isLoading } = useLoginQuery(code);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (isClient) {
+      const codeFromHook = useCode();
+      setCode(codeFromHook);
+    }
+  }, [isClient]);
+
+  const { isLoading } = useLoginQuery(code);
 
   if (!isClient) {
     return null;
