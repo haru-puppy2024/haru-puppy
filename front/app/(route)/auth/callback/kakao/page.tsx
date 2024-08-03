@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,8 +7,18 @@ import { useCode, useLoginQuery } from '@/app/_utils/apis/usePostLoginApi';
 import Loading from '@/app/components/loading/loading';
 
 const KakaoCallbackPage = () => {
-  const code = useCode();
+  const [isClient, setIsClient] = useState(false);
   const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return <Loading />;
+  }
+
+  const code = useCode();
   const { isLoading } = useLoginQuery(code);
 
   if (error) {
