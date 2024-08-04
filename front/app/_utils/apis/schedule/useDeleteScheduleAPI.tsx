@@ -1,13 +1,12 @@
 import instance from '../interceptors';
 import { useMutation, useQueryClient } from 'react-query';
-import { useRouter } from 'next/navigation';
+
 interface DeleteScheduleParams {
   scheduleId: number | undefined;
   all: boolean;
 }
 
 export const useDeleteScheduleAPI = () => {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const deleteSchedule = async ({ scheduleId, all }: DeleteScheduleParams) => {
@@ -16,8 +15,16 @@ export const useDeleteScheduleAPI = () => {
   };
 
   return useMutation(deleteSchedule, {
-    onSuccess: (data, scheduleId) => {
+    onSuccess: (data, variables) => {
+      const { scheduleId, all } = variables;
       queryClient.invalidateQueries(['getSchedule', scheduleId]);
+
+      if (all) {
+        alert('반복 스케줄이 삭제되었습니다.');
+      } else {
+        alert('해당 스케줄이 삭제되었습니다.');
+      }
+      console.log(data);
     },
     onError: (error) => {
       console.error('스케줄 삭제 실패:', error);
