@@ -101,8 +101,9 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
   };
 
   const handleSave = () => {
+    //기존에 loadedScheduleData.repeatId이 무조건 있었던 경우. formData.repeatId는 있든 없든 상관없다.
     if (scheduleId !== undefined) {
-      const isRepeat = formData.repeatType !== 'NONE' || loadedScheduleData.repeatType !== 'NONE';
+      const isRepeat = loadedScheduleData.repeatType !== 'NONE';
       if (isRepeat) {
         setIsUpdateModalOpen(true);
       } else {
@@ -144,13 +145,14 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
         <RadioModal
           title='반복 스케줄 수정'
           optionList={[
-            { key: 'all', label: '이 스케줄만 수정' },
-            { key: 'only', label: '반복 스케줄 수정' },
+            { key: 'all', label: '반복 스케줄 수정' },
+            { key: 'only', label: '이 스케줄만 수정' },
           ]}
           name='selectRepeat'
           onSubmit={(key) => {
             if (scheduleId === undefined) return;
             if (key === 'only') {
+              //새로 repeatId도 설정한 경우
               patchScheduleAPI(
                 { scheduleId, data: formData },
                 {
