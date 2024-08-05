@@ -19,11 +19,12 @@ export const useDeleteScheduleAPI = () => {
       const { scheduleId, all } = variables;
       queryClient.invalidateQueries(['getSchedule', scheduleId]);
 
-      if (all) {
+      if (all === true) {
         alert('반복 스케줄이 삭제되었습니다.');
-      } else {
+      } else if (all === false) {
         alert('해당 스케줄이 삭제되었습니다.');
       }
+
       console.log(data);
     },
     onError: (error) => {

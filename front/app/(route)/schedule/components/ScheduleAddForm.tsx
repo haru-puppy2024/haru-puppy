@@ -93,7 +93,7 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
     if (loadedScheduleData.repeatId !== null) {
       setIsDeleteModalOpen(true);
     } else {
-      deleteScheduleAPI({ scheduleId: scheduleId!, all: true });
+      deleteScheduleAPI({ scheduleId: scheduleId!, all: false });
       close();
       resetFormData();
       refetchTodos();

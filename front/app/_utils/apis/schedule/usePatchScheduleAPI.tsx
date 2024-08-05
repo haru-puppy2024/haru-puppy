@@ -13,7 +13,7 @@ export const usePatchSingleScheduleAPI = () => {
   //2-3. 반복되지 않는 단일 스케줄 수정
   //scheduleType, scheduleDate, scheduleTime, mates, repeatType, alertType, memo 항목 변경 가능
   //2-6. 반복 스케줄 중 해당 스케줄만 수정 -
-  //scheduleType, scheduleDate, scheduleTime, mates, repeatType, alertType, memo 항목 변경 가능
+  //scheduleType, scheduleDate, scheduleTime, mates, repeatType(NONE으로), alertType, memo 항목 변경 가능
 
   const patchScheduleFormData = (scheduleId: number, data: IScheduleAddFormData) => {
     return instance.patch(`/api/schedules/${scheduleId}?all=false`, data);
