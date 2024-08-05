@@ -7,11 +7,14 @@ export const usePatchSingleScheduleAPI = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  //repeatId 없으면 단일 스케줄 -> 단일 스케줄로 수정 (2-3)
+  //repeatId 있으면 반복 스케줄 -> 단일 스케줄로 수정 (2-6)
+
   //2-3. 반복되지 않는 단일 스케줄 수정
   //scheduleType, scheduleDate, scheduleTime, mates, repeatType, alertType, memo 항목 변경 가능
   //2-6. 반복 스케줄 중 해당 스케줄만 수정 -
-  //scheduleType, scheduleDate, scheduleTime, mates, repeatType, alertType, memo 항목 변경 가능
-  //repeatId 없으면 2-3, repeatId 있으면 2-6
+  //scheduleType, scheduleDate, scheduleTime, mates, repeatType(NONE으로), alertType, memo 항목 변경 가능
+
   const patchScheduleFormData = (scheduleId: number, data: IScheduleAddFormData) => {
     return instance.patch(`/api/schedules/${scheduleId}?all=false`, data);
   };
@@ -24,7 +27,7 @@ export const usePatchSingleScheduleAPI = () => {
       if (resData) {
         // router.push('/schedule');
         queryClient.invalidateQueries(['getSchedule', scheduleId]);
-        console.log('스케줄 수정 성공!:', resData);
+        alert('해당 스케줄이 수정되었습니다.');
       } else {
         console.error('스케줄 수정 실패');
       }
@@ -49,7 +52,7 @@ export const usePatchRepeatMaintainScheduleAPI = () => {
   return useMutation(({ scheduleId, data }: { scheduleId: number; data: IScheduleAddFormData }) => patchScheduleFormData(scheduleId, data), {
     onSuccess: (res, { scheduleId }) => {
       queryClient.invalidateQueries(['getSchedule', scheduleId]);
-      console.log('반복 스케줄 수정 성공! (이후 스케줄도 변경/repeatId 수정하지 않은 경우):', res.data.data);
+      alert('반복 스케줄이 수정되었습니다.');
     },
     onError: (error) => {
       console.error('반복 스케줄 수정 실패:', error);

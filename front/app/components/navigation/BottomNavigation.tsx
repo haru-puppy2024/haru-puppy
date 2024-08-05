@@ -58,8 +58,6 @@ const BottomNavigationWrap = styled.nav`
   }
 
   .tab-button {
-    flex-grow: 1;
-    flex-shrink: 1;
     text-align: center;
     background: none;
     border: none;

@@ -12,10 +12,8 @@ export const usePostScheduleAPI = () => {
   return useMutation(postScheduleFormData, {
     onSuccess: (res) => {
       const resData = res.data.data;
-      console.log('resData:', resData);
-
       if (resData) {
-        console.log('스케줄 생성 성공!:', resData);
+        alert('스케줄이 생성되었습니다.');
       } else {
         console.error('스케줄 생성 실패');
       }
