@@ -21,29 +21,29 @@ const ProfileImg = ({ onValueChange, imgUrl }: IProfileImgProps) => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/x-icon'];
+  //   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     if (e.target.files && e.target.files.length > 0) {
+  //       const file = e.target.files[0];
+  //       const validImageTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/x-icon'];
 
-      if (!validImageTypes.includes(file.type)) {
-        alert('이미지 형식 파일만 등록할 수 있습니다. (jpeg, png, svg, webp 등)');
-        return;
-      }
+  //       if (!validImageTypes.includes(file.type)) {
+  //         alert('이미지 형식 파일만 등록할 수 있습니다. (jpeg, png, svg, webp 등)');
+  //         return;
+  //       }
 
-      const fileReader = new FileReader();
+  //       const fileReader = new FileReader();
 
-      fileReader.onload = (e: ProgressEvent<FileReader>) => {
-        if (typeof e.target?.result === 'string') {
-          setCurrentImgUrl(e.target.result);
-          onValueChange(e.target.result);
-          setIsModalOpen(false);
-        }
-      };
+  //       fileReader.onload = (e: ProgressEvent<FileReader>) => {
+  //         if (typeof e.target?.result === 'string') {
+  //           setCurrentImgUrl(e.target.result);
+  //           onValueChange(e.target.result);
+  //           setIsModalOpen(false);
+  //         }
+  //       };
 
-      fileReader.readAsDataURL(file);
-    }
-  };
+  //       fileReader.readAsDataURL(file);
+  //     }
+  //   };
 
   const handleDeleteImage = () => {
     setCurrentImgUrl(initialImgUrlRef.current); // 초기 이미지로 복원
@@ -61,11 +61,11 @@ const ProfileImg = ({ onValueChange, imgUrl }: IProfileImgProps) => {
   return (
     <Wrap>
       <ProfileImgWrap onClick={handleImageClick}>
-        <input type='file' ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
+        {/* <input type='file' ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} /> */}
         <ImgWrap>
           <StyledCurrentImage src={currentImgUrl} alt='프로필 이미지' />
         </ImgWrap>
-        <EditableIcon src='/svgs/editable.svg' alt='편집' width={30} height={30} />
+        {/* <EditableIcon src='/svgs/editable.svg' alt='편집' width={30} height={30} /> */}
       </ProfileImgWrap>
       {isModalOpen && (
         <ModalOverlay onClick={() => setIsModalOpen(false)}>
@@ -78,7 +78,11 @@ const ProfileImg = ({ onValueChange, imgUrl }: IProfileImgProps) => {
               <Button onClick={handleDeleteImage} width='120px' height='32px'>
                 삭제
               </Button>
-              <Button onClick={() => fileInputRef.current?.click()} width='120px' height='32px'>
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                width='120px'
+                height='32px'
+              >
                 새 이미지
               </Button>
             </ButtonGroup>
