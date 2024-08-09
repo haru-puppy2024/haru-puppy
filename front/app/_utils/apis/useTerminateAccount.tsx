@@ -5,7 +5,11 @@ import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import instance from './interceptors';
 
 // 회원 탈퇴 요청을 보내는 함수
-const terminateAccountRequest = async ({ accessToken }: { accessToken: string | null }) => {
+const terminateAccountRequest = async ({
+  accessToken,
+}: {
+  accessToken: string | null;
+}) => {
   const response = await instance.post(`/api/users/withdraw`, {
     headers: {
       'Content-Type': 'application/json',
@@ -25,6 +29,8 @@ export const useTerminateAccount = () => {
       localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
       localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
       localStorage.removeItem('userState');
+      localStorage.removeItem('dogState');
+      localStorage.removeItem('mateState');
       router.push('/auth/login');
     },
     onError: (error) => {

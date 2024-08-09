@@ -15,13 +15,16 @@ import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 import { fetchNotification } from '@/app/_utils/apis/usePutAlarmApi';
 import { useTerminateAccount } from '@/app/_utils/apis/useTerminateAccount';
 import { useLogout } from '@/app/_utils/apis/user/useLogout';
-import { getImgUrlSrc, getUserRoleLabel, UserRoleValue } from '@/app/constants/userRoleOptions';
+import {
+  getImgUrlSrc,
+  getUserRoleLabel,
+  UserRoleValue,
+} from '@/app/constants/userRoleOptions';
 import Loading from '@/app/components/loading/loading';
+import { overlay } from 'overlay-kit';
 
 const SettingPage = () => {
   const [isToggled, setIsToggled] = useState(false);
-  const [isLogoutModal, setLogoutIsModal] = useState(false);
-  const [isTerminateModal, setTerminateModal] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -37,14 +40,19 @@ const SettingPage = () => {
     }
   }, [router]);
 
-  const { mutate: notification } = useMutation((active: boolean) => fetchNotification(active, accessToken), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('notifications');
+  const { mutate: notification } = useMutation(
+    (active: boolean) => fetchNotification(active, accessToken),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('notifications');
+      },
     },
-  });
+  );
 
-  const defaultImg = userData.imgUrl && getImgUrlSrc(userData.imgUrl, userData.userRole as UserRoleValue);
-  const validImgUrl = userData.imgUrl && userData.imgUrl?.startsWith('data') ? userData.imgUrl : defaultImg;
+  const defaultImg =
+    userData.imgUrl && getImgUrlSrc(userData.imgUrl, userData.userRole as UserRoleValue);
+  const validImgUrl =
+    userData.imgUrl && userData.imgUrl?.startsWith('data') ? userData.imgUrl : defaultImg;
   const userRoleLabel = userData.userRole && getUserRoleLabel(userData.userRole);
 
   // 알림 토글 함수
@@ -60,12 +68,30 @@ const SettingPage = () => {
     }
   };
 
-  const toggleLogoutModal = () => {
-    setLogoutIsModal(!isLogoutModal);
+  const openLogoutModal = () => {
+    overlay.open(({ isOpen, close }) => (
+      <Modal
+        isOpen={isOpen}
+        onClose={close}
+        children='로그아웃하시겠습니까?'
+        btn1='취소'
+        btn2='로그아웃'
+        onBtn2Click={handleLogout}
+      />
+    ));
   };
 
-  const toggleTerminateModal = () => {
-    setTerminateModal(!isTerminateModal);
+  const openTerminateModal = () => {
+    overlay.open(({ isOpen, close }) => (
+      <Modal
+        isOpen={isOpen}
+        onClose={close}
+        children='정말 탈퇴 하시겠습니까?'
+        btn1='취소'
+        btn2='회원 탈퇴'
+        onBtn2Click={handleTerminate}
+      />
+    ));
   };
 
   // 로그아웃
@@ -90,15 +116,17 @@ const SettingPage = () => {
     <>
       <TopNavigation />
       <Wrapper>
-        <UpperUserProfile imgUrl={validImgUrl} nickName={userData.nickName} userRole={userRoleLabel} />
+        <UpperUserProfile
+          imgUrl={validImgUrl}
+          nickName={userData.nickName}
+          userRole={userRoleLabel}
+        />
         <MenuWrapper>
           <NavMenu title='알림 설정'>
             <ToggleSwitch onToggle={handelToggle} isToggled={isToggled} />
           </NavMenu>
-          <NavMenu title='로그아웃' onClick={toggleLogoutModal} />
-          {isLogoutModal && <Modal children='로그아웃하시겠습니까?' btn1='취소' btn2='로그아웃' onClose={toggleLogoutModal} onBtn2Click={handleLogout} />}
-          <NavMenu title='회원 탈퇴' onClick={toggleTerminateModal} />
-          {isTerminateModal && <Modal children='정말 탈퇴 하시겠습니까?' btn1='취소' btn2='회원 탈퇴' onClose={toggleTerminateModal} onBtn2Click={handleTerminate} />}
+          <NavMenu title='로그아웃' onClick={openLogoutModal} />
+          <NavMenu title='회원 탈퇴' onClick={openTerminateModal} />
           <NavMenu title='메이트 초대하기' onClick={handleMateInvite} />
         </MenuWrapper>
       </Wrapper>
