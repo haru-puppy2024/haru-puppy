@@ -3,7 +3,7 @@
 import { IRegisterData } from '@/app/_types';
 import { usePostRegisterAPI } from '@/app/_utils/apis/user/usePostRegisterAPI';
 import Button from '@/app/components/button/Button';
-import Input, { InputType } from '@/app/components/input/Input';
+import Input from '@/app/components/input/Input';
 import ContainerLayout from '@/app/components/layout/layout';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import DateSelect, { DateSelectLabel } from '@/app/components/profile/DateSelect';
@@ -13,103 +13,132 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
+import { valibotResolver } from '@hookform/resolvers/valibot';
+import * as v from 'valibot';
+
+const NewDogSchema = v.object({
+  imgUrl: v.string(),
+  name: v.pipe(v.string(), v.minLength(1, '강아지 이름을 입력해주세요.')),
+  gender: v.pipe(v.string(), v.minLength(1, '성별을 선택해주세요.')),
+  birthday: v.string(),
+  weight: v.pipe(
+    v.number(),
+    v.minValue(0.1, '올바른 체중을 입력해주세요.'),
+    v.transform((value) => {
+      const roundedValue = Number(value.toFixed(1));
+      if (roundedValue !== value) {
+        throw new Error('체중은 소수점 첫째자리까지만 입력 가능합니다.');
+      }
+      return roundedValue;
+    }),
+  ),
+});
 
 const DogRegisterPage = () => {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
   const { mutate: registerAPI } = usePostRegisterAPI();
-  const [requestData, setRequestData] = useState<IRegisterData>({
-    userRequest: {
-      imgUrl: '/svgs/mate_father.svg',
-    },
-    dogRequest: {
+  const [userRequest, setUserRequest] = useState<IRegisterData['userRequest'] | null>(
+    null,
+  );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setValue,
+    watch,
+  } = useForm<IRegisterData['dogRequest']>({
+    resolver: valibotResolver(NewDogSchema),
+    defaultValues: {
       name: '',
       gender: '',
       birthday: dayjs().format('YYYY-MM-DD'),
       weight: 0,
       imgUrl: '/svgs/dog_profile.svg',
     },
-    homeName: '',
+    mode: 'onChange',
   });
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      //1. 하나의페이지에서 각 단계를 상태로 만든다. 단계 넘어갈 때 페이지 이동 하지 않게 함~ *
-      //2. 하나의 페이지인데 단계를 넘어갈 때 query string을 바꾼다 user/register?step=human *
-      //3. url에 이전 단계의 데이터를 다 때려 넣는다 (새로고침은 하기 싫은데 세션스토리지도 사용하고 싶지 않을 떄..? )
-      //4. 세션스토리지는...넣으면 새로고침하면 정보가 사라지던데..
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
       const storedUserRequest = sessionStorage.getItem('userRequestData');
       if (storedUserRequest) {
-        setRequestData((prev) => ({
-          ...prev,
-          userRequest: JSON.parse(storedUserRequest),
-        }));
+        setUserRequest(JSON.parse(storedUserRequest));
       } else {
         router.push('/auth/register/user');
       }
     }
-  }, [router]);
+  }, [isClient, router]);
 
-  //필수입력 상태값
-  const [requiredField, setRequiredField] = useState<{ name: boolean; gender: boolean; weight: boolean }>({
-    name: false,
-    gender: false,
-    weight: false,
-  });
-
-  const handleSelectChange = (name: string, value: any) => {
+  const handleFormChange = (name: keyof IRegisterData['dogRequest'], value: any) => {
     if (name === 'birthday' && value instanceof Date) {
       value = dayjs(value).format('YYYY-MM-DD');
     }
-
-    const newData = {
-      ...requestData,
-      [name]: value,
-    };
-
-    setRequestData((prev) => {
-      const updatedHomeName = name === 'name' ? `${value}네 집` : prev.homeName;
-
-      return {
-        ...prev,
-        dogRequest: {
-          ...prev.dogRequest,
-          [name]: value,
-        },
-        homeName: updatedHomeName,
-      };
-    });
-
-    setRequiredField({
-      ...requiredField,
-      [name]: value !== '' && value !== null,
-    });
+    if (name === 'weight') {
+      value = Number(Number(value).toFixed(1));
+    }
+    setValue(name, value);
   };
 
-  //필수 입력란 체크 boolean
-  const areAllFieldsFilled = requiredField.name && requiredField.gender && requiredField.weight;
-
-  //signUp 요청 함수
-  const handleSignUpClick = () => {
-    if (requestData.userRequest) {
+  const onSubmit = (data: IRegisterData['dogRequest']) => {
+    if (userRequest) {
+      const requestData: IRegisterData = {
+        userRequest,
+        dogRequest: data,
+        homeName: `${data.name}네 집`,
+      };
+      console.log('Request data to be sent:', requestData);
       registerAPI(requestData);
     }
   };
 
+  if (!isClient) {
+    return null;
+  }
+
   return (
     <ContainerLayout>
       <TopNavigation />
-      <ComponentsWrapper>
-        <ProfileImg onValueChange={(value) => handleSelectChange('imgUrl', value)} imgUrl={requestData.dogRequest.imgUrl} />
-        <Input inputType={InputType.DogName} onInputValue={(value) => handleSelectChange('name', value)} />
-        <GenderSelect onValueChange={(value) => handleSelectChange('gender', value)} />
-        <DateSelect onValueChange={(value) => handleSelectChange('birthday', value)} label={DateSelectLabel.Birthday} isRequired={false} />
-        <Input inputType={InputType.Weight} onInputValue={(value) => handleSelectChange('weight', value)} />
+      <DogRegisterFormWrap onSubmit={handleSubmit(onSubmit)}>
+        <ProfileImg
+          onValueChange={(value) => handleFormChange('imgUrl', value)}
+          imgUrl={watch('imgUrl')}
+        />
+        <Input
+          {...register('name')}
+          label='강아지 이름'
+          error={errors.name?.message}
+          placeholder='이름을 입력하세요'
+        />
+        <GenderSelect
+          onValueChange={(value) => handleFormChange('gender', value)}
+          value={watch('gender')}
+        />
+        <DateSelect
+          onValueChange={(value) => handleFormChange('birthday', value)}
+          label={DateSelectLabel.Birthday}
+        />
+        <Input
+          {...register('weight', {
+            valueAsNumber: true,
+            onChange: (e) => handleFormChange('weight', e.target.value),
+          })}
+          label='체중'
+          error={errors.weight?.message}
+          placeholder='체중을 입력하세요'
+          type='number'
+          step='0.1'
+        />
         <ButtonWrapper>
-          <Button onClick={handleSignUpClick} disabled={!areAllFieldsFilled}>
-            가입 완료하기
-          </Button>
+          <Button disabled={!isValid}>가입 완료하기</Button>
         </ButtonWrapper>
-      </ComponentsWrapper>
+      </DogRegisterFormWrap>
     </ContainerLayout>
   );
 };
@@ -118,7 +147,7 @@ const ButtonWrapper = styled.div`
   margin-top: 40px;
 `;
 
-const ComponentsWrapper = styled.div`
+const DogRegisterFormWrap = styled.form`
   display: grid;
   grid-template-rows: repeat(4, minmax(20px, 1fr));
   grid-gap: 30px;

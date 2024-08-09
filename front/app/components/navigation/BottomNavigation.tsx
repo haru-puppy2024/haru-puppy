@@ -27,7 +27,11 @@ const BottomNavigation = () => {
       <TabProvider store={tabStore}>
         <TabList aria-label='Bottom Navigation'>
           {tabs.map((tab, index) => (
-            <Tab key={index} className='tab-button' onClick={() => handleTabChange(index)}>
+            <Tab
+              key={index}
+              className='tab-button'
+              onClick={() => handleTabChange(index)}
+            >
               <IconWrap>
                 {tab.icon}
                 <strong>{tab.title}</strong>
@@ -73,7 +77,7 @@ const IconWrap = styled.div`
   align-items: center;
   width: 84px;
   height: 60px;
-  color: ${({ theme }) => theme.colors.black80};
+  color: ${({ theme }) => theme.colors.black90};
 
   &:hover {
     color: ${({ theme }) => theme.colors.main};

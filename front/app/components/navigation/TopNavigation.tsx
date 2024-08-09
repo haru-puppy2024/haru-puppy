@@ -14,7 +14,11 @@ const TopNavigation = () => {
 
   const [hasNotification, setHasNotification] = useState(true);
 
-  const NotiComponent = hasNotification ? <Image src={NotificationUnreadIcon} alt='알림' /> : <NotificationsNoneRoundedIcon />;
+  const NotiComponent = hasNotification ? (
+    <Image src={NotificationUnreadIcon} alt='알림' />
+  ) : (
+    <NotificationsNoneRoundedIcon />
+  );
 
   const handleNotiClick = () => {
     setHasNotification(false);
@@ -76,7 +80,7 @@ const TopNavigation = () => {
       <button onClick={handleGoBack}>
         <ArrowBackRoundedIcon />
       </button>
-      <strong>{currentTitle}</strong>
+      <h1>{currentTitle}</h1>
       <button onClick={handleNotiClick}>{NotiComponent}</button>
     </TopNavigationWrap>
   );
@@ -98,7 +102,7 @@ const TopNavigationWrap = styled.nav`
   border-bottom: 0.5px solid ${({ theme }) => theme.colors.black60};
   background-color: #ffffff;
 
-  & > strong {
+  & > h1 {
     flex-grow: 1;
     text-align: center;
     font-size: 16px;

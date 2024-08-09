@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 interface DogGenderSelectorProps {
@@ -9,28 +9,30 @@ interface DogGenderSelectorProps {
 const GenderSelect = ({ onValueChange, value }: DogGenderSelectorProps) => {
   const genderOptions = ['MALE', 'FEMALE'];
 
-  const [selectedGender, setSelectedGender] = useState<string>('');
-
-  useEffect(() => {
-    value && setSelectedGender(value);
-  }, [value]);
-
-  const handleGenderClick = (gender: string) => {
-    setSelectedGender(gender);
-    onValueChange(gender);
+  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedValue = event.target.value;
+    onValueChange(selectedValue);
   };
 
   return (
     <Wrapper>
       <Title>
-        <p>성별</p>
-        <span>*</span>
+        <p id='gender-label'>성별</p>
       </Title>
       <GenderWrapper>
         {genderOptions.map((gender) => (
-          <GenderButton key={gender} selected={selectedGender === gender} onClick={() => handleGenderClick(gender)}>
-            {gender === 'FEMALE' ? '여아' : '남아'}
-          </GenderButton>
+          <Label key={gender} aria-labelledby='gender-label'>
+            <Input
+              type='radio'
+              name='gender'
+              value={gender}
+              checked={value === gender}
+              onChange={handleGenderChange}
+              aria-checked={value === gender}
+              aria-labelledby={`label-${gender}`}
+            />
+            <GenderButton>{gender === 'FEMALE' ? '여아' : '남아'}</GenderButton>
+          </Label>
         ))}
       </GenderWrapper>
     </Wrapper>
@@ -45,11 +47,8 @@ const Wrapper = styled.div`
 
 const Title = styled.div`
   display: flex;
-  margin-bottom: 5px;
-  & span {
-    margin-left: 8px;
-    color: ${({ theme }) => theme.colors.alert};
-  }
+  margin-bottom: 14px;
+
   & > p {
     font-size: 14px;
   }
@@ -61,19 +60,33 @@ const GenderWrapper = styled.div`
   align-items: center;
 `;
 
-const GenderButton = styled.div<{ selected: boolean }>`
-  width: 160px;
-  height: 38px;
-  margin: 5px;
+const Label = styled.label`
   display: flex;
-  font-size: 14px;
-  justify-content: center;
   align-items: center;
   cursor: pointer;
+  margin: 0 5px;
+`;
+
+const Input = styled.input`
+  display: none;
+
+  &:checked + span {
+    background-color: ${({ theme }) => theme.colors.main};
+    color: white;
+  }
+`;
+const GenderButton = styled.span`
+  width: 160px;
+  height: 38px;
+  display: flex;
+  font-size: 14px;
+  font-weight: 500;
+  justify-content: center;
+  align-items: center;
   border: 1px solid ${({ theme }) => theme.colors.main};
   border-radius: 10px;
-  background-color: ${({ selected, theme }) => (selected ? theme.colors.main : 'white')};
-  color: ${({ selected, theme }) => (selected ? 'white' : theme.colors.black90)};
+  background-color: white;
+  color: ${({ theme }) => theme.colors.black90};
   transition: background-color 0.3s ease;
 `;
 

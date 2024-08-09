@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import styled from 'styled-components';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
-import { formatDateToYMD, parseDateToYMD } from '@/app/_utils/formatDate';
+import { formatDateToYMD } from '@/app/_utils/formatDate';
 
 export enum DateSelectLabel {
   Birthday = '생일',
@@ -18,7 +18,12 @@ interface IDateSelectProps {
   initialDate?: string;
 }
 
-const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSelectProps) => {
+const DateSelect = ({
+  onValueChange,
+  label,
+  isRequired,
+  initialDate,
+}: IDateSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const width = label === DateSelectLabel.Birthday ? '340px' : '300px';
@@ -70,7 +75,16 @@ const DateSelect = ({ onValueChange, label, isRequired, initialDate }: IDateSele
         {selectedDate.toLocaleDateString()}
         <Image src='/svgs/cover-box.svg' alt='드롭다운 열기' width={20} height={20} />
       </div>
-      <DateDropdownWrap>{isOpen && <StyledDatePicker selected={selectedDate} onChange={handleDateSelect} inline className='react-datepicker-custom-b' />}</DateDropdownWrap>
+      <DateDropdownWrap>
+        {isOpen && (
+          <StyledDatePicker
+            selected={selectedDate}
+            onChange={handleDateSelect}
+            inline
+            className='react-datepicker-custom-b'
+          />
+        )}
+      </DateDropdownWrap>
     </DateSelectWrap>
   );
 };

@@ -6,11 +6,22 @@ interface IModalProps {
   btn1: string;
   btn2?: string;
   onClose: () => void;
+  isOpen: boolean;
   onBtn1Click?: () => void;
   onBtn2Click?: () => void;
 }
 
-const Modal = ({ children, btn1, btn2, onClose, onBtn1Click, onBtn2Click }: IModalProps) => {
+const Modal = ({
+  children,
+  btn1,
+  btn2,
+  onClose,
+  isOpen,
+  onBtn1Click,
+  onBtn2Click,
+}: IModalProps) => {
+  if (!isOpen) return null;
+
   const handleBtn1Click = () => {
     if (onBtn1Click) {
       onBtn1Click();
