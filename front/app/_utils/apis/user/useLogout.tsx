@@ -24,6 +24,8 @@ export const useLogout = () => {
       localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
       localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
       localStorage.removeItem('userState');
+      localStorage.removeItem('dogState');
+      localStorage.removeItem('mateState');
       router.push('/auth/login');
     },
     onError: (error) => {
