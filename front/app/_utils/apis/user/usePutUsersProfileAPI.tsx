@@ -3,7 +3,7 @@ import { useMutation } from 'react-query';
 import { IUser } from '@/app/_types';
 import { AxiosError } from 'axios';
 
-export const usePutUserProfileAPI = (onSuccess: (userInfo: IUser) => void, onError: (error: AxiosError) => void) => {
+export const usePutUserProfileAPI = () => {
   const updateProfile = async (formData: IUser) => {
     try {
       const response = await instance.put('/api/users/profile', formData);
@@ -14,5 +14,5 @@ export const usePutUserProfileAPI = (onSuccess: (userInfo: IUser) => void, onErr
     }
   };
 
-  return useMutation(updateProfile, { onSuccess: onSuccess, onError: onError });
+  return useMutation<IUser, AxiosError, IUser>(updateProfile);
 };

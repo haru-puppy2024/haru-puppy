@@ -8,20 +8,19 @@ import TopNavigation from '@/app/components/navigation/TopNavigation';
 import InviteImg from '@/public/svgs/invite.svg';
 import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
 import Image from 'next/image';
-import { useState } from 'react';
+import { overlay } from 'overlay-kit';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 const InvitePage = () => {
   const userData = useRecoilValue(userState);
   const homeId = userData.homeId;
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const copyToClipboard = async (text: string) => {
     if ('clipboard' in navigator) {
       try {
         await navigator.clipboard.writeText(text);
-        setIsModalVisible(true);
+        openModal();
       } catch (error) {
         console.error('클립보드 복사에 실패했습니다.', error);
       }
@@ -35,13 +34,19 @@ const InvitePage = () => {
     copyToClipboard(inviteUrl);
   };
 
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
+  const openModal = () => {
+    overlay.open(({ isOpen, close }) => (
+      <Modal
+        isOpen={isOpen}
+        onClose={close}
+        children='초대 링크가 클립보드에 복사되었습니다.'
+        btn1='확인'
+      />
+    ));
   };
 
   return (
     <ContainerLayout>
-      {isModalVisible && <Modal children='초대 링크가 클립보드에 복사되었습니다.' btn1='확인' onClose={handleCloseModal} />}
       <TopNavigation />
       <InvitePageWrap>
         <Image src={InviteImg} alt='초대 이미지' />
