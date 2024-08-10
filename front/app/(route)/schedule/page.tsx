@@ -18,8 +18,15 @@ const SchedulePage = () => {
   const month = getMonth(selectedDate) + 1;
   const day = selectedDate.getDate();
 
-  const { data: monthData, refetch: refetchMonthData } = useGetTodoScheduleAPI(year, month);
-  const { data: dayData, refetch: refetchDayData } = useGetTodoScheduleAPI(year, month, day);
+  const { data: monthData, refetch: refetchMonthData } = useGetTodoScheduleAPI(
+    year,
+    month,
+  );
+  const { data: dayData, refetch: refetchDayData } = useGetTodoScheduleAPI(
+    year,
+    month,
+    day,
+  );
 
   const refetchTodos = () => {
     refetchMonthData();
@@ -31,7 +38,12 @@ const SchedulePage = () => {
     overlay.open(({ isOpen, close }) => {
       return (
         <OverlayBackground data-open={isOpen}>
-          <ScheduleAddForm selectedDateFromCalender={selectedDate} scheduleId={scheduleId !== null ? scheduleId : undefined} refetchTodos={refetchTodos} close={close} />
+          <StyledScheduleAddForm
+            selectedDateFromCalender={selectedDate}
+            scheduleId={scheduleId !== null ? scheduleId : undefined}
+            refetchTodos={refetchTodos}
+            close={close}
+          />
         </OverlayBackground>
       );
     });
@@ -47,7 +59,14 @@ const SchedulePage = () => {
     <>
       <TopNavigation />
       <Wrapper>
-        <Calendar selectedDate={selectedDate} onDateChange={handleDateChange} onTodoClick={handleTodoClick} monthData={monthData} dayData={dayData} refetchTodos={refetchTodos} />
+        <Calendar
+          selectedDate={selectedDate}
+          onDateChange={handleDateChange}
+          onTodoClick={handleTodoClick}
+          monthData={monthData}
+          dayData={dayData}
+          refetchTodos={refetchTodos}
+        />
         <AddBtnWrapper onClick={onAddBtnClick}>
           <Image src='/svgs/add_circle.svg' alt='add_circle' width={50} height={50} />
         </AddBtnWrapper>
@@ -97,19 +116,20 @@ const OverlayBackground = styled.div`
     justify-content: center;
     align-items: flex-end;
   }
+`;
 
-  & > main {
-    position: fixed;
-    left: 50%;
-    right: 50%;
-    bottom: 700px;
-    z-index: 1000;
-    transform: translateX(-50%) translateY(100%);
-    transition: transform 0.3s ease-out;
+const StyledScheduleAddForm = styled(ScheduleAddForm)`
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 1000;
+  width: 100%;
+  max-width: 390px;
+  transform: translateX(-50%) translateY(100%);
+  transition: transform 0.3s ease-out;
 
-    &[data-open='true'] {
-      transform: translateY(0);
-    }
+  &[data-open='true'] {
+    transform: translateX(-50%) translateY(0);
   }
 `;
 

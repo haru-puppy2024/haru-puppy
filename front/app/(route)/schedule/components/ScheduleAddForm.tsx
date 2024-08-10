@@ -2,8 +2,19 @@
 
 import { mateState } from '@/app/_states/mateState';
 import { IScheduleAddFormData } from '@/app/_types';
-import { useDeleteScheduleAPI, useGetScheduleAPI, usePatchRepeatMaintainScheduleAPI, usePatchSingleScheduleAPI, usePostScheduleAPI } from '@/app/_utils/apis';
-import { formatDateToHM, formatDateToYMD, formatTimeToHM, parseDateToYMD } from '@/app/_utils/formatDate';
+import {
+  useDeleteScheduleAPI,
+  useGetScheduleAPI,
+  usePatchRepeatMaintainScheduleAPI,
+  usePatchSingleScheduleAPI,
+  usePostScheduleAPI,
+} from '@/app/_utils/apis';
+import {
+  formatDateToHM,
+  formatDateToYMD,
+  formatTimeToHM,
+  parseDateToYMD,
+} from '@/app/_utils/formatDate';
 import Button from '@/app/components/button/Button';
 import MemoTextArea from '@/app/components/input/MemoTextArea';
 import { RadioModal } from '@/app/components/modal/RadioModal';
@@ -25,7 +36,12 @@ export interface IScheduleAddFormProps {
   close: () => void;
 }
 
-const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, close }: IScheduleAddFormProps) => {
+const ScheduleAddForm = ({
+  selectedDateFromCalender,
+  scheduleId,
+  refetchTodos,
+  close,
+}: IScheduleAddFormProps) => {
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
   const { mutate: patchScheduleAPI } = usePatchSingleScheduleAPI();
   const { mutate: patchRepeatMaintainScheduleAPI } = usePatchRepeatMaintainScheduleAPI();
@@ -65,7 +81,10 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
     }
   }, [scheduleId, loadedScheduleData, isLoading, isError, selectedDateFromCalender]);
 
-  const initialDate = scheduleId && loadedScheduleData ? parseDateToYMD(loadedScheduleData.scheduleDate) : formatDateToYMD(selectedDateFromCalender);
+  const initialDate =
+    scheduleId && loadedScheduleData
+      ? parseDateToYMD(loadedScheduleData.scheduleDate)
+      : formatDateToYMD(selectedDateFromCalender);
 
   const handleSelectChange = (name: string, value: any) => {
     let formattedValue = value;
@@ -206,13 +225,34 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
             e.preventDefault();
           }}
         >
-          <ScheduleTypeSelect onValueChange={(value) => handleSelectChange('scheduleType', value)} initialValue={formData.scheduleType} />
-          <MateSelect onValueChange={(value) => handleSelectChange('mates', value)} mates={mates} initialSelectedMates={formData.mates} />
-          <DateSelect onValueChange={(value) => handleSelectChange('scheduleDate', value)} label={DateSelectLabel.ScheduleDay} isRequired={true} initialDate={initialDate} />
-          <TimeSelect onValueChange={(value) => handleSelectChange('scheduleTime', value)} initialValue={formData.scheduleTime} />
-          <RepeatSelect onValueChange={(value) => handleSelectChange('repeatType', value)} initialValue={formData.repeatType} />
-          <NotiSelect onValueChange={(value) => handleSelectChange('alertType', value)} />
-          <MemoTextArea onValueChange={(value) => handleSelectChange('memo', value)} initialValue={formData.memo} />
+          <ScheduleTypeSelect
+            onValueChange={(value) => handleSelectChange('scheduleType', value)}
+            initialValue={formData.scheduleType}
+          />
+          <MateSelect
+            onValueChange={(value) => handleSelectChange('mates', value)}
+            mates={mates}
+            initialSelectedMates={formData.mates}
+          />
+          <DateSelect
+            onValueChange={(value) => handleSelectChange('scheduleDate', value)}
+            label={DateSelectLabel.ScheduleDay}
+            isRequired={true}
+            initialDate={initialDate}
+          />
+          <TimeSelect
+            onValueChange={(value) => handleSelectChange('scheduleTime', value)}
+            initialValue={formData.scheduleTime}
+          />
+          <RepeatSelect
+            onValueChange={(value) => handleSelectChange('repeatType', value)}
+            initialValue={formData.repeatType}
+          />
+          {/* <NotiSelect onValueChange={(value) => handleSelectChange('alertType', value)} /> */}
+          <MemoTextArea
+            onValueChange={(value) => handleSelectChange('memo', value)}
+            initialValue={formData.memo}
+          />
           <ButtonGroupWrap>
             <Button onClick={handleDelete} width='135px' height='32px'>
               삭제
@@ -232,12 +272,14 @@ const ScheduleAddForm = ({ selectedDateFromCalender, scheduleId, refetchTodos, c
 
 const ScheduleAddWrap = styled.main`
   padding: 37px 0 61px;
-  width: 390px;
+  width: 100%;
+  max-width: 390px;
   height: 620px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border: 1px solid #e6e6e6;
   background: white;
+  position: relative;
 
   @media (max-height: 740px) {
     padding: 20px 0 14px;
@@ -259,6 +301,7 @@ const CloseButton = styled.button`
   top: 5px;
   right: 5px;
 `;
+
 const ButtonGroupWrap = styled.div`
   margin-top: 30px;
   & button:first-of-type {
