@@ -8,9 +8,11 @@ import NotiCard from './NotiCard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEventSource } from '@/app/_utils/apis/noti/useGetSubscribeNotificationAPI';
-import { INotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
+import { INotification } from '@/app/_types/noti/Noti';
+import { useGetSingleNotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
+import { useRouter } from 'next/navigation';
 
-const NOTIFICATION_DURATION = 50000; // 알림이 표시될 시간 (밀리초)
+const NOTIFICATION_DURATION = 5000;
 
 const NotificationManager: React.FC = () => {
   const notifications = useRecoilValue(notificationsState);
@@ -18,6 +20,8 @@ const NotificationManager: React.FC = () => {
   const isEnabled = useRecoilValue(eventSourceEnabledState);
   const { isEnabled: eventSourceIsEnabled } = useEventSource();
   const shownNotifications = useRef(new Set<number>());
+  const getSingleNotification = useGetSingleNotification();
+  const router = useRouter();
 
   const removeNotification = useCallback(
     (id: number) => {
@@ -25,6 +29,17 @@ const NotificationManager: React.FC = () => {
       shownNotifications.current.delete(id);
     },
     [setNotifications],
+  );
+
+  const handleNotificationClick = useCallback(
+    (notificationId: number) => {
+      getSingleNotification.mutate(notificationId, {
+        onSuccess: () => {
+          router.push('/noti');
+        },
+      });
+    },
+    [getSingleNotification, router],
   );
 
   const showNotification = useCallback(
@@ -40,18 +55,18 @@ const NotificationManager: React.FC = () => {
             notificationId={notification.id}
             scheduleType={notification.scheduleType}
             isRead={null}
-            message={notification.content}
+            content={notification.content}
             time={time}
-            onClose={() => removeNotification(notification.id)}
           />,
           {
             autoClose: NOTIFICATION_DURATION,
             onClose: () => removeNotification(notification.id),
+            onClick: () => handleNotificationClick(notification.id),
           },
         );
       }
     },
-    [removeNotification],
+    [removeNotification, handleNotificationClick],
   );
 
   useEffect(() => {

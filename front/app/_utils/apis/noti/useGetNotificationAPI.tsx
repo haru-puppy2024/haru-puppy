@@ -1,17 +1,6 @@
+import { INotification } from '@/app/_types/noti/Noti';
 import instance from '../interceptors';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-
-export interface INotification {
-  id: number;
-  content: string;
-  url: string;
-  isRead: boolean;
-  scheduleType: string;
-  notificationType: string;
-  sendDate: string;
-  time?: string;
-  message?: string;
-}
 
 // 전체 알림을 가져오는 훅
 export const useGetAllNotifications = () => {

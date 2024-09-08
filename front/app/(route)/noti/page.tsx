@@ -5,14 +5,9 @@ import TopNavigation from '@/app/components/navigation/TopNavigation';
 import NotiCardGroup from './components/NotiCardGroup';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { INotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
 import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 import React from 'react';
-
-interface ITransformedNotiData {
-  sendDate: string;
-  notifications: (INotification & { time: string })[];
-}
+import { INotification, ITransformedNotiData } from '@/app/_types/noti/Noti';
 
 const NotiPage = () => {
   const {

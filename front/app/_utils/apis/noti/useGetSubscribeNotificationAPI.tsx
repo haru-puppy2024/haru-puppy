@@ -3,15 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useQueryClient } from 'react-query';
 import { atom, useRecoilState, useSetRecoilState } from 'recoil';
 import { useCookies } from 'react-cookie';
-
-interface INotification {
-  id: number;
-  content: string;
-  url: string;
-  isRead: boolean;
-  notificationType: string;
-  scheduleType: string;
-}
+import { INotification } from '@/app/_types/noti/Noti';
 
 const EVENT_SOURCE_ENABLED_KEY = 'eventSourceEnabled';
 

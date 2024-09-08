@@ -10,7 +10,6 @@ interface INotiCardProps {
   content: string;
   time: string;
   isRead: boolean | null;
-  onClose?: () => void;
 }
 
 const NotiCard = ({
@@ -19,7 +18,6 @@ const NotiCard = ({
   time,
   content,
   isRead,
-  onClose,
 }: INotiCardProps) => {
   const mutation = useGetSingleNotification();
 
