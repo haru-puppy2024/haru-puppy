@@ -1,5 +1,5 @@
 import { EventSourcePolyfill as EventSource } from 'event-source-polyfill';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { atom, useRecoilState, useSetRecoilState } from 'recoil';
 import { useCookies } from 'react-cookie';
@@ -37,6 +37,15 @@ export const useEventSource = () => {
   const setNotifications = useSetRecoilState(notificationsState);
   const eventSourceRef = useRef<EventSource | null>(null);
   const [cookies] = useCookies(['access_token']);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const storedValue = localStorage.getItem(EVENT_SOURCE_ENABLED_KEY);
+    if (storedValue !== null) {
+      setIsEnabled(storedValue === 'true');
+    }
+  }, []);
 
   const closeEventSource = useCallback(() => {
     if (eventSourceRef.current) {
@@ -86,7 +95,7 @@ export const useEventSource = () => {
   }, [cookies.access_token, closeEventSource, setNotifications]);
 
   useEffect(() => {
-    if (isEnabled && cookies.access_token) {
+    if (isClient && isEnabled && cookies.access_token) {
       createAndConnectEventSource();
     } else if (!isEnabled) {
       //   console.log('isEnabled is false, calling closeEventSource');
@@ -94,7 +103,13 @@ export const useEventSource = () => {
     } else {
       //   console.log('Conditions not met for createAndConnectEventSource');
     }
-  }, [isEnabled, cookies.access_token, createAndConnectEventSource, closeEventSource]);
+  }, [
+    isClient,
+    isEnabled,
+    cookies.access_token,
+    createAndConnectEventSource,
+    closeEventSource,
+  ]);
 
   const toggleEventSource = useCallback(() => {
     setIsEnabled((prev) => {
