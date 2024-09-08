@@ -4,19 +4,9 @@ import { useQueryClient } from 'react-query';
 import { atom, useRecoilState, useSetRecoilState } from 'recoil';
 import { useCookies } from 'react-cookie';
 import { INotification } from '@/app/_types/noti/Noti';
+import { eventSourceEnabledState, notificationsState } from '@/app/_states/notiState';
 
 const EVENT_SOURCE_ENABLED_KEY = 'eventSourceEnabled';
-
-// Recoil atoms for global state
-export const notificationsState = atom<INotification[]>({
-  key: 'notificationsState',
-  default: [],
-});
-
-export const eventSourceEnabledState = atom<boolean>({
-  key: 'eventSourceEnabledState',
-  default: localStorage.getItem(EVENT_SOURCE_ENABLED_KEY) === 'true',
-});
 
 const createEventSource = (accessToken: string) => {
   return new EventSource(
@@ -37,15 +27,13 @@ export const useEventSource = () => {
   const setNotifications = useSetRecoilState(notificationsState);
   const eventSourceRef = useRef<EventSource | null>(null);
   const [cookies] = useCookies(['access_token']);
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-    const storedValue = localStorage.getItem(EVENT_SOURCE_ENABLED_KEY);
-    if (storedValue !== null) {
+    if (typeof window !== 'undefined') {
+      const storedValue = localStorage.getItem(EVENT_SOURCE_ENABLED_KEY);
       setIsEnabled(storedValue === 'true');
     }
-  }, []);
+  }, [setIsEnabled]);
 
   const closeEventSource = useCallback(() => {
     if (eventSourceRef.current) {
@@ -95,7 +83,7 @@ export const useEventSource = () => {
   }, [cookies.access_token, closeEventSource, setNotifications]);
 
   useEffect(() => {
-    if (isClient && isEnabled && cookies.access_token) {
+    if (isEnabled && cookies.access_token) {
       createAndConnectEventSource();
     } else if (!isEnabled) {
       //   console.log('isEnabled is false, calling closeEventSource');
@@ -103,13 +91,7 @@ export const useEventSource = () => {
     } else {
       //   console.log('Conditions not met for createAndConnectEventSource');
     }
-  }, [
-    isClient,
-    isEnabled,
-    cookies.access_token,
-    createAndConnectEventSource,
-    closeEventSource,
-  ]);
+  }, [isEnabled, cookies.access_token, createAndConnectEventSource, closeEventSource]);
 
   const toggleEventSource = useCallback(() => {
     setIsEnabled((prev) => {
