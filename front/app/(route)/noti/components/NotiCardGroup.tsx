@@ -1,63 +1,53 @@
-"use client"
+'use client';
 
-import styled from "styled-components";
-import { scheduleTypeOptions } from '../../../constants/scheduleTypeOptions';
-import NotiCard from "./NotiCard";
-
-interface INotiData {
-    sendDate: string;
-    notifications: {
-      time: string;
-      message: string;
-    }[];
-}
-
+import styled from 'styled-components';
+import NotiCard from './NotiCard';
+import { INotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
 interface INotiCardGroupProps {
-    notiData: INotiData;
+  sendDate: string;
+  notiData: (INotification & { time: string })[];
 }
 
-const NotiCardGroup = ({notiData} :INotiCardGroupProps) => {
- 
-   return (
-   <NotiCardGroupWrap>
-     <strong>{notiData.sendDate}</strong>
-     <div>
-     {notiData.notifications.map((noti, index) => {
-          const matchingOption = scheduleTypeOptions.find(option => noti.message.includes(option.label));
-          const icon = matchingOption?.icon || null;
+const NotiCardGroup = ({ sendDate, notiData }: INotiCardGroupProps) => {
+  return (
+    <NotiCardGroupWrap>
+      <strong>{sendDate}</strong>
+      <div>
+        {notiData.map((noti, index) => {
           return (
             <NotiCard
-              key={index}
+              key={noti.id}
               time={noti.time}
-              icon={icon}
-              message={noti.message}
+              scheduleType={noti.scheduleType}
+              content={noti.content}
+              notificationId={noti.id}
+              isRead={noti.isRead}
             />
           );
         })}
-     </div>
+      </div>
     </NotiCardGroupWrap>
-   )
+  );
 };
 
 const NotiCardGroupWrap = styled.div`
-    width: 340px;
-    height: fit-content;
+  width: 340px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 auto;
+  & > div {
     display: flex;
     flex-direction: column;
     gap: 16px;
+  }
+  & > strong {
+    color: ${({ theme }) => theme.colors.black80};
+    font-weight: ${({ theme }) => theme.typo.semibold};
+    font-size: 16px;
+  }
+`;
 
-    & > div {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    & > strong {
-        color: ${({ theme }) => theme.colors.black80};
-        font-weight: ${({ theme }) => theme.typo.semibold};
-        font-size: 16px;
-    }
-`
-
-  export default NotiCardGroup;
-  
+export default NotiCardGroup;

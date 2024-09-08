@@ -17,7 +17,6 @@ export const useDeleteScheduleAPI = () => {
   return useMutation(deleteSchedule, {
     onSuccess: (data, variables) => {
       const { scheduleId, all } = variables;
-      queryClient.invalidateQueries(['getSchedule', scheduleId]);
 
       if (all === true) {
         alert('반복 스케줄이 삭제되었습니다.');

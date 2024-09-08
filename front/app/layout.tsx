@@ -8,6 +8,18 @@ import { ThemeProvider } from 'styled-components';
 import './globals.css';
 import StyledComponentsRegistry from './registry';
 import { OverlayProvider } from 'overlay-kit';
+import NotificationManager from './(route)/noti/components/NotiManager';
+import { useGetAllNotifications } from '@/app/_utils/apis/noti/useGetNotificationAPI';
+
+function NotificationInitializer() {
+  const { data: allNotifications, isLoading, isError } = useGetAllNotifications();
+
+  if (isError) {
+    console.error('Failed to fetch notifications');
+  }
+
+  return null;
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -31,7 +43,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body className={Pretendard.className}>
               <ThemeProvider theme={theme}>
-                <OverlayProvider>{children} </OverlayProvider>
+                <OverlayProvider>
+                  <NotificationInitializer />
+                  {children} <NotificationManager />
+                </OverlayProvider>
               </ThemeProvider>
             </body>
           </html>

@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { userState } from '@/app/_states/userState';
 import { BACKEND_REDIRECT_URL, LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import axios from 'axios';
+import { useCookies } from 'react-cookie';
 
 export const fetcher = async (code: string | null) => {
   if (!code) return null;
@@ -14,6 +15,7 @@ export const fetcher = async (code: string | null) => {
 export const useLoginQuery = (code: string | null) => {
   const router = useRouter();
   const [, setUser] = useRecoilState(userState);
+  const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
 
   return useQuery(['login'], () => fetcher(code), {
     enabled: !!code,
@@ -25,8 +27,18 @@ export const useLoginQuery = (code: string | null) => {
         const accessToken = responseData.accessToken;
         const refreshToken = responseData.refreshToken;
 
-        localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+        // 쿠키에 토큰 저장
+        setCookie('access_token', accessToken, {
+          path: '/',
+          //   secure: true,
+          sameSite: 'strict',
+        });
+        setCookie('refresh_token', refreshToken, {
+          path: '/',
+          //   secure: true,
+          sameSite: 'strict',
+        });
+
         if (setUser) {
           setUser(responseData.response.registeredUser);
         }

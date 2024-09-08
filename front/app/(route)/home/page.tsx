@@ -13,6 +13,7 @@ import BottomNavigation from '@/app/components/navigation/BottomNavigation';
 import TopNavigation from '@/app/components/navigation/TopNavigation';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -32,13 +33,14 @@ const HomePage = () => {
   const { data, isLoading, isError } = useQuery<IHomeData>('homeData', fetchHomeData);
   const [mates, setMates] = useRecoilState(mateState);
   const [dog, setDog] = useRecoilState(dogState);
+  const [cookies] = useCookies(['access_token']);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = cookies['access_token'];
     if (!accessToken) {
       router.push('/auth/login');
     }
-  }, [router]);
+  }, [cookies, router]);
 
   useEffect(() => {
     if (data && data.mateDto) {
@@ -52,7 +54,18 @@ const HomePage = () => {
   }
 
   if (isError) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Error loading data</div>; // 에러 상태 표시
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        Error loading data
+      </div>
+    ); // 에러 상태 표시
   }
 
   const user: IDogDetail = data?.dogDetailResponse || {

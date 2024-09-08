@@ -42,11 +42,18 @@ const ScheduleAddForm = ({
   refetchTodos,
   close,
 }: IScheduleAddFormProps) => {
+  const [currentScheduleId, setCurrentScheduleId] = useState<number | undefined>(
+    scheduleId,
+  );
   const { mutate: postScheduleAPI } = usePostScheduleAPI();
   const { mutate: patchScheduleAPI } = usePatchSingleScheduleAPI();
   const { mutate: patchRepeatMaintainScheduleAPI } = usePatchRepeatMaintainScheduleAPI();
   const { mutate: deleteScheduleAPI } = useDeleteScheduleAPI();
-  const { data: loadedScheduleData, isLoading, isError } = useGetScheduleAPI(scheduleId);
+  const {
+    data: loadedScheduleData,
+    isLoading,
+    isError,
+  } = useGetScheduleAPI(currentScheduleId);
   const mates = useRecoilValue(mateState);
 
   const [formData, setFormData] = useState<IScheduleAddFormData>({
@@ -108,14 +115,23 @@ const ScheduleAddForm = ({
     setFormData(newFormData);
   };
 
+  //   console.log(formData);
+
   const handleDelete = () => {
     if (loadedScheduleData.repeatId !== null) {
       setIsDeleteModalOpen(true);
     } else {
-      deleteScheduleAPI({ scheduleId: scheduleId!, all: false });
-      close();
-      resetFormData();
-      refetchTodos();
+      deleteScheduleAPI(
+        { scheduleId: currentScheduleId!, all: false },
+        {
+          onSuccess: () => {
+            setCurrentScheduleId(undefined);
+            close();
+            refetchTodos();
+            resetFormData();
+          },
+        },
+      );
     }
   };
 
@@ -206,13 +222,17 @@ const ScheduleAddForm = ({
           name='deleteRepeat'
           onSubmit={(key) => {
             if (scheduleId === undefined) return;
-            if (key === 'only') {
-              deleteScheduleAPI({ scheduleId, all: false });
-            } else if (key === 'all') {
-              deleteScheduleAPI({ scheduleId, all: true });
-            }
-            close();
-            resetFormData();
+            deleteScheduleAPI(
+              { scheduleId: currentScheduleId, all: key === 'all' },
+              {
+                onSuccess: () => {
+                  setCurrentScheduleId(undefined);
+                  close();
+                  resetFormData();
+                  refetchTodos();
+                },
+              },
+            );
           }}
           isOpen={isDeleteModalOpen}
           setOpen={setIsDeleteModalOpen}
@@ -248,7 +268,10 @@ const ScheduleAddForm = ({
             onValueChange={(value) => handleSelectChange('repeatType', value)}
             initialValue={formData.repeatType}
           />
-          {/* <NotiSelect onValueChange={(value) => handleSelectChange('alertType', value)} /> */}
+          <NotiSelect
+            onValueChange={(value) => handleSelectChange('alertType', value)}
+            initialValue={formData.alertType}
+          />
           <MemoTextArea
             onValueChange={(value) => handleSelectChange('memo', value)}
             initialValue={formData.memo}

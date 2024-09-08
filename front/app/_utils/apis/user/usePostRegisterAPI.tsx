@@ -1,5 +1,6 @@
 import instance from '../interceptors';
 import { useMutation } from 'react-query';
+import { useCookies } from 'react-cookie';
 import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
 import { useRecoilState } from 'recoil';
 import { userState } from '@/app/_states/userState';
@@ -10,6 +11,7 @@ import { IRegisterData, IUser } from '@/app/_types';
 export const usePostRegisterAPI = () => {
   const [, setUser] = useRecoilState(userState);
   const [, setDog] = useRecoilState(dogState);
+  const [cookies, setCookie] = useCookies(['access_token']);
   const router = useRouter();
   const postRegisterData = (data: IRegisterData) => {
     return instance.post('/api/users/register', data);
@@ -19,7 +21,10 @@ export const usePostRegisterAPI = () => {
     onSuccess: (res) => {
       const resData = res.data.data;
       const accessToken = resData.token.accessToken;
-      localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+      setCookie('access_token', accessToken, {
+        path: '/',
+        sameSite: 'strict',
+      });
       if (resData) {
         setUser(resData.userResponse);
         setDog(resData.dogResponse);
@@ -41,6 +46,7 @@ export const usePostInviteRegisterAPI = () => {
   const router = useRouter();
   const [, setUser] = useRecoilState(userState);
   const [, setDog] = useRecoilState(dogState);
+  const [cookies, setCookie] = useCookies(['access_token']);
   const postInviteRegisterData = async (data: { requestData: IUser; homeId: string }) => {
     const { requestData, homeId } = data;
     return instance.post(`/api/users/invitation/${homeId}`, requestData);
@@ -50,7 +56,10 @@ export const usePostInviteRegisterAPI = () => {
     onSuccess: (res) => {
       const resData = res.data.data;
       const accessToken = resData.token.accessToken;
-      localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+      setCookie('access_token', accessToken, {
+        path: '/',
+        sameSite: 'strict',
+      });
       if (resData) {
         setUser(resData.userResponse);
         setDog(resData.dogResponse);

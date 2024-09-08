@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface IToggleSwitchProps {
-  isToggled: boolean;
+  isToggled: boolean | null;
   onToggle: (toggled: boolean) => void;
 }
 
