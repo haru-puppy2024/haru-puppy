@@ -2,7 +2,8 @@
 
 import styled from 'styled-components';
 import NotiCard from './NotiCard';
-import { INotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
+import { INotification } from '@/app/_types/noti/Noti';
+
 interface INotiCardGroupProps {
   sendDate: string;
   notiData: (INotification & { time: string })[];
