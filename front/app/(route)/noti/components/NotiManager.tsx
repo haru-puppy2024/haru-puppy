@@ -60,6 +60,7 @@ const NotificationManager: React.FC = () => {
           />,
           {
             autoClose: NOTIFICATION_DURATION,
+            closeOnClick: true,
             onClose: () => removeNotification(notification.id),
             onClick: () => handleNotificationClick(notification.id),
           },
