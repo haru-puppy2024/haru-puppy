@@ -8,9 +8,11 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import NotificationUnreadIcon from '../../../public/svgs/notifications_unread.svg';
 import { INotification } from '@/app/_types/noti/Noti';
+import { useCookies } from 'react-cookie';
 
 const TopNavigation = () => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const [cookies] = useCookies(['access_token']);
+  const token = cookies.access_token;
   const { data: allNotifications } = useQuery<INotification[], Error>(
     'getAllNotifications',
     async () => {
@@ -45,7 +47,6 @@ const TopNavigation = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     setShowBtns(!!token);
   }, []);
 
