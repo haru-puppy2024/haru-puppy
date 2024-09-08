@@ -31,9 +31,11 @@ export const useTerminateAccount = () => {
     onSuccess: () => {
       removeCookie('access_token', { path: '/' });
       removeCookie('refresh_token', { path: '/' });
-      localStorage.removeItem('userState');
-      localStorage.removeItem('dogState');
-      localStorage.removeItem('mateState');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('userState');
+        localStorage.removeItem('dogState');
+        localStorage.removeItem('mateState');
+      }
       router.push('/auth/login');
     },
     onError: (error) => {
