@@ -1,13 +1,10 @@
-import React, { useEffect, useCallback, useRef, useState } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  notificationsState,
-  eventSourceEnabledState,
-} from '@/app/_utils/apis/noti/useGetSubscribeNotificationAPI';
 import NotiCard from './NotiCard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEventSource } from '@/app/_utils/apis/noti/useGetSubscribeNotificationAPI';
+import { eventSourceEnabledState, notificationsState } from '@/app/_states/notiState';
 import { INotification } from '@/app/_types/noti/Noti';
 import { useGetSingleNotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
 import { useRouter } from 'next/navigation';
