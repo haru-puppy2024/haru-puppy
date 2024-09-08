@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import NotificationUnreadIcon from '../../../public/svgs/notifications_unread.svg';
-import { INotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
+import { INotification } from '@/app/_types/noti/Noti';
 
 const TopNavigation = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
