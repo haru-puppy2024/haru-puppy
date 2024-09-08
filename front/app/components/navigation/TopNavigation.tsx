@@ -1,5 +1,5 @@
 'use client';
-
+import { useQuery } from 'react-query';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneRounded';
 import Image from 'next/image';
@@ -7,12 +7,31 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import NotificationUnreadIcon from '../../../public/svgs/notifications_unread.svg';
+import { INotification } from '@/app/_utils/apis/noti/useGetNotificationAPI';
 
 const TopNavigation = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const { data: allNotifications } = useQuery<INotification[], Error>(
+    'getAllNotifications',
+    async () => {
+      return Promise.resolve([]);
+    },
+    {
+      staleTime: Infinity,
+      cacheTime: Infinity,
+    },
+  );
   const [showBtns, setShowBtns] = useState(!!token);
+  const [hasNotification, setHasNotification] = useState(false);
 
-  const [hasNotification, setHasNotification] = useState(true);
+  useEffect(() => {
+    if (allNotifications) {
+      const hasUnread = allNotifications.some(
+        (notification: INotification) => !notification.isRead,
+      );
+      setHasNotification(hasUnread);
+    }
+  }, [allNotifications]);
 
   const NotiComponent = hasNotification ? (
     <Image src={NotificationUnreadIcon} alt='알림' />
@@ -22,6 +41,7 @@ const TopNavigation = () => {
 
   const handleNotiClick = () => {
     setHasNotification(false);
+    router.push('/noti');
   };
 
   useEffect(() => {
@@ -116,7 +136,6 @@ const TopNavigationWrap = styled.nav`
   & > button {
     padding: 12px 15px;
     color: ${({ theme }) => theme.colors.black80};
-    visibility: hidden;
 
     &:hover {
       color: ${({ theme }) => theme.colors.black90};

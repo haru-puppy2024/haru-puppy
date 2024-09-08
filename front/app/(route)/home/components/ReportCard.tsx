@@ -24,10 +24,42 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
   }, [reports]);
 
   const reportsArray = [
-    { title: '지난주 산책', count: lastWalkCount, unit: '회', icon: <Image src={'/svgs/paw.svg'} alt='산책 아이콘' width={25} height={25} /> },
-    { title: '오늘의 배변활동', count: todayPooCount, unit: '회', icon: <Image src={'/svgs/poop.svg'} alt='배변활동 아이콘' width={30} height={30} /> },
-    { title: '마지막 목욕', count: lastWash ? dayjs(lastWash).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_bath.svg'} alt='마지막 목욕 아이콘' width={30} height={30} /> },
-    { title: '마지막 검진', count: lastHospitalDate ? dayjs(lastHospitalDate).format('MM.DD') : '-', icon: <Image src={'/svgs/dog_health_check.svg'} alt='마지막 검진 아이콘' width={30} height={30} /> },
+    {
+      title: '지난주 산책',
+      count: lastWalkCount,
+      unit: '회',
+      icon: <Image src={'/svgs/paw.svg'} alt='산책 아이콘' width={25} height={25} />,
+    },
+    {
+      title: '오늘의 배변활동',
+      count: todayPooCount,
+      unit: '회',
+      icon: <Image src={'/svgs/poop.svg'} alt='배변활동 아이콘' width={30} height={30} />,
+    },
+    {
+      title: '마지막 목욕',
+      count: lastWash ? dayjs(lastWash).format('MM.DD') : '-',
+      icon: (
+        <Image
+          src={'/svgs/dog_bath.svg'}
+          alt='마지막 목욕 아이콘'
+          width={30}
+          height={30}
+        />
+      ),
+    },
+    {
+      title: '마지막 검진',
+      count: lastHospitalDate ? dayjs(lastHospitalDate).format('MM.DD') : '-',
+      icon: (
+        <Image
+          src={'/svgs/dog_health_check.svg'}
+          alt='마지막 검진 아이콘'
+          width={30}
+          height={30}
+        />
+      ),
+    },
   ];
 
   const onMinusClick = async () => {
@@ -63,9 +95,21 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
           <Wrapper key={index}>
             <p>{report.title}</p>
             <Info>
-              {report.title === '오늘의 배변활동' && <StyledIconButtonMinus src='/svgs/minus-svgrepo-com 1.svg' alt='minus icon' width={24} height={24} onClick={onMinusClick} />}
+              {report.title === '오늘의 배변활동' && (
+                <StyledIconButtonMinus
+                  src='/svgs/minus-svgrepo-com 1.svg'
+                  alt='minus icon'
+                  width={24}
+                  height={24}
+                  onClick={onMinusClick}
+                />
+              )}
               <IconImg>{report.icon}</IconImg>
-              <Count>
+              <Count
+                data-is-date-type={
+                  report.title === '마지막 목욕' || report.title === '마지막 검진'
+                }
+              >
                 {report.count !== null && report.count !== 0 ? (
                   <>
                     {report.count}
@@ -77,7 +121,15 @@ const ReportCard = ({ reports, userName }: IReportCard) => {
                   </>
                 )}
               </Count>
-              {report.title === '오늘의 배변활동' && <StyledIconButtonPlus src='/svgs/plus-circle-svgrepo-com 1.svg' alt='plus icon' width={24} height={24} onClick={onPlusClick} />}
+              {report.title === '오늘의 배변활동' && (
+                <StyledIconButtonPlus
+                  src='/svgs/plus-circle-svgrepo-com 1.svg'
+                  alt='plus icon'
+                  width={24}
+                  height={24}
+                  onClick={onPlusClick}
+                />
+              )}
             </Info>
           </Wrapper>
         ))}
@@ -146,12 +198,17 @@ const Info = styled.div`
 `;
 
 const Count = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   color: ${({ theme }) => theme.colors.black90};
   margin-left: 20px;
   display: flex;
   align-items: flex-end;
   padding-bottom: 5px;
+
+  &[data-is-date-type='true'] {
+    margin-left: 42px;
+  }
+
   p {
     display: inline-block;
     font-size: 14px;

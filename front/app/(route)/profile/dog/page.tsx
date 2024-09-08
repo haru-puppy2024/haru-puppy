@@ -1,5 +1,6 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { dogState } from '@/app/_states/dogState';
@@ -44,6 +45,7 @@ const DEFAULT_IMAGE = '/svgs/dog_profile.svg';
 
 const DogProfilePage = () => {
   const [dogData, setDogData] = useRecoilState<any>(dogState);
+  const [cookies] = useCookies(['access_token']);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
@@ -73,6 +75,12 @@ const DogProfilePage = () => {
   }, []);
 
   useEffect(() => {
+    if (isClient) {
+      setAccessToken(cookies['access_token']);
+    }
+  }, [isClient, cookies]);
+
+  useEffect(() => {
     if (isClient && dogData) {
       setValue('dogId', dogData.dogId || 0);
       setValue('name', dogData.name || '');
@@ -87,10 +95,6 @@ const DogProfilePage = () => {
       );
     }
   }, [isClient, dogData, setValue]);
-
-  useEffect(() => {
-    setAccessToken(localStorage.getItem('access_token'));
-  }, []);
 
   const updateDogProfileAPI = useUpdateDogProfileAPI();
 
@@ -137,7 +141,7 @@ const DogProfilePage = () => {
   return (
     <ContainerLayout>
       <TopNavigation />
-      <Suspense fallback={<Loading/>}>
+      <Suspense fallback={<Loading />}>
         <DogProfileFormWrap onSubmit={handleSubmit(onSubmit)}>
           <ProfileImg
             onValueChange={(value) => handleFormChange('imgUrl', value)}

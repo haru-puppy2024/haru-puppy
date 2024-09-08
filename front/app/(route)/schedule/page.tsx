@@ -79,7 +79,7 @@ const SchedulePage = () => {
 const Wrapper = styled.div`
   position: relative;
   background-color: ${({ theme }) => theme.colors.background};
-  height: 748px;
+  padding-bottom: 30px;
   width: 390px;
   justify-content: center;
   top: 0;
@@ -92,7 +92,7 @@ const AddBtnWrapper = styled.div`
   height: 50px;
   background-color: white;
   border-radius: 50%;
-  bottom: -25px;
+  bottom: -30px;
   justify-content: center;
   align-items: center;
   left: 166px;

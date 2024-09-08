@@ -2,6 +2,12 @@
    v2.0 | 20110126
    License: none (public domain)
 */
+
+:root {
+  --toastify-color-progress-light: #fa9e52;
+  --toastify-toast-width: width: 300px;
+}
+
 html,
 body {
   margin: 0;

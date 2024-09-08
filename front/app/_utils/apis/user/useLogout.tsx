@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 import instance from '../interceptors';
 import { useMutation } from 'react-query';
-import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
+import { useCookies } from 'react-cookie';
 
 // 회원 탈퇴 요청을 보내는 함수
 const logoutRequest = async ({ accessToken }: { accessToken: string | null }) => {
@@ -18,11 +18,15 @@ const logoutRequest = async ({ accessToken }: { accessToken: string | null }) =>
 // useMutation을 사용하여 회원 탈퇴 처리를 하는 custom hook
 export const useLogout = () => {
   const router = useRouter();
+  const [cookies, setCookie, removeCookie] = useCookies([
+    'access_token',
+    'refresh_token',
+  ]);
 
   return useMutation(logoutRequest, {
     onSuccess: () => {
-      localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
+      removeCookie('access_token', { path: '/' });
+      removeCookie('refresh_token', { path: '/' });
       localStorage.removeItem('userState');
       localStorage.removeItem('dogState');
       localStorage.removeItem('mateState');

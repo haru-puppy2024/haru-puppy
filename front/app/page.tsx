@@ -1,18 +1,20 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LOCAL_STORAGE_KEYS } from '@/app/constants/api';
+import { useCookies } from 'react-cookie';
 
 export default function Home() {
   const router = useRouter();
+  const [cookies] = useCookies(['access_token']);
 
   useEffect(() => {
-    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+    const token = cookies['access_token'];
 
     if (token) {
       router.push('/home');
     } else {
       router.push('/auth/login');
     }
-  }, [router]);
+  }, [router, cookies]);
+  return null;
 }
